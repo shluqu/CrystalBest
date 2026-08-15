@@ -46,31 +46,31 @@ Qaz@741852
     <td width="50%" valign="top">
       <a id="preview-home"></a>
       <b>首页 / 市场</b><br><br>
-      <img src="https://media.crystalbest.top/host/1.png" alt="CrystalBest 首页" width="100%">
+      <img src="https://media.crystalbest.top/host/6.png" alt="CrystalBest 首页" width="100%">
     </td>
     <td width="50%" valign="top">
       <a id="preview-spot"></a>
       <b>现货交易</b><br><br>
-      <img src="https://media.crystalbest.top/host/2.png" alt="CrystalBest 现货交易" width="100%">
+      <img src="https://media.crystalbest.top/host/7.png" alt="CrystalBest 现货交易" width="100%">
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
       <a id="preview-perp"></a>
       <b>永续合约</b><br><br>
-      <img src="https://media.crystalbest.top/host/3.png" alt="CrystalBest 永续合约" width="100%">
+      <img src="https://media.crystalbest.top/host/8.png" alt="CrystalBest 永续合约" width="100%">
     </td>
     <td width="50%" valign="top">
       <a id="preview-c2c"></a>
       <b>C2C / P2P</b><br><br>
-      <img src="https://media.crystalbest.top/host/5.png" alt="CrystalBest C2C" width="100%">
+      <img src="https://media.crystalbest.top/host/9.png" alt="CrystalBest C2C" width="100%">
     </td>
   </tr>
   <tr>
     <td colspan="2" valign="top">
       <a id="preview-admin"></a>
       <b>独立管理后台</b><br><br>
-      <img src="https://media.crystalbest.top/host/4.png" alt="CrystalBest 管理后台" width="100%">
+      <img src="https://media.crystalbest.top/host/10.png" alt="CrystalBest 管理后台" width="100%">
     </td>
   </tr>
 </table>
