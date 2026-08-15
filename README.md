@@ -63,14 +63,14 @@ Qaz@741852
     <td width="50%" valign="top">
       <a id="preview-c2c"></a>
       <b>C2C / P2P</b><br><br>
-      <img src="https://media.crystalbest.top/host/9.png" alt="CrystalBest C2C" width="100%">
+      <img src="https://media.crystalbest.top/host/10.png" alt="CrystalBest C2C" width="100%">
     </td>
   </tr>
   <tr>
     <td colspan="2" valign="top">
       <a id="preview-admin"></a>
       <b>独立管理后台</b><br><br>
-      <img src="https://media.crystalbest.top/host/10.png" alt="CrystalBest 管理后台" width="100%">
+      <img src="https://media.crystalbest.top/host/9.png" alt="CrystalBest 管理后台" width="100%">
     </td>
   </tr>
 </table>
