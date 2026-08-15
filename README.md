@@ -1,4 +1,4 @@
-# CrystalBest加密交易所系统源码
+# CrystalBest 系统技术与功能说明书
 
 > 文档版本：2026-08-15  
 > 系统范围：CrystalBest 用户交易端、行情数据链路、现货执行、永续合约执行、资产账本、钱包/充提、用户异步任务、Ledger 对账、独立管理员后台、C2C 法币交易模块。  
@@ -6,7 +6,161 @@
 
 ---
 
-## 1. 系统定位
+#
+# 0. 登录演示与访问入口
+
+本节用于快速演示 CrystalBest 用户交易端与独立管理员后台的登录入口。
+
+## 0.1 用户交易端
+
+用户交易站地址：
+
+```text
+https://crystalbest.top
+```
+
+主要入口：
+
+```text
+首页：
+https://crystalbest.top/
+
+登录：
+https://crystalbest.top/login
+
+注册：
+https://crystalbest.top/register
+
+用户仪表盘：
+https://crystalbest.top/dashboard
+
+现货交易：
+https://crystalbest.top/trade-spot/{symbol}
+
+永续合约：
+https://crystalbest.top/trade-swap/{symbol}
+
+C2C 法币交易：
+https://crystalbest.top/c2c
+```
+
+用户端演示流程：
+
+```text
+访问 crystalbest.top
+↓
+点击登录
+↓
+输入用户邮箱和密码
+↓
+完成验证码 / 二次验证（如账户已启用）
+↓
+进入用户仪表盘
+↓
+查看资产、充值、提现、现货、永续、C2C 等功能
+```
+
+---
+
+## 0.2 独立管理员后台
+
+管理员后台与用户交易端完全分离。
+
+后台地址：
+
+```text
+https://admin.crystalbest.top
+```
+
+后台登录地址：
+
+```text
+https://admin.crystalbest.top/login
+```
+
+当前管理员账号：
+
+```text
+用户名：
+superadmin
+
+显示名称：
+Super Admin
+
+角色：
+SUPER_ADMIN
+
+状态：
+启用
+```
+
+管理员密码：
+
+```text
+使用当前已设置的 superadmin 登录密码
+```
+
+> 管理员密码只保存密码哈希，不在本文档中保存明文密码。  
+> 当前管理员账号数据保存在 MySQL 表 `cex_admin_users_accounts`。
+
+管理员登录演示流程：
+
+```text
+访问：
+https://admin.crystalbest.top/login
+
+↓
+输入管理员账号：
+superadmin
+
+↓
+输入当前管理员密码
+
+↓
+登录成功
+
+↓
+进入 CrystalBest 管理控制台
+```
+
+登录后可以进入：
+
+```text
+总览
+用户中心
+实名认证审核
+资产余额
+账本流水
+冻结记录
+现货交易
+永续合约
+风险账户
+自动强平
+对账中心
+提现中心
+钱包与链上
+市场配置
+手续费
+系统健康
+管理员账号
+管理员审计
+```
+
+管理员后台与用户站的 Session、页面和操作入口彼此独立：
+
+```text
+crystalbest.top
+= 用户交易端
+
+admin.crystalbest.top
+= 管理员后台
+```
+
+管理员后台不应与用户登录 Cookie 混用。
+
+---
+
+# 1. 系统定位
 
 CrystalBest 是一套以 **内部双边账本（Double-entry Ledger）为资金核心** 的数字资产交易系统。
 
