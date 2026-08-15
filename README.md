@@ -9,7 +9,7 @@
 #
 # 0. 演示登录
 
-<a href="[[https://admin.crystalbest.top/login](https://crystalbest.top/login)](https://crystalbest.top/login)" target="_blank">[[后台登录](https://crystalbest.top/login)](https://crystalbest.top/login)</a>
+<a href="[[https://admin.crystalbest.top/login](https://crystalbest.top/login)](https://crystalbest.top/login)" target="_blank">[(https://crystalbest.top/login)](https://crystalbest.top/login)</a>
 
 演示账号：`host@hmailx.com`
 演示账号：`Qaz@741852`
