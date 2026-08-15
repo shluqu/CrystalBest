@@ -38,11 +38,11 @@ Qaz@741852
 > GitHub Markdown 不支持真正的交互式 Tabs，下面使用“徽章导航 + 截图卡片”的兼容方案。把截图放到 `docs/screenshots/` 后即可显示。
 
 <p align="center">
-  <a href="#preview-home"><img src="https://img.shields.io/badge/首页-Preview-111827?style=for-the-badge" alt="首页"></a>
-  <a href="#preview-spot"><img src="https://img.shields.io/badge/现货交易-Spot-0F766E?style=for-the-badge" alt="现货交易"></a>
-  <a href="#preview-perp"><img src="https://img.shields.io/badge/永续合约-Perpetual-7C3AED?style=for-the-badge" alt="永续合约"></a>
-  <a href="#preview-c2c"><img src="https://img.shields.io/badge/C2C-P2P-B45309?style=for-the-badge" alt="C2C"></a>
-  <a href="#preview-admin"><img src="https://img.shields.io/badge/管理后台-Admin-B91C1C?style=for-the-badge" alt="管理后台"></a>
+  <a href="#preview-home"><img src="https://media.crystalbest.top/host/1.png" alt="首页"></a>
+  <a href="#preview-spot"><img src="https://media.crystalbest.top/host/2.png" alt="现货交易"></a>
+  <a href="#preview-perp"><img src="https://media.crystalbest.top/host/3.png" alt="永续合约"></a>
+  <a href="#preview-c2c"><img src="https://media.crystalbest.top/host/5.png" alt="C2C"></a>
+  <a href="#preview-admin"><img src="https://media.crystalbest.top/host/4.png" alt="管理后台"></a>
 </p>
 
 <table>
