@@ -1,0 +1,24 @@
+{
+  "name": "crystalbest-ledger-reconciler",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "17.9.x"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "manual": "node src/cli.js manual",
+    "daily-now": "node src/cli.js daily-now",
+    "issues": "node src/cli.js issues",
+    "repair-preview": "node src/cli.js repair-preview",
+    "doctor": "node src/cli.js doctor",
+    "check": "node --check src/app.js && node --check src/cli.js && node --check src/config.js && node --check src/db.js && node --check src/decimal.js && node --check src/reconciliation.js && node --check src/scheduler.js"
+  },
+  "dependencies": {
+    "dotenv": "16.4.7",
+    "mysql2": "3.11.5",
+    "ulid": "2.3.0",
+    "ws": "8.18.0"
+  }
+}

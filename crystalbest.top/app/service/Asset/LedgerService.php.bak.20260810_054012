@@ -1,0 +1,333 @@
+<?php
+
+namespace app\service\Asset;
+
+use app\controller\Auth\Ulid;
+use app\controller\Auth\UtcClock;
+use think\facade\Db;
+
+/**
+ * The only write gateway for cex_asset_balances in Phase A.
+ * Never update a balance directly from a controller/business service.
+ */
+final class LedgerService
+{
+    public const DIRECTION_DECREASE = 1;
+    public const DIRECTION_INCREASE = 2;
+
+    public const SCOPE_SPOT = 1;
+    public const SCOPE_PERPETUAL_CROSS = 2;
+
+    public const BUCKET_AVAILABLE = 1;
+    public const BUCKET_LOCKED = 2;
+
+    public function ensureLedgerAccount(
+        int $accountId,
+        int $assetId,
+        int $scope,
+        int $bucket,
+        bool $allowNegative = false
+    ): array {
+        $this->validateDimensions($scope, $bucket);
+
+        if ($allowNegative) {
+            $owner = Db::table('cex_account_accounts')
+                ->where('id', $accountId)
+                ->field('account_kind,status')
+                ->find();
+            if (!$owner || (int) $owner['account_kind'] !== 2 || (int) $owner['status'] !== 1) {
+                throw new AssetException('只有活动中的系统账户可以启用负余额清算能力', 500, 'LEDGER_NEGATIVE_OWNER_INVALID');
+            }
+        }
+
+        $query = function () use ($accountId, $assetId, $scope, $bucket) {
+            return Db::table('cex_asset_ledger_accounts')
+                ->where('account_id', $accountId)
+                ->where('asset_id', $assetId)
+                ->where('account_scope', $scope)
+                ->where('balance_bucket', $bucket)
+                ->field('id,ledger_account_no,account_id,asset_id,account_scope,balance_bucket,allow_negative,status')
+                ->find();
+        };
+
+        $existing = $query();
+        if (!$existing) {
+            $ledgerNo = sprintf('ACC%d-A%d-S%d-B%d', $accountId, $assetId, $scope, $bucket);
+            try {
+                Db::table('cex_asset_ledger_accounts')->insert([
+                    'ledger_account_no' => $ledgerNo,
+                    'account_id' => $accountId,
+                    'asset_id' => $assetId,
+                    'account_scope' => $scope,
+                    'balance_bucket' => $bucket,
+                    'allow_negative' => $allowNegative ? 1 : 0,
+                    'status' => 1,
+                ]);
+            } catch (\Throwable $exception) {
+                // A concurrent request may have created the same dimensional account.
+                $existing = $query();
+                if (!$existing) {
+                    throw $exception;
+                }
+            }
+            $existing = $existing ?: $query();
+        }
+
+        if (!$existing || (int) $existing['status'] !== 1) {
+            throw new AssetException('账本账户当前不可用', 409, 'LEDGER_ACCOUNT_UNAVAILABLE');
+        }
+
+        if ($allowNegative && !(bool) $existing['allow_negative']) {
+            Db::table('cex_asset_ledger_accounts')
+                ->where('id', (int) $existing['id'])
+                ->update(['allow_negative' => 1]);
+            $existing['allow_negative'] = 1;
+        }
+
+        Db::execute(
+            'INSERT IGNORE INTO `cex_asset_balances` (`ledger_account_id`,`asset_id`,`balance`,`version`) VALUES (?,?,0,0)',
+            [(int) $existing['id'], $assetId]
+        );
+
+        return $existing;
+    }
+
+    public function balanceForDimensions(int $accountId, int $assetId, int $scope, int $bucket): string
+    {
+        $row = Db::table('cex_asset_ledger_accounts')->alias('la')
+            ->leftJoin('cex_asset_balances b', 'b.ledger_account_id = la.id')
+            ->where('la.account_id', $accountId)
+            ->where('la.asset_id', $assetId)
+            ->where('la.account_scope', $scope)
+            ->where('la.balance_bucket', $bucket)
+            ->field('COALESCE(b.balance,0) AS balance')
+            ->find();
+
+        return Decimal18::normalize($row ? (string) $row['balance'] : '0');
+    }
+
+    /**
+     * Lock and return the current balance row inside the caller's transaction.
+     * Used by reorg/reconciliation paths that must make a decision against the
+     * same balance state later consumed by postWithinTransaction().
+     */
+    public function lockBalanceForDimensions(int $accountId, int $assetId, int $scope, int $bucket): array
+    {
+        $row = Db::table('cex_asset_ledger_accounts')->alias('la')
+            ->join('cex_asset_balances b', 'b.ledger_account_id = la.id')
+            ->where('la.account_id', $accountId)
+            ->where('la.asset_id', $assetId)
+            ->where('la.account_scope', $scope)
+            ->where('la.balance_bucket', $bucket)
+            ->field('la.id,la.asset_id,la.allow_negative,la.status,b.balance,b.version')
+            ->lock(true)
+            ->find();
+
+        if (!$row || (int) $row['status'] !== 1) {
+            throw new AssetException('账本账户或余额缓存不存在', 500, 'LEDGER_BALANCE_MISSING');
+        }
+
+        $row['balance'] = Decimal18::normalize((string) $row['balance']);
+        return $row;
+    }
+
+    /**
+     * Post an already-balanced journal inside the caller's DB transaction.
+     * $postings = [{ledger_account_id, asset_id, direction, amount}, ...]
+     */
+    public function postWithinTransaction(array $journal, array $postings): array
+    {
+        if (count($postings) < 2) {
+            throw new AssetException('账本交易至少需要两条分录', 500, 'LEDGER_POSTINGS_INCOMPLETE');
+        }
+
+        $businessType = $this->requiredAscii($journal['business_type'] ?? '', 64, 'business_type');
+        $businessId = $this->requiredAscii($journal['business_id'] ?? '', 64, 'business_id');
+        $idempotencyKey = $this->requiredAscii($journal['idempotency_key'] ?? '', 128, 'idempotency_key');
+
+        $existing = Db::table('cex_asset_ledger_transactions')
+            ->where('idempotency_key', $idempotencyKey)
+            ->field('id,journal_no,business_type,business_id,status,posted_at')
+            ->lock(true)
+            ->find();
+        if ($existing) {
+            if ((string) $existing['business_type'] !== $businessType || (string) $existing['business_id'] !== $businessId) {
+                throw new AssetException('幂等键已用于其他账本业务', 409, 'LEDGER_IDEMPOTENCY_CONFLICT');
+            }
+            if ((int) $existing['status'] !== 2) {
+                throw new AssetException('相同账本请求正在处理或未完成', 409, 'LEDGER_ALREADY_PROCESSING');
+            }
+            return [
+                'id' => (int) $existing['id'],
+                'journal_no' => (string) $existing['journal_no'],
+                'existing' => true,
+            ];
+        }
+
+        $accountIds = [];
+        $normalized = [];
+        $assetDecrease = [];
+        $assetIncrease = [];
+
+        foreach ($postings as $index => $posting) {
+            $ledgerAccountId = (int) ($posting['ledger_account_id'] ?? 0);
+            $assetId = (int) ($posting['asset_id'] ?? 0);
+            $direction = (int) ($posting['direction'] ?? 0);
+            $amount = Decimal18::positive((string) ($posting['amount'] ?? ''));
+            if ($ledgerAccountId <= 0 || $assetId <= 0 || !in_array($direction, [1, 2], true)) {
+                throw new AssetException('账本分录参数无效', 500, 'LEDGER_POSTING_INVALID');
+            }
+            if (isset($accountIds[$ledgerAccountId])) {
+                throw new AssetException('同一账本账户不能在一笔基础流水中重复出现', 500, 'LEDGER_DUPLICATE_ACCOUNT_POSTING');
+            }
+            $accountIds[$ledgerAccountId] = true;
+            $normalized[] = compact('ledgerAccountId', 'assetId', 'direction', 'amount');
+
+            if ($direction === self::DIRECTION_DECREASE) {
+                $assetDecrease[$assetId] = Decimal18::add($assetDecrease[$assetId] ?? '0', $amount);
+            } else {
+                $assetIncrease[$assetId] = Decimal18::add($assetIncrease[$assetId] ?? '0', $amount);
+            }
+        }
+
+        $assetIds = array_unique(array_merge(array_keys($assetDecrease), array_keys($assetIncrease)));
+        foreach ($assetIds as $assetId) {
+            if (Decimal18::compare($assetDecrease[$assetId] ?? '0', $assetIncrease[$assetId] ?? '0') !== 0) {
+                throw new AssetException('账本借贷不平衡，拒绝入账', 500, 'LEDGER_UNBALANCED');
+            }
+        }
+
+        $lockedAccountIds = array_keys($accountIds);
+        sort($lockedAccountIds, SORT_NUMERIC);
+        $states = [];
+        foreach ($lockedAccountIds as $ledgerAccountId) {
+            $state = Db::table('cex_asset_ledger_accounts')->alias('la')
+                ->join('cex_asset_balances b', 'b.ledger_account_id = la.id')
+                ->where('la.id', $ledgerAccountId)
+                ->field('la.id,la.asset_id,la.allow_negative,la.status,b.balance,b.version')
+                ->lock(true)
+                ->find();
+            if (!$state || (int) $state['status'] !== 1) {
+                throw new AssetException('账本账户或余额缓存不存在', 500, 'LEDGER_BALANCE_MISSING');
+            }
+            $states[$ledgerAccountId] = $state;
+        }
+
+        $now = UtcClock::now();
+        $journalNo = Ulid::generate();
+        try {
+            $transactionId = (int) Db::table('cex_asset_ledger_transactions')->insertGetId([
+                'journal_no' => $journalNo,
+                'business_type' => $businessType,
+                'business_id' => $businessId,
+                'idempotency_key' => $idempotencyKey,
+                'status' => 2,
+                'reversed_transaction_id' => $journal['reversed_transaction_id'] ?? null,
+                'request_id' => $journal['request_id'] ?? Ulid::generate(),
+                'description' => isset($journal['description']) ? substr((string) $journal['description'], 0, 512) : null,
+                'metadata_json' => empty($journal['metadata']) ? null : json_encode($journal['metadata'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'occurred_at' => $journal['occurred_at'] ?? $now,
+                'posted_at' => $now,
+            ]);
+        } catch (\Throwable $exception) {
+            // A concurrent identical business operation may have crossed the
+            // initial SELECT before either INSERT committed. Re-read both
+            // unique business keys and only accept the exact same journal.
+            $concurrent = Db::table('cex_asset_ledger_transactions')
+                ->where('idempotency_key', $idempotencyKey)
+                ->field('id,journal_no,business_type,business_id,idempotency_key,status,posted_at')
+                ->lock(true)
+                ->find();
+
+            if (!$concurrent) {
+                $concurrent = Db::table('cex_asset_ledger_transactions')
+                    ->where('business_type', $businessType)
+                    ->where('business_id', $businessId)
+                    ->field('id,journal_no,business_type,business_id,idempotency_key,status,posted_at')
+                    ->lock(true)
+                    ->find();
+            }
+
+            if (!$concurrent) {
+                throw $exception;
+            }
+            if ((string) $concurrent['business_type'] !== $businessType
+                || (string) $concurrent['business_id'] !== $businessId
+                || (string) $concurrent['idempotency_key'] !== $idempotencyKey) {
+                throw new AssetException('账本业务唯一引用发生冲突', 409, 'LEDGER_BUSINESS_REF_CONFLICT');
+            }
+            if ((int) $concurrent['status'] !== 2) {
+                throw new AssetException('相同账本请求未处于已入账状态', 409, 'LEDGER_ALREADY_PROCESSING');
+            }
+
+            return [
+                'id' => (int) $concurrent['id'],
+                'journal_no' => (string) $concurrent['journal_no'],
+                'existing' => true,
+            ];
+        }
+
+        $entryNo = 1;
+        foreach ($normalized as $posting) {
+            $state = $states[$posting['ledgerAccountId']];
+            if ((int) $state['asset_id'] !== $posting['assetId']) {
+                throw new AssetException('账本分录资产与账户不匹配', 500, 'LEDGER_ASSET_MISMATCH');
+            }
+
+            $before = Decimal18::normalize((string) $state['balance']);
+            $after = $posting['direction'] === self::DIRECTION_DECREASE
+                ? Decimal18::subtract($before, $posting['amount'])
+                : Decimal18::add($before, $posting['amount']);
+
+            if (!(bool) $state['allow_negative'] && Decimal18::compare($after, '0') < 0) {
+                throw new AssetException('可用余额不足', 422, 'INSUFFICIENT_BALANCE');
+            }
+
+            $entryId = (int) Db::table('cex_asset_ledger_entries')->insertGetId([
+                'transaction_id' => $transactionId,
+                'entry_no' => $entryNo++,
+                'ledger_account_id' => $posting['ledgerAccountId'],
+                'asset_id' => $posting['assetId'],
+                'direction' => $posting['direction'],
+                'amount' => $posting['amount'],
+                'balance_before' => $before,
+                'balance_after' => $after,
+                'created_at' => $now,
+            ]);
+
+            Db::table('cex_asset_balances')
+                ->where('ledger_account_id', $posting['ledgerAccountId'])
+                ->update([
+                    'balance' => $after,
+                    'last_entry_id' => $entryId,
+                    'version' => (int) $state['version'] + 1,
+                    'updated_at' => $now,
+                ]);
+
+            $states[$posting['ledgerAccountId']]['balance'] = $after;
+            $states[$posting['ledgerAccountId']]['version'] = (int) $state['version'] + 1;
+        }
+
+        return [
+            'id' => $transactionId,
+            'journal_no' => $journalNo,
+            'existing' => false,
+        ];
+    }
+
+    private function validateDimensions(int $scope, int $bucket): void
+    {
+        if (!in_array($scope, [1, 2, 3, 4, 5, 6, 7], true) || !in_array($bucket, [1, 2], true)) {
+            throw new AssetException('账本维度无效', 500, 'LEDGER_DIMENSION_INVALID');
+        }
+    }
+
+    private function requiredAscii($value, int $maxLength, string $field): string
+    {
+        $value = trim((string) $value);
+        if ($value === '' || strlen($value) > $maxLength || !preg_match('/^[A-Za-z0-9:_\-.]+$/', $value)) {
+            throw new AssetException('账本字段 ' . $field . ' 无效', 500, 'LEDGER_HEADER_INVALID');
+        }
+        return $value;
+    }
+}

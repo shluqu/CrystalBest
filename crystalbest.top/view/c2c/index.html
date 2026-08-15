@@ -1,0 +1,325 @@
+{extend name="layout/base" /}
+{block name="title"}C2C 法币交易 — CrystalBest{/block}
+{block name="description"}CrystalBest C2C 法币交易市场，支持 BTC、USDT、ETH 与支付宝、微信、银行卡。{/block}
+{block name="head_extra"}<link href="/static/assets/css/c2c.css" rel="stylesheet"/>{/block}
+{block name="body_attributes"} id="top"{/block}
+{block name="body"}
+<header class="site-header" data-site-header="">
+  <div class="announcement">
+    <div class="container announcement-inner">
+      <span class="announcement-label">NEW</span>
+      <span>新用户完成认证，可领取专属交易权益</span>
+      <span class="nav-placeholder">查看详情 <i aria-hidden="true" class="bi bi-arrow-right"></i></span>
+    </div>
+  </div>
+  <nav aria-label="主导航" class="nav-shell">
+    <div class="container nav-inner">
+      <a aria-label="Aster Exchange 首页" class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" src="/static/assets/images/logo_light.svg" width="628"/></a>
+      <div class="nav-links" data-nav-links="">
+        <a aria-current="page" class="nav-direct-link is-current" href="/c2c">一键买币</a>
+        <a class="nav-direct-link" href="/markets">市场</a>
+        <div class="nav-item" data-dropdown="">
+          <button aria-expanded="false" class="nav-trigger" data-dropdown-trigger="" type="button">
+          交易 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown nav-dropdown-trade" role="menu">
+            <a class="dropdown-link" href="/trade-spot" role="menuitem"><span><strong>现货交易</strong><small>快速买卖数字资产</small></span><i aria-hidden="true" class="bi bi-arrow-left-right"></i></a>
+            <a class="dropdown-link" href="/trade-swap" role="menuitem"><span><strong>合约交易</strong><small>灵活管理多空仓位</small></span><i aria-hidden="true" class="bi bi-graph-up-arrow"></i></a>
+          </div>
+        </div>
+        <div class="nav-item" data-dropdown="">
+          <button aria-expanded="false" class="nav-trigger" data-dropdown-trigger="" type="button">
+          新手学院 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown academy-dropdown" role="menu">
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-coin"></i><span><strong>了解数字资产</strong><small>基础概念与资产类型</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-wallet2"></i><span><strong>买币介绍</strong><small>完成你的首次购买</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-question-circle"></i><span><strong>常见问题</strong><small>快速解决使用疑问</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-newspaper"></i><span><strong>热门资讯</strong><small>掌握市场最新动态</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-journal-text"></i><span><strong>博客文章</strong><small>阅读深度行业观点</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-robot"></i><span><strong>学习 AI 交易</strong><small>了解智能策略工具</small></span></span>
+          </div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button aria-label="搜索币种" class="nav-icon-button" data-search-open="" type="button">
+        <i aria-hidden="true" class="bi bi-search"></i>
+        </button>
+        <button aria-label="切换夜色模式" class="nav-icon-button theme-toggle" data-theme-toggle="" title="切换夜色模式" type="button">
+        <i aria-hidden="true" class="bi bi-moon-stars" data-theme-icon=""></i>
+        </button>
+        <div class="nav-item language-menu nav-desktop-only" data-dropdown="">
+          <button aria-expanded="false" aria-label="选择语言" class="language-trigger" data-dropdown-trigger="" type="button">
+          <img alt="" data-language-flag="" decoding="async" src="/static/assets/images/flags/cn.png"/>
+          <span data-language-label="">简体中文</span>
+          <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown language-dropdown" role="menu">
+            <button class="language-option is-active" data-flag="/static/assets/images/flags/cn.png" data-label="简体中文" data-language="zh-CN" type="button"><img alt="中国国旗" decoding="async" src="/static/assets/images/flags/cn.png"/><span>简体中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/us.png" data-label="English" data-language="en-US" type="button"><img alt="美国国旗" decoding="async" src="/static/assets/images/flags/us.png"/><span>English</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/tw.png" data-label="繁體中文" data-language="zh-TW" type="button"><img alt="中国台湾地区旗帜" decoding="async" src="/static/assets/images/flags/tw.png"/><span>繁體中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/jp.png" data-label="日本語" data-language="ja-JP" type="button"><img alt="日本国旗" decoding="async" src="/static/assets/images/flags/jp.png"/><span>日本語</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/kr.png" data-label="한국어" data-language="ko-KR" type="button"><img alt="韩国国旗" decoding="async" src="/static/assets/images/flags/kr.png"/><span>한국어</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/fr.png" data-label="Français" data-language="fr-FR" type="button"><img alt="法国国旗" decoding="async" src="/static/assets/images/flags/fr.png"/><span>Français</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/es.png" data-label="Español" data-language="es-ES" type="button"><img alt="西班牙国旗" decoding="async" src="/static/assets/images/flags/es.png"/><span>Español</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+          </div>
+        </div>
+        <a class="nav-button nav-button-ghost nav-desktop-only" data-auth-nav-avatar href="/login">登录</a>
+        <a class="nav-button nav-button-primary" data-auth-nav-dashboard href="/register">注册</a>
+        <button aria-expanded="false" aria-label="打开菜单" class="nav-icon-button menu-button" data-menu-button="" type="button">
+        <i aria-hidden="true" class="bi bi-list"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+<div aria-hidden="true" class="header-spacer">
+</div>
+<div class="mobile-backdrop" data-mobile-backdrop="">
+</div>
+<aside aria-hidden="true" class="mobile-panel" data-mobile-panel="">
+  <div class="mobile-panel-head">
+    <a class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" src="/static/assets/images/logo_light.svg" width="628"/></a>
+    <button aria-label="关闭菜单" data-menu-button="" type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+  </div>
+  <div class="mobile-nav-list">
+    <a aria-current="page" class="mobile-direct-link is-active" href="/c2c">一键买币</a>
+    <a class="mobile-direct-link" href="/markets">市场</a>
+    <details>
+      <summary>
+        交易 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+      </summary>
+      <div class="mobile-submenu">
+        <a href="/trade-spot">现货交易</a><a href="/trade-swap">合约交易</a>
+      </div>
+    </details>
+    <details>
+      <summary>
+        新手学院 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+      </summary>
+      <div class="mobile-submenu mobile-submenu-grid">
+        <span class="mobile-placeholder">了解数字资产</span><span class="mobile-placeholder">买币介绍</span><span class="mobile-placeholder">常见问题</span><span class="mobile-placeholder">热门资讯</span><span class="mobile-placeholder">博客文章</span><span class="mobile-placeholder">学习 AI 交易</span>
+      </div>
+    </details>
+  </div>
+  <details class="mobile-language-details">
+    <summary class="mobile-language-summary">
+      <span><img alt="" data-language-flag="" decoding="async" src="/static/assets/images/flags/cn.png"/><span data-language-label="">简体中文</span></span><i aria-hidden="true" class="bi bi-chevron-down"></i>
+    </summary>
+    <div class="mobile-language-options">
+      <button class="language-option is-active" data-flag="/static/assets/images/flags/cn.png" data-label="简体中文" data-language="zh-CN" type="button"><img alt="中国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/cn.png"/><span>简体中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/us.png" data-label="English" data-language="en-US" type="button"><img alt="美国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/us.png"/><span>English</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/tw.png" data-label="繁體中文" data-language="zh-TW" type="button"><img alt="中国台湾地区旗帜" decoding="async" loading="lazy" src="/static/assets/images/flags/tw.png"/><span>繁體中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/jp.png" data-label="日本語" data-language="ja-JP" type="button"><img alt="日本国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/jp.png"/><span>日本語</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/kr.png" data-label="한국어" data-language="ko-KR" type="button"><img alt="韩国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/kr.png"/><span>한국어</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/fr.png" data-label="Français" data-language="fr-FR" type="button"><img alt="法国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/fr.png"/><span>Français</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/es.png" data-label="Español" data-language="es-ES" type="button"><img alt="西班牙国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/es.png"/><span>Español</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+    </div>
+  </details>
+  <div class="mobile-panel-actions">
+    <button data-search-open="" type="button"><i aria-hidden="true" class="bi bi-search"></i>搜索币种</button>
+    <button data-theme-toggle="" type="button"><i aria-hidden="true" class="bi bi-moon-stars" data-theme-icon=""></i><span data-theme-label="">切换夜色模式</span></button>
+  </div>
+</aside>
+{include file="common/search_modal" /}
+<main class="c2c-main" data-c2c-app data-initial-order="{$initialOrderNo}">
+  <section class="c2c-hero">
+    <div class="container c2c-hero-inner">
+      <div class="c2c-hero-copy">
+        <span class="section-kicker">C2C 法币交易</span>
+        <h1>自由选择商家，人民币买卖数字资产</h1>
+        <p>当前开放 BTC、USDT、ETH。订单创建后由平台托管加密资产，人民币由交易双方通过本人实名收款方式直接支付。</p>
+      </div>
+      <div class="c2c-hero-badges">
+        <span><i class="bi bi-shield-lock"></i> 加密资产托管</span>
+        <span><i class="bi bi-person-vcard"></i> 实名收付款</span>
+        <span><i class="bi bi-life-preserver"></i> 订单申诉</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="container c2c-app-shell">
+    <nav class="c2c-workspace-tabs" aria-label="C2C 功能">
+      <button type="button" class="is-active" data-c2c-tab="market">交易市场</button>
+      <button type="button" data-c2c-tab="orders">我的订单</button>
+      <button type="button" data-c2c-tab="payments">收款方式</button>
+      <button type="button" data-c2c-tab="merchant">商家中心</button>
+    </nav>
+
+    <section class="c2c-panel is-active" data-c2c-panel="market">
+      <div class="c2c-market-card">
+        <div class="c2c-market-toolbar">
+          <div class="c2c-side-switch" aria-label="交易方向">
+            <button type="button" class="is-active" data-market-action="buy">我要购买</button>
+            <button type="button" data-market-action="sell">我要出售</button>
+          </div>
+          <div class="c2c-asset-tabs" aria-label="币种">
+            <button type="button" data-market-asset="BTC">BTC</button>
+            <button type="button" class="is-active" data-market-asset="USDT">USDT</button>
+            <button type="button" data-market-asset="ETH">ETH</button>
+          </div>
+        </div>
+
+        <div class="c2c-filters">
+          <label><span>交易金额</span><div class="c2c-input-suffix"><input type="text" inputmode="decimal" data-market-amount placeholder="例如 1000"><b>CNY</b></div></label>
+          <label><span>付款方式</span><select data-market-payment><option value="">全部付款方式</option><option value="1">支付宝</option><option value="2">微信支付</option><option value="3">银行卡</option></select></label>
+          <button type="button" class="c2c-btn c2c-btn-secondary" data-market-refresh><i class="bi bi-arrow-clockwise"></i> 刷新报价</button>
+        </div>
+
+        <div class="c2c-table-wrap">
+          <table class="c2c-table">
+            <thead><tr><th>商家</th><th>单价</th><th>可交易数量</th><th>单笔限额</th><th>付款方式</th><th>操作</th></tr></thead>
+            <tbody data-market-body><tr><td colspan="6" class="c2c-empty">正在加载 C2C 报价...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="c2c-panel" data-c2c-panel="orders">
+      <div class="c2c-panel-head"><div><h2>我的 C2C 订单</h2><p>查看付款、放币、取消和申诉状态。</p></div><button type="button" class="c2c-btn c2c-btn-secondary" data-orders-refresh>刷新订单</button></div>
+      <div class="c2c-table-wrap">
+        <table class="c2c-table">
+          <thead><tr><th>订单号</th><th>方向</th><th>币种</th><th>数量</th><th>人民币金额</th><th>付款方式</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+          <tbody data-orders-body><tr><td colspan="9" class="c2c-empty">登录后查看订单。</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="c2c-panel" data-c2c-panel="payments">
+      <div class="c2c-grid-2">
+        <article class="c2c-card">
+          <div class="c2c-panel-head"><div><h2>我的收款方式</h2><p>支付宝、微信、银行卡必须使用与实名认证一致的本人账户。</p></div></div>
+          <div data-payment-list class="c2c-payment-list"><div class="c2c-empty">登录后查看收款方式。</div></div>
+        </article>
+        <article class="c2c-card">
+          <h2>添加收款方式</h2>
+          <form data-payment-form class="c2c-form" enctype="multipart/form-data">
+            <label><span>收款类型</span><select name="method_type" data-payment-type required><option value="1">支付宝二维码</option><option value="2">微信二维码</option><option value="3">银行卡</option></select></label>
+            <label><span>收款人姓名</span><input name="account_name" autocomplete="name" required placeholder="必须与实名认证姓名一致"></label>
+            <label data-payment-account-row class="is-hidden"><span>银行卡号 / 收款账号</span><input name="account_no" autocomplete="off" placeholder="银行卡请填写卡号"></label>
+            <label data-bank-row class="is-hidden"><span>银行名称</span><input name="bank_name" placeholder="例如：中国工商银行"></label>
+            <label data-bank-row class="is-hidden"><span>开户支行</span><input name="bank_branch" placeholder="可选"></label>
+            <label data-qr-row><span>收款二维码</span><input name="qr_image" type="file" accept="image/jpeg,image/png,image/webp"></label>
+            <div class="c2c-security-note"><i class="bi bi-lock"></i> 二维码使用私有对象存储，仅订单双方可读取。</div>
+            <button class="c2c-btn c2c-btn-primary" type="submit">保存收款方式</button>
+          </form>
+        </article>
+      </div>
+    </section>
+
+    <section class="c2c-panel" data-c2c-panel="merchant">
+      <div data-merchant-guest class="c2c-card">
+        <div class="c2c-panel-head"><div><h2>申请成为 C2C 商家</h2><p>完成实名认证并缴纳商家保证金后，即可发布 BTC、USDT、ETH 买卖广告。</p></div><span class="c2c-status" data-merchant-state>未激活</span></div>
+        <div class="c2c-merchant-onboard">
+          <div><span>商家保证金</span><strong data-deposit-requirement>—</strong><small>保证金进入独立系统保证金账本，不计入订单成交资金。</small></div>
+          <div><span>保证金币种可用余额</span><strong data-deposit-available>—</strong><small>余额不足时请先充值或划入现货可用余额。</small></div>
+          <div><span>实名认证</span><strong data-kyc-state>—</strong><small>收款账户姓名必须与实名认证姓名一致。</small></div>
+        </div>
+        <button type="button" class="c2c-btn c2c-btn-primary" data-merchant-apply>缴纳保证金并激活商家</button>
+      </div>
+
+      <div data-merchant-active class="is-hidden">
+        <div class="c2c-grid-2">
+          <article class="c2c-card">
+            <div class="c2c-panel-head"><div><h2>发布广告</h2><p>固定价格模式。商家卖币时，实际订单会逐笔锁入平台托管账户。</p></div><span class="c2c-status is-ok" data-merchant-badge>商家已激活</span></div>
+            <form data-ad-form class="c2c-form">
+              <div class="c2c-form-grid">
+                <label><span>广告方向</span><select name="side" required><option value="SELL">商家卖币（用户购买）</option><option value="BUY">商家买币（用户出售）</option></select></label>
+                <label><span>币种</span><select name="asset" required><option>USDT</option><option>BTC</option><option>ETH</option></select></label>
+                <label><span>固定单价（CNY）</span><input name="price" inputmode="decimal" required placeholder="例如 7.25"></label>
+                <label><span>广告总数量</span><input name="total_crypto_amount" inputmode="decimal" required placeholder="例如 1000"></label>
+                <label><span>单笔最小金额（CNY）</span><input name="min_fiat_amount" inputmode="decimal" required placeholder="例如 100"></label>
+                <label><span>单笔最大金额（CNY）</span><input name="max_fiat_amount" inputmode="decimal" required placeholder="例如 50000"></label>
+                <label><span>付款时限</span><select name="payment_window_minutes"><option value="15">15 分钟</option><option value="10">10 分钟</option><option value="30">30 分钟</option><option value="60">60 分钟</option></select></label>
+              </div>
+              <fieldset class="c2c-payment-checks"><legend>支持付款方式</legend><label><input type="checkbox" name="payment_types[]" value="1" checked> 支付宝</label><label><input type="checkbox" name="payment_types[]" value="2" checked> 微信支付</label><label><input type="checkbox" name="payment_types[]" value="3"> 银行卡</label></fieldset>
+              <label><span>交易说明</span><textarea name="terms" maxlength="1000" rows="4" placeholder="例如：请使用本人实名账户付款；转账备注不要填写数字资产相关词语。"></textarea></label>
+              <button class="c2c-btn c2c-btn-primary" type="submit">发布广告</button>
+            </form>
+          </article>
+          <article class="c2c-card">
+            <h2>商家说明</h2>
+            <div class="c2c-rule-list"><p><i class="bi bi-check-circle"></i> 商家卖币广告：下单时才从商家现货可用余额锁入托管。</p><p><i class="bi bi-check-circle"></i> 商家买币广告：卖币用户下单时由用户资产进入托管。</p><p><i class="bi bi-check-circle"></i> 法币由买方向收款方的支付宝、微信或银行卡直接支付。</p><p><i class="bi bi-exclamation-triangle"></i> 只有确认法币实际到账后，卖币方才点击“确认收款并放币”。</p></div>
+          </article>
+        </div>
+
+        <article class="c2c-card c2c-my-ads">
+          <div class="c2c-panel-head"><div><h2>我的广告</h2><p>上线、下架和查看剩余数量。</p></div><button type="button" class="c2c-btn c2c-btn-secondary" data-ads-refresh>刷新</button></div>
+          <div class="c2c-table-wrap"><table class="c2c-table"><thead><tr><th>广告号</th><th>方向</th><th>币种</th><th>价格</th><th>剩余 / 总量</th><th>单笔限额</th><th>付款方式</th><th>状态</th><th>操作</th></tr></thead><tbody data-ads-body><tr><td colspan="9" class="c2c-empty">暂无广告。</td></tr></tbody></table></div>
+        </article>
+      </div>
+    </section>
+  </section>
+
+  <section class="c2c-safety-section">
+    <div class="container">
+      <div class="section-heading"><div><span class="section-kicker">交易流程</span><h2>平台托管加密资产，人民币由双方直接支付</h2></div></div>
+      <div class="c2c-steps-grid">
+        <article class="c2c-step-card"><span class="c2c-step-icon"><i class="bi bi-ui-checks-grid"></i></span><small>步骤 01</small><h3>选择广告并下单</h3><p>按价格、限额和付款方式选择商家。下单成功后，加密资产立即进入平台托管。</p></article>
+        <article class="c2c-step-card"><span class="c2c-step-icon"><i class="bi bi-qr-code"></i></span><small>步骤 02</small><h3>使用实名账户付款</h3><p>法币付款方按订单中展示的支付宝、微信或银行卡信息完成付款并标记“已付款”。</p></article>
+        <article class="c2c-step-card"><span class="c2c-step-icon"><i class="bi bi-shield-check"></i></span><small>步骤 03</small><h3>收款后确认放币</h3><p>加密资产卖方确认法币实际到账后放币；出现争议可发起申诉，托管资产保持锁定。</p></article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<dialog class="c2c-dialog" data-order-dialog>
+  <div class="c2c-dialog-head"><div><h2 data-order-dialog-title>创建 C2C 订单</h2><p data-order-dialog-subtitle>请确认价格、金额和付款方式。</p></div><button type="button" class="c2c-icon-btn" data-order-dialog-close aria-label="关闭"><i class="bi bi-x-lg"></i></button></div>
+  <div class="c2c-order-summary"><div><span>商家</span><strong data-order-merchant>—</strong></div><div><span>单价</span><strong data-order-price>—</strong></div><div><span>单笔限额</span><strong data-order-limit>—</strong></div></div>
+  <form data-order-form class="c2c-form">
+    <input type="hidden" name="ad_no" data-order-ad>
+    <label><span>人民币金额</span><div class="c2c-input-suffix"><input name="fiat_amount" data-order-amount inputmode="decimal" required><b>CNY</b></div></label>
+    <label><span>付款方式</span><select name="payment_type" data-order-payment required></select></label>
+    <div class="c2c-order-estimate"><span>预计成交数量</span><strong data-order-estimate>—</strong></div>
+    <div class="c2c-security-note"><i class="bi bi-shield-lock"></i> 点击确认后，加密资产卖方的对应数量会立即转入平台 C2C 托管账本。</div>
+    <button class="c2c-btn c2c-btn-primary" type="submit">确认下单</button>
+  </form>
+</dialog>
+
+<dialog class="c2c-dialog c2c-order-detail-dialog" data-order-detail-dialog>
+  <div class="c2c-dialog-head"><div><h2>C2C 订单详情</h2><p class="mono" data-detail-order-no>—</p></div><button type="button" class="c2c-icon-btn" data-detail-close aria-label="关闭"><i class="bi bi-x-lg"></i></button></div>
+  <div data-order-detail-body class="c2c-detail-body"><div class="c2c-empty">正在加载订单...</div></div>
+</dialog>
+
+<div class="c2c-toast" data-c2c-toast aria-live="polite"></div>
+<div
+  aria-busy="true" class="deferred-section-shell" data-deferred-section="site-footer"
+  style="--deferred-section-height:430px;--deferred-section-height-mobile:790px">
+  <template data-deferred-template="">
+  <footer class="footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" loading="lazy" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" loading="lazy" src="/static/assets/images/logo_light.svg" width="628"/></a>
+        <p>面向全球用户的数字资产交易平台概念官网。</p>
+        <div class="social-links">
+          <a aria-label="Twitter" href="/"><i aria-hidden="true" class="bi bi-twitter"></i></a><a aria-label="Telegram" href="/"><i aria-hidden="true" class="bi bi-telegram"></i></a><a aria-label="Discord" href="/"><i aria-hidden="true" class="bi bi-discord"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h3>交易</h3><a href="/c2c">C2C 买币</a><a href="/markets">市场行情</a><a href="/trade-spot">现货交易</a><a href="/trade-swap">合约交易</a><a href="/#products">策略工具</a>
+      </div>
+      <div class="footer-column">
+        <h3>产品</h3><a href="/#products">简单理财</a><a href="/#products">机构服务</a><a href="/#products">API 文档</a><a href="/#products">下载中心</a>
+      </div>
+      <div class="footer-column">
+        <h3>支持</h3><a href="/">帮助中心</a><a href="/">公告中心</a><a href="/">费率说明</a><a href="/#security">安全中心</a>
+      </div>
+      <div class="footer-column">
+        <h3>关于</h3><a href="/">关于我们</a><a href="/">联系我们</a><a href="/">加入团队</a><a href="/">服务条款</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2026 Aster Exchange. Concept design.</span>
+    </div>
+  </footer>
+  </template>
+  <div aria-hidden="true" class="deferred-section-placeholder">
+  </div>
+</div>
+<script src="/static/assets/js/main.js?v=20260808-1">
+</script>
+<script src="/static/assets/js/c2c.js?v=20260813-1">
+</script>
+<script src="/static/assets/js/performance-loader.js">
+</script>
+{/block}
