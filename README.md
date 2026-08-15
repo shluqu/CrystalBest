@@ -1,4 +1,4 @@
-# CrystalBest 系统技术与功能说明书
+# CrystalBest加密交易所系统源码
 
 > 文档版本：2026-08-15  
 > 系统范围：CrystalBest 用户交易端、行情数据链路、现货执行、永续合约执行、资产账本、钱包/充提、用户异步任务、Ledger 对账、独立管理员后台、C2C 法币交易模块。  
@@ -9,9 +9,10 @@
 #
 # 0. 演示登录
 
-<a href="https://admin.crystalbest.top/login" target="_blank">后台登录</a>
+<a href="https://admin.crystalbest.top/login" target="_blank">[后台登录](https://crystalbest.top/login)</a>
 
-演示账号：`superadmin`
+演示账号：`host@hmailx.com`
+演示账号：`Qaz@741852`
 
 ---
 
