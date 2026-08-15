@@ -1,0 +1,84 @@
+{extend name="layout/base" /}
+{block name="title"}忘记密码 — CrystalBest{/block}
+{block name="description"}通过邮箱验证安全重置 CrystalBest 登录密码。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="auth-body auth-forgot"{/block}
+{block name="body"}
+<header class="auth-header">
+  <div class="container auth-header-inner">
+    <a class="auth-brand" href="/"><img alt="CrystalBest" class="brand-logo brand-logo-light-theme" src="/static/assets/images/logo.svg"/><img alt="CrystalBest" class="brand-logo brand-logo-dark-theme" src="/static/assets/images/logo_light.svg"/></a>
+    <div class="auth-header-actions"><a class="auth-home-link" href="/login"><i class="bi bi-arrow-left"></i><span>返回登录</span></a><button aria-label="切换夜色模式" class="nav-icon-button theme-toggle" data-theme-toggle type="button"><i class="bi bi-moon-stars" data-theme-icon></i></button></div>
+  </div>
+</header>
+<main class="auth-main">
+  <section class="auth-showcase">
+    <div class="auth-showcase-inner">
+      <span class="auth-eyebrow"><i class="bi bi-key"></i> PASSWORD RECOVERY</span>
+      <h1>三阶段验证，安全重置登录密码</h1>
+      <p>先通过人机验证发送邮箱验证码，再换取一次性重置凭证，最后重新做人机验证并设置新密码。</p>
+      <div class="auth-feature-grid">
+        <article><i class="bi bi-shield-check"></i><div><strong>人机验证</strong><span>发送邮件前阻断机器人</span></div></article>
+        <article><i class="bi bi-envelope-check"></i><div><strong>邮箱所有权</strong><span>6 位短期验证码</span></div></article>
+        <article><i class="bi bi-ticket-perforated"></i><div><strong>一次性凭证</strong><span>验证码通过后签发短期 ticket</span></div></article>
+        <article><i class="bi bi-x-circle"></i><div><strong>撤销旧会话</strong><span>新密码生效后全部重新登录</span></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="auth-form-side">
+    <div class="auth-form-wrap auth-form-wrap-wide">
+      <div class="auth-card auth-wizard-card" data-reset-wizard>
+        <div class="auth-card-head"><span class="auth-kicker">RESET PASSWORD</span><h2>重置密码</h2></div>
+        <div class="auth-wizard-progress auth-wizard-progress-3">
+          <span class="is-active" data-reset-indicator="start"><b>1</b>验证邮箱</span><i></i>
+          <span data-reset-indicator="code"><b>2</b>验证码</span><i></i>
+          <span data-reset-indicator="password"><b>3</b>新密码</span>
+        </div>
+
+        <section class="auth-wizard-step is-active" data-reset-step="start">
+          <form class="auth-form" data-reset-request novalidate>
+            <label><span>注册邮箱</span><div class="auth-input"><i class="bi bi-envelope"></i><input autocomplete="email" name="email" placeholder="name@example.com" required type="email"/></div></label>
+            <div class="auth-captcha-box">
+              <button class="auth-captcha-image" data-captcha-refresh="password-reset-start" type="button" aria-label="刷新验证码"><img data-captcha-image="password-reset-start" src="/captcha/password-reset-start" alt="人机验证码"/></button>
+              <label><span>人机验证</span><div class="auth-input"><i class="bi bi-shield-check"></i><input autocomplete="off" maxlength="8" name="captcha" placeholder="输入图片字符" required type="text"/></div></label>
+            </div>
+            <button class="auth-submit" type="submit"><span>发送重置验证码</span><i class="bi bi-send"></i></button>
+          </form>
+        </section>
+
+        <section class="auth-wizard-step" data-reset-step="code" hidden>
+          <div class="auth-step-heading"><strong>输入邮箱验证码</strong><span>验证码已发送到 <b data-reset-email-label></b></span></div>
+          <form class="auth-form" data-reset-code novalidate>
+            <input name="email" data-reset-code-email type="hidden"/>
+            <label><span>6 位验证码</span><div class="auth-input auth-code-input"><i class="bi bi-envelope-check"></i><input autocomplete="one-time-code" inputmode="numeric" maxlength="6" minlength="6" name="code" pattern="[0-9]{6}" placeholder="000000" required type="text"/></div></label>
+            <button class="auth-submit" type="submit"><span>验证邮箱</span><i class="bi bi-patch-check"></i></button>
+            <button class="auth-text-button" data-reset-restart type="button">重新输入邮箱</button>
+          </form>
+        </section>
+
+        <section class="auth-wizard-step" data-reset-step="password" hidden>
+          <div class="auth-success-panel"><i class="bi bi-check-circle-fill"></i><div><strong>邮箱验证成功</strong><span>重置凭证已经签发。设置新密码后，旧登录会话将全部失效。</span></div></div>
+          <form class="auth-form" data-auth-form="forgot" novalidate>
+            <input name="reset_ticket" data-reset-ticket type="hidden"/>
+            <label><span>已验证邮箱</span><div class="auth-input auth-input-readonly"><i class="bi bi-envelope-check"></i><input name="email" data-reset-final-email readonly type="email"/></div></label>
+            <div class="auth-final-grid">
+              <label><span>新密码 <em>8-128 位</em></span><div class="auth-input"><i class="bi bi-lock"></i><input autocomplete="new-password" minlength="8" name="password" required type="password"/><button aria-label="显示密码" data-password-toggle type="button"><i class="bi bi-eye"></i></button></div></label>
+              <label><span>确认新密码</span><div class="auth-input"><i class="bi bi-lock-fill"></i><input autocomplete="new-password" minlength="8" name="confirmPassword" required type="password"/><button aria-label="显示密码" data-password-toggle type="button"><i class="bi bi-eye"></i></button></div></label>
+              <label class="auth-final-captcha"><span>人机验证</span><div class="auth-final-captcha-shell"><button class="auth-captcha-image auth-captcha-image-small" data-captcha-refresh="password-reset-final" type="button" aria-label="刷新验证码"><img data-captcha-image="password-reset-final" src="/captcha/password-reset-final" alt="人机验证码"/></button><div class="auth-input"><i class="bi bi-shield-check"></i><input autocomplete="off" maxlength="8" name="captcha" placeholder="验证码" required type="text"/></div></div></label>
+            </div>
+            <button class="auth-submit" type="submit"><span>设置新密码</span><i class="bi bi-arrow-right"></i></button>
+          </form>
+        </section>
+
+        <div class="auth-switch">想起密码了？ <a href="/login">返回登录</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="auth-footer"><span>© CrystalBest</span><nav><a href="/">首页</a><a href="/markets">市场</a></nav></footer>
+<div class="auth-toast" data-auth-toast></div>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/auth.js"></script>
+{/block}

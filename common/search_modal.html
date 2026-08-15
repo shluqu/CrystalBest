@@ -1,0 +1,24 @@
+<div aria-hidden="true" class="search-modal" data-search-modal="">
+  <button aria-label="关闭搜索" class="search-modal-backdrop" data-search-close="" type="button"></button>
+  <section aria-labelledby="search-dialog-title" aria-modal="true" class="search-dialog" role="dialog">
+    <div class="search-dialog-head">
+      <label class="coin-search-input">
+      <i aria-hidden="true" class="bi bi-search"></i>
+      <input autocomplete="off" data-coin-search-input="" placeholder="搜索币种、名称或交易对" type="search"/>
+      </label>
+      <button aria-label="关闭搜索" class="search-close-button" data-search-close="" type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="search-dialog-body">
+      <div class="search-table-title">
+        <h2 id="search-dialog-title">搜索现货</h2><span>实时 24h 行情</span>
+      </div>
+      <div aria-label="现货币种搜索结果" class="coin-search-table" data-coin-search-results role="table">
+        <div class="coin-search-head" role="row">
+          <span role="columnheader">资产</span><span role="columnheader">最新价</span><span role="columnheader">24h</span>
+        </div>
+        <div class="coin-search-loading" data-coin-search-loading>正在加载现货行情…</div>
+      </div>
+      <p class="coin-search-empty" data-coin-search-empty="" hidden="">没有找到相关币种</p>
+    </div>
+  </section>
+</div>

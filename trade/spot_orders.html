@@ -1,0 +1,62 @@
+<section aria-label="现货委托" class="positions-panel terminal-panel spot-orders-panel" data-spot-orders-panel>
+  <div class="positions-tabs">
+    <div aria-label="现货委托标签" class="positions-tab-buttons" role="tablist">
+      <button aria-controls="position-panel-open-orders" aria-selected="true" class="is-active" data-position-tab="open-orders" id="position-tab-open-orders" role="tab" type="button">当前委托 <span data-spot-open-count>0</span></button>
+      <button aria-controls="position-panel-order-history" aria-selected="false" data-position-tab="order-history" id="position-tab-order-history" role="tab" type="button">历史委托</button>
+    </div>
+    <div aria-label="现货账户摘要" class="positions-account-summary spot-account-summary">
+      <span>可用 <strong data-spot-summary-available>-- USDT</strong></span>
+      <span>冻结 <strong data-spot-summary-locked>-- USDT</strong></span>
+    </div>
+  </div>
+
+  <div aria-labelledby="position-tab-open-orders" class="position-tab-panel is-active" data-position-panel="open-orders" id="position-panel-open-orders" role="tabpanel">
+    <div class="positions-table-wrap">
+      <table aria-label="当前现货委托列表" class="positions-data-table spot-order-table">
+        <thead>
+          <tr>
+            <th>交易对</th>
+            <th>时间</th>
+            <th>方向</th>
+            <th>委托价</th>
+            <th>委托数量</th>
+            <th>已成交</th>
+            <th>锁定资金</th>
+            <th>执行状态</th>
+            <th>订单编号</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody data-spot-open-orders-body>
+          <tr><td class="spot-order-empty" colspan="10"><span class="data-skeleton" aria-hidden="true"></span><span>正在加载委托...</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="positions-table-note">显示当前交易对最近 20 个未完成委托。限价单采用参考盘口触价执行；待触价期间可撤单。</p>
+  </div>
+
+  <div aria-labelledby="position-tab-order-history" class="position-tab-panel" data-position-panel="order-history" hidden id="position-panel-order-history" role="tabpanel">
+    <div class="positions-table-wrap">
+      <table aria-label="历史现货委托列表" class="positions-data-table spot-order-table">
+        <thead>
+          <tr>
+            <th>交易对</th>
+            <th>时间</th>
+            <th>方向</th>
+            <th>委托价</th>
+            <th>委托数量</th>
+            <th>已成交</th>
+            <th>成交金额</th>
+            <th>状态</th>
+            <th>完成时间</th>
+            <th>订单编号</th>
+          </tr>
+        </thead>
+        <tbody data-spot-history-orders-body>
+          <tr><td class="spot-order-empty" colspan="10"><span class="data-skeleton" aria-hidden="true"></span><span>正在加载历史委托...</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="positions-table-note">显示当前交易对最近 20 条历史委托；已成交订单会显示实际成交数量与成交金额。</p>
+  </div>
+</section>

@@ -1,0 +1,756 @@
+{extend name="layout/base" /}
+{block name="title"}{$pageTitle}{/block}
+{block name="description"}{$pageDescription}{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/trading.css?v=20260811-order-profit-ui8" rel="stylesheet" />{/block}
+{block name="body_attributes"} class="trading-body trading-full-header" id="top"{/block}
+{block name="body"}
+<div aria-label="交易弹窗区域" class="trade-dialog-layer">
+  <dialog aria-labelledby="modify-price-title" class="trade-dialog" id="modify-price-dialog">
+    <form class="trade-dialog-card" method="dialog">
+      <header>
+        <div>
+          <small>BTCUSDT 永续</small>
+          <h3 id="modify-price-title">修改委托价格</h3>
+        </div>
+        <button aria-label="关闭弹窗" class="dialog-close" data-dialog-close="" type="button"><i
+        class="bi bi-x-lg"></i></button>
+      </header>
+      <div class="trade-dialog-body">
+        <label><span>当前委托价</span>
+        <div class="dialog-readonly">
+          64,199.3 USDT
+        </div>
+        </label><label><span>新委托价 (USDT)</span>
+        <div class="dialog-input">
+          <input inputmode="decimal" value="64,199.3" /><em>USDT</em>
+        </div>
+        </label>
+      </div>
+      <footer>
+        <button data-dialog-close="" type="button">取消</button><button class="dialog-primary" data-dialog-submit=""
+        type="button">确认修改</button>
+      </footer>
+    </form>
+  </dialog>
+  <dialog aria-labelledby="modify-quantity-title" class="trade-dialog" id="modify-quantity-dialog">
+    <form class="trade-dialog-card" method="dialog">
+      <header>
+        <div>
+          <small>BTCUSDT 永续</small>
+          <h3 id="modify-quantity-title">修改委托数量</h3>
+        </div>
+        <button aria-label="关闭弹窗" class="dialog-close" data-dialog-close="" type="button"><i
+        class="bi bi-x-lg"></i></button>
+      </header>
+      <div class="trade-dialog-body">
+        <label><span>当前委托数量</span>
+        <div class="dialog-readonly">
+          0.0001 BTC
+        </div>
+        </label><label><span>新委托数量 (BTC)</span>
+        <div class="dialog-input">
+          <input inputmode="decimal" value="0.0001" /><em>BTC</em>
+        </div>
+        </label>
+      </div>
+      <footer>
+        <button data-dialog-close="" type="button">取消</button><button class="dialog-primary" data-dialog-submit=""
+        type="button">确认修改</button>
+      </footer>
+    </form>
+  </dialog>
+  <dialog aria-labelledby="modify-order-title" class="trade-dialog" id="modify-order-dialog">
+    <form class="trade-dialog-card" method="dialog">
+      <header>
+        <div>
+          <small>买入开多 · 限价委托</small>
+          <h3 id="modify-order-title">修改委托</h3>
+        </div>
+        <button aria-label="关闭弹窗" class="dialog-close" data-dialog-close="" type="button"><i
+        class="bi bi-x-lg"></i></button>
+      </header>
+      <div class="trade-dialog-body dialog-two-fields">
+        <label><span>委托价格 (USDT)</span>
+        <div class="dialog-input">
+          <input inputmode="decimal" value="64,199.3" /><em>USDT</em>
+        </div>
+        </label><label><span>委托数量 (BTC)</span>
+        <div class="dialog-input">
+          <input inputmode="decimal" value="0.0001" /><em>BTC</em>
+        </div>
+        </label>
+      </div>
+      <footer>
+        <button data-dialog-close="" type="button">取消</button><button class="dialog-primary" data-dialog-submit=""
+        type="button">保存修改</button>
+      </footer>
+    </form>
+  </dialog>
+  <dialog aria-labelledby="order-tpsl-title" class="trade-dialog" id="order-tpsl-dialog">
+    <form class="trade-dialog-card" method="dialog">
+      <header>
+        <div>
+          <small>当前委托 · BTCUSDT</small>
+          <h3 id="order-tpsl-title">添加止盈止损</h3>
+        </div>
+        <button aria-label="关闭弹窗" class="dialog-close" data-dialog-close="" type="button"><i
+        class="bi bi-x-lg"></i></button>
+      </header>
+      <div class="trade-dialog-body dialog-two-fields">
+        <label><span>止盈价格 (USDT)</span>
+        <div class="dialog-input">
+          <input inputmode="decimal" /><button type="button">最新 <i
+          class="bi bi-chevron-down"></i></button>
+        </div>
+        </label><label><span>止损价格 (USDT)</span>
+        <div class="dialog-input">
+          <input inputmode="decimal" /><button type="button">最新 <i
+          class="bi bi-chevron-down"></i></button>
+        </div>
+        </label>
+      </div>
+      <footer>
+        <button data-dialog-close="" type="button">取消</button><button class="dialog-primary" data-dialog-submit=""
+        type="button">确认添加</button>
+      </footer>
+    </form>
+  </dialog>
+  <dialog aria-labelledby="close-position-title" class="trade-dialog" id="close-position-dialog">
+    <form class="trade-dialog-card" method="dialog">
+      <header>
+        <div>
+          <small>BTCUSDT 永续 · 多仓</small>
+          <h3 id="close-position-title">平仓</h3>
+        </div>
+        <button aria-label="关闭弹窗" class="dialog-close" data-dialog-close="" type="button"><i
+        class="bi bi-x-lg"></i></button>
+      </header>
+      <div class="trade-dialog-body">
+        <div class="dialog-segmented" data-close-order-type="">
+          <button class="is-active" data-close-type="market"
+          type="button">市价平仓</button><button data-close-type="limit" type="button">限价平仓</button>
+        </div>
+        <label data-close-limit-price="" hidden=""><span>平仓价格 (USDT)</span>
+        <div class="dialog-input">
+          <input inputmode="decimal" value="63,936.9" /><em>USDT</em>
+        </div>
+        </label>
+        <label><span>平仓数量 (BTC)</span>
+        <div class="dialog-input">
+          <input inputmode="decimal" value="0.0001" /><em>BTC</em>
+        </div>
+        </label>
+        <div class="dialog-position-line">
+          <span>可平 0.0001 BTC</span><button type="button">全部</button>
+        </div>
+      </div>
+      <footer>
+        <button data-dialog-close="" type="button">取消</button><button class="dialog-danger" data-dialog-submit=""
+        type="button">确认平仓</button>
+      </footer>
+    </form>
+  </dialog>
+</div>
+<header class="site-header" data-site-header="">
+  <nav aria-label="主导航" class="nav-shell">
+    <div class="container nav-inner">
+      <a aria-label="Aster Exchange 首页" class="brand" href="/"><img alt="Aster Exchange Logo"
+      class="brand-logo brand-logo-light-theme" decoding="async" height="122" src="/static/assets/images/logo.svg"
+      width="574" /><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async"
+      height="115" src="/static/assets/images/logo_light.svg" width="628" /></a>
+      <div class="nav-links" data-nav-links="">
+        <a class="nav-direct-link" href="/c2c">一键买币</a>
+        <a class="nav-direct-link" href="/markets">市场</a>
+        <div class="nav-item" data-dropdown="">
+          <button aria-expanded="false" class="nav-trigger is-current" data-dropdown-trigger="" type="button">
+          交易 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown nav-dropdown-trade" role="menu">
+            <a class="dropdown-link" href="/trade-spot"
+            role="menuitem"><span><strong>现货交易</strong><small>快速买卖数字资产</small></span><i aria-hidden="true"
+            class="bi bi-arrow-left-right"></i></a>
+            <a class="dropdown-link" href="/trade-swap"
+            role="menuitem"><span><strong>合约交易</strong><small>灵活管理多空仓位</small></span><i aria-hidden="true"
+            class="bi bi-graph-up-arrow"></i></a>
+          </div>
+        </div>
+        <div class="nav-item" data-dropdown="">
+          <button aria-expanded="false" class="nav-trigger" data-dropdown-trigger="" type="button">
+          新手学院 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown academy-dropdown" role="menu">
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true"
+            class="bi bi-coin"></i><span><strong>了解数字资产</strong><small>基础概念与资产类型</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true"
+            class="bi bi-wallet2"></i><span><strong>买币介绍</strong><small>完成你的首次购买</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true"
+            class="bi bi-question-circle"></i><span><strong>常见问题</strong><small>快速解决使用疑问</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true"
+            class="bi bi-newspaper"></i><span><strong>热门资讯</strong><small>掌握市场最新动态</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true"
+            class="bi bi-journal-text"></i><span><strong>博客文章</strong><small>阅读深度行业观点</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true"
+            class="bi bi-robot"></i><span><strong>学习 AI 交易</strong><small>了解智能策略工具</small></span></span>
+          </div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button aria-label="搜索币种" class="nav-icon-button" data-search-open="" type="button">
+        <i aria-hidden="true" class="bi bi-search"></i>
+        </button>
+        <button aria-label="切换夜色模式" class="nav-icon-button theme-toggle" data-theme-toggle="" title="切换夜色模式"
+        type="button">
+        <i aria-hidden="true" class="bi bi-moon-stars" data-theme-icon=""></i>
+        </button>
+        <div class="nav-item language-menu nav-desktop-only" data-dropdown="">
+          <button aria-expanded="false" aria-label="选择语言" class="language-trigger" data-dropdown-trigger=""
+          type="button">
+          <img alt="" data-language-flag="" decoding="async" src="/static/assets/images/flags/cn.png" />
+          <span data-language-label="">简体中文</span>
+          <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown language-dropdown" role="menu">
+            <button class="language-option is-active" data-flag="/static/assets/images/flags/cn.png" data-label="简体中文"
+            data-language="zh-CN" type="button"><img alt="中国国旗" decoding="async"
+            src="/static/assets/images/flags/cn.png" /><span>简体中文</span><i aria-hidden="true"
+            class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/us.png" data-label="English"
+            data-language="en-US" type="button"><img alt="美国国旗" decoding="async"
+            src="/static/assets/images/flags/us.png" /><span>English</span><i aria-hidden="true"
+            class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/tw.png" data-label="繁體中文"
+            data-language="zh-TW" type="button"><img alt="中国台湾地区旗帜" decoding="async"
+            src="/static/assets/images/flags/tw.png" /><span>繁體中文</span><i aria-hidden="true"
+            class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/jp.png" data-label="日本語"
+            data-language="ja-JP" type="button"><img alt="日本国旗" decoding="async"
+            src="/static/assets/images/flags/jp.png" /><span>日本語</span><i aria-hidden="true"
+            class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/kr.png" data-label="한국어"
+            data-language="ko-KR" type="button"><img alt="韩国国旗" decoding="async"
+            src="/static/assets/images/flags/kr.png" /><span>한국어</span><i aria-hidden="true"
+            class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/fr.png" data-label="Français"
+            data-language="fr-FR" type="button"><img alt="法国国旗" decoding="async"
+            src="/static/assets/images/flags/fr.png" /><span>Français</span><i aria-hidden="true"
+            class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/es.png" data-label="Español"
+            data-language="es-ES" type="button"><img alt="西班牙国旗" decoding="async"
+            src="/static/assets/images/flags/es.png" /><span>Español</span><i aria-hidden="true"
+            class="bi bi-check-lg"></i></button>
+          </div>
+        </div>
+        <a class="nav-button nav-button-ghost nav-desktop-only" data-auth-nav-avatar href="/login">登录</a>
+        <a class="nav-button nav-button-primary" data-auth-nav-dashboard href="/register">注册</a>
+        <button aria-expanded="false" aria-label="打开菜单" class="nav-icon-button menu-button" data-menu-button=""
+        type="button">
+        <i aria-hidden="true" class="bi bi-list"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+<div aria-hidden="true" class="header-spacer trading-header-spacer">
+</div>
+<div class="mobile-backdrop" data-mobile-backdrop="">
+</div>
+<aside aria-hidden="true" class="mobile-panel" data-mobile-panel="">
+  <div class="mobile-panel-head">
+    <a class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async"
+    height="122" src="/static/assets/images/logo.svg" width="574" /><img alt="Aster Exchange Logo"
+    class="brand-logo brand-logo-dark-theme" decoding="async" height="115"
+    src="/static/assets/images/logo_light.svg" width="628" /></a>
+    <button aria-label="关闭菜单" data-menu-button="" type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+  </div>
+  <div class="mobile-nav-list">
+    <a class="mobile-direct-link" href="/c2c">一键买币</a>
+    <a class="mobile-direct-link" href="/markets">市场</a>
+    <details>
+      <summary>
+        交易 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+      </summary>
+      <div class="mobile-submenu">
+        <a href="/trade-spot">现货交易</a><a href="/trade-swap">合约交易</a>
+      </div>
+    </details>
+    <details>
+      <summary>
+        新手学院 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+      </summary>
+      <div class="mobile-submenu mobile-submenu-grid">
+        <span class="mobile-placeholder">了解数字资产</span><span
+        class="mobile-placeholder">买币介绍</span><span class="mobile-placeholder">常见问题</span><span
+        class="mobile-placeholder">热门资讯</span><span class="mobile-placeholder">博客文章</span><span
+        class="mobile-placeholder">学习 AI 交易</span>
+      </div>
+    </details>
+  </div>
+  <details class="mobile-language-details">
+    <summary class="mobile-language-summary">
+      <span><img alt="" data-language-flag="" decoding="async"
+      src="/static/assets/images/flags/cn.png" /><span data-language-label="">简体中文</span></span><i
+      aria-hidden="true" class="bi bi-chevron-down"></i>
+    </summary>
+    <div class="mobile-language-options">
+      <button class="language-option is-active" data-flag="/static/assets/images/flags/cn.png" data-label="简体中文"
+      data-language="zh-CN" type="button"><img alt="中国国旗" decoding="async" loading="lazy"
+      src="/static/assets/images/flags/cn.png" /><span>简体中文</span><i aria-hidden="true"
+      class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/us.png" data-label="English"
+      data-language="en-US" type="button"><img alt="美国国旗" decoding="async" loading="lazy"
+      src="/static/assets/images/flags/us.png" /><span>English</span><i aria-hidden="true"
+      class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/tw.png" data-label="繁體中文"
+      data-language="zh-TW" type="button"><img alt="中国台湾地区旗帜" decoding="async" loading="lazy"
+      src="/static/assets/images/flags/tw.png" /><span>繁體中文</span><i aria-hidden="true"
+      class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/jp.png" data-label="日本語"
+      data-language="ja-JP" type="button"><img alt="日本国旗" decoding="async" loading="lazy"
+      src="/static/assets/images/flags/jp.png" /><span>日本語</span><i aria-hidden="true"
+      class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/kr.png" data-label="한국어"
+      data-language="ko-KR" type="button"><img alt="韩国国旗" decoding="async" loading="lazy"
+      src="/static/assets/images/flags/kr.png" /><span>한국어</span><i aria-hidden="true"
+      class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/fr.png" data-label="Français"
+      data-language="fr-FR" type="button"><img alt="法国国旗" decoding="async" loading="lazy"
+      src="/static/assets/images/flags/fr.png" /><span>Français</span><i aria-hidden="true"
+      class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/es.png" data-label="Español"
+      data-language="es-ES" type="button"><img alt="西班牙国旗" decoding="async" loading="lazy"
+      src="/static/assets/images/flags/es.png" /><span>Español</span><i aria-hidden="true"
+      class="bi bi-check-lg"></i></button>
+    </div>
+  </details>
+  <div class="mobile-panel-actions">
+    <button data-search-open="" type="button"><i aria-hidden="true" class="bi bi-search"></i>搜索币种</button>
+    <button data-theme-toggle="" type="button"><i aria-hidden="true" class="bi bi-moon-stars"
+    data-theme-icon=""></i><span data-theme-label="">切换夜色模式</span></button>
+    <a class="mobile-auth-link mobile-auth-login" href="/login">登录</a><a class="mobile-auth-link mobile-auth-register" href="/register">注册</a>
+  </div>
+</aside>
+{include file="common/search_modal" /}
+<main class="trading-page" data-trade-page data-trade-mode="{$tradeMode}" data-spot-account-api="/api/trade-spot/account" data-spot-orders-api="/api/trade-spot/orders" data-spot-execution-mode="reference-trigger" data-spot-reference-provider="BINANCE" data-perp-account-api="/api/trade-swap/account" data-perp-orders-api="/api/trade-swap/orders" data-perp-positions-api="/api/trade-swap/positions" data-perp-leverage-api="/api/trade-swap/leverage" data-perp-execution-mode="live-reference-trigger">
+  <h1 class="visually-hidden" data-contract-title="">{$tradeHeading}</h1>
+  <section aria-label="{if condition="$tradeMode == 'swap'"}永续合约交易工作区{else /}现货交易工作区{/if}" class="trade-workspace">
+    <div class="trade-primary-column">
+      <section
+        aria-label="{$currentMarket.pair}{if condition="$tradeMode == 'swap'"} 合约行情图{else /} 现货行情图{/if}" class="chart-panel terminal-panel"
+        data-contract-chart-section="" data-chart-api-base="/chart-api" data-chart-ws-path="/chart-ws" data-chart-history-limit="500">
+        <div class="symbol-summary">
+          <div
+            class="symbol-market-selector" data-contract-market-selector="" data-default-market="{$currentMarket.internal_symbol}"
+            data-market-config-source="html-data-attributes" data-trade-mode="{$tradeMode}" data-spot-market-api="/api/trade-spot/markets"
+            data-swap-market-api="/api/trade-swap/markets" data-market-page-size="10">
+            <div class="symbol-primary">
+              <img alt="{$currentMarket.base_name}" class="coin-logo" data-contract-logo="" decoding="async" height="28" src="/static/assets/images/coins/{$currentMarket.base_code|strtolower}.png" onerror="this.onerror=null;this.hidden=true;" width="28"/><span><strong data-contract-pair="">{$currentMarket.pair}</strong><small data-contract-type="">{if condition="$tradeMode == 'swap'"}永续合约 · {else /}现货交易 · {/if}{$currentMarket.quote_code}</small></span><button aria-controls="contract-market-popover" aria-expanded="false" aria-label="展开{$marketListLabel}" class="symbol-market-toggle" data-contract-market-toggle="" type="button"><i aria-hidden="true" class="bi bi-chevron-down"></i></button>
+            </div>
+            <aside
+              aria-label="{$marketListLabel}" class="contract-market-popover terminal-panel" data-contract-market-popover="" hidden=""
+              id="contract-market-popover">
+              <div class="contract-market-search">
+                <i aria-hidden="true" class="bi bi-search"></i><input aria-label="{$searchLabel}" autocomplete="off" data-contract-market-search="" placeholder="{$searchLabel}" type="search"/><button aria-label="固定市场列表" title="固定市场列表" type="button"><i aria-hidden="true" class="bi bi-pin-angle"></i></button>
+              </div>
+              <div aria-label="交易模式" class="contract-market-primary-tabs" role="tablist">
+                <button data-market-mode-tab="spot" aria-selected="{if condition="$tradeMode == 'spot'"}true{else /}false{/if}" class="{if condition="$tradeMode == 'spot'"}is-active{/if}" role="tab" type="button">现货</button>
+                <button data-market-mode-tab="swap" aria-selected="{if condition="$tradeMode == 'swap'"}true{else /}false{/if}" class="{if condition="$tradeMode == 'swap'"}is-active{/if}" role="tab" type="button">USDT 永续</button>
+                <button class="market-all-filter" type="button" disabled>全部</button>
+              </div>
+              <div aria-label="市场分类" class="contract-market-category-tabs" role="tablist">
+                <button class="is-active" data-market-category type="button">全部</button>
+              </div>
+              <div class="contract-market-table-head" role="row">
+                <span data-market-list-heading role="columnheader">{if condition="$tradeMode == 'swap'"}合约 / 成交量{else /}交易对 / 成交量{/if}</span><span role="columnheader">最新价格</span><span role="columnheader">24 小时涨跌</span><span data-market-list-last-heading role="columnheader">{if condition="$tradeMode == 'swap'"}资金费率{else /}市场类型{/if}</span>
+              </div>
+              <div
+                class="contract-market-table" data-contract-market-table="" data-market-list-mode="{$tradeMode}"
+                data-market-page="{$marketPagination.page}" data-market-has-more="{if condition="$marketPagination.has_more"}true{else /}false{/if}"
+                data-market-total="{$marketPagination.total}" role="table">
+                {foreach $marketList as $market}
+                <button
+                class="contract-market-row{if condition="$market.internal_symbol == $currentMarket.internal_symbol"} is-selected{/if}"
+                data-market-base="{$market.base_code}"
+                data-market-best-buy="64228.6"
+                data-market-best-sell="64357.2"
+                data-market-change="+0.90%"
+                data-market-change-type="positive"
+                data-market-demo="false"
+                data-market-funding="{if condition="$tradeMode == 'swap'"}0.0100%{else /}现货{/if}"
+                data-market-high="65450.2"
+                data-market-index-price="64299.3"
+                data-market-keywords="{$market.base_code} {$market.base_name} {$market.pair} {$market.internal_symbol}"
+                data-market-logo="/static/assets/images/coins/{$market.base_code|strtolower}.png"
+                data-market-low="63135.6"
+                data-market-min-quantity="{$market.min_quantity}"
+                data-market-price-tick="{$market.price_tick}"
+                data-market-quantity-step="{$market.quantity_step}"
+                data-market-min-notional="{$market.min_notional}"
+                data-market-maker-fee-rate="{$market.maker_fee_rate}"
+                data-market-taker-fee-rate="{$market.taker_fee_rate}"
+                data-market-mode="{$tradeMode}"
+                data-market-name="{$market.base_name}"
+                data-market-price="64292.9"
+                data-market-price-display="64,292.9"
+                data-market-price-precision="1"
+                data-market-quantity-precision="5"
+                data-market-quote="{$market.quote_code}"
+                data-market-symbol="{$market.internal_symbol}"
+                data-market-url="{$market.route}"
+                data-market-volume="8.30B {$market.base_code}"
+                role="row"
+                type="button"
+                aria-pressed="{if condition="$market.internal_symbol == $currentMarket.internal_symbol"}true{else /}false{/if}"
+                >
+                <span class="contract-market-asset" role="cell">
+                <span class="contract-market-favorite" data-market-favorite-toggle data-favorite-market-type="{if condition="$tradeMode == 'swap'"}perpetual{else /}spot{/if}" data-favorite-symbol="{$market.internal_symbol}" role="button" aria-label="添加 {$market.pair} 到自选" aria-pressed="false"><i aria-hidden="true" class="bi bi-star"></i></span>
+                <img
+                alt="{$market.base_name}"
+                class="coin-logo contract-market-logo"
+                decoding="async"
+                height="28"
+                src="/static/assets/images/coins/{$market.base_code|strtolower}.png"
+                onerror="this.onerror=null;this.hidden=true;"
+                width="28"
+                >
+                <span>
+                <span class="contract-market-symbol-line">
+                <strong>{$market.pair}</strong>
+                <em>{if condition="$tradeMode == 'swap'"}永续{else /}现货{/if}</em>
+                </span>
+                <small data-market-volume>--</small>
+                </span>
+                </span>
+                <strong class="contract-market-price" data-market-price role="cell">--</strong>
+                <span data-market-change role="cell">--</span>
+                <span data-market-funding role="cell">{if condition="$tradeMode == 'spot'"}现货{else /}--{/if}</span>
+                </button>
+                {/foreach}
+                <div aria-live="polite" class="contract-market-loading" data-contract-market-loading hidden>
+                  正在加载更多市场…
+                </div>
+              </div>
+              <p class="contract-market-empty" data-contract-market-empty="" hidden="">{$marketEmptyText}</p>
+            </aside>
+          </div>
+          <div class="symbol-price">
+            <strong data-summary-price="">--</strong><span data-summary-change="">--</span>
+          </div>
+          <dl class="symbol-stats">
+            <div>
+              <dt>
+                24h 高
+              </dt>
+              <dd data-summary-high="">
+                --
+              </dd>
+            </div>
+            <div>
+              <dt>
+                24h 低
+              </dt>
+              <dd data-summary-low="">
+                --
+              </dd>
+            </div>
+            <div>
+              <dt>
+                24h 成交量
+              </dt>
+              <dd data-summary-volume="">
+                --
+              </dd>
+            </div>
+            <div>
+              <dt data-summary-funding-label>
+                {if condition="$tradeMode == 'swap'"}资金费率{else /}市场类型{/if}
+              </dt>
+              <dd data-summary-funding="">
+                {if condition="$tradeMode == 'swap'"}--{else /}现货{/if}
+              </dd>
+            </div>
+          </dl>
+        </div>
+        <div class="chart-toolbar">
+          <div aria-label="图表周期" class="timeframe-tabs" role="tablist">
+            <button aria-selected="true" class="is-active" data-chart-period="timeline" type="button">分时</button>
+            <button aria-selected="false" data-chart-period="1m" type="button">1分</button>
+            <button aria-selected="false" data-chart-period="5m" type="button">5分</button>
+            <button aria-selected="false" data-chart-period="15m" type="button">15分</button>
+            <button aria-selected="false" data-chart-period="1h" type="button">1小时</button>
+            <button aria-selected="false" data-chart-period="4h" type="button">4小时</button>
+            <button aria-selected="false" data-chart-period="1d" type="button">1天</button>
+            <button aria-selected="false" data-chart-period="1mo" type="button">1月</button>
+            <button aria-selected="false" data-chart-period="1y" type="button">1年</button>
+          </div>
+          <div aria-label="图表工具" class="chart-tools">
+            <button aria-label="十字光标" aria-pressed="true" class="is-active" data-chart-crosshair="" title="显示或隐藏十字光标" type="button"><i aria-hidden="true" class="bi bi-plus-lg"></i></button>
+            <button aria-label="指标" aria-pressed="false" data-chart-indicator="" title="显示或隐藏 MA20 均线" type="button"><i aria-hidden="true" class="bi bi-bar-chart-line"></i></button>
+            <button aria-label="重置图表" class="chart-reset-button" data-chart-fit="" type="button">重置图表</button>
+          </div>
+        </div>
+        <div class="chart-stage">
+          <div class="chart-canvas">
+            <div aria-label="{$currentMarket.pair} 分时 实时分时图" class="lightweight-chart" id="lightweight-chart">
+            </div>
+            <div class="chart-legend" data-chart-legend="">
+              <span data-chart-period-label="">分时</span>
+              <span data-chart-line-legend="">价 <b data-legend-price="">--</b></span>
+              <span data-chart-ohlc="" hidden="">开 <b data-legend-open="">--</b></span>
+              <span data-chart-ohlc="" hidden="">高 <b data-legend-high="">--</b></span>
+              <span data-chart-ohlc="" hidden="">低 <b data-legend-low="">--</b></span>
+              <span data-chart-ohlc="" hidden="">收 <b data-legend-close="">--</b></span>
+              <span>量 <b data-legend-volume="">--</b></span>
+            </div>
+            <div class="chart-loading" data-chart-loading="">
+              <i class="bi bi-arrow-repeat"></i><span>正在载入真实行情</span>
+            </div>
+            <div class="chart-error" data-chart-error="" hidden="">
+              <strong>行情图加载失败</strong><span>请检查网络连接或稍后刷新。</span>
+            </div>
+          </div>
+          <aside aria-label="买卖盘与分时成交" class="chart-orderbook">
+            <div aria-label="盘口视图" class="orderbook-tabs" data-orderbook-tabs="" role="tablist">
+              <button class="is-active" data-orderbook-tab="depth" type="button">买卖盘</button><button data-orderbook-tab="trades" type="button">分时成交</button>
+            </div>
+            <div class="orderbook-view is-active" data-orderbook-view="depth">
+              <div class="orderbook-head">
+                <span data-orderbook-price-heading="">价格 (USDT)</span><span data-orderbook-quantity-heading="">数量 (BTC)</span>
+              </div>
+              <div class="orderbook-rows sell-rows" data-live-asks>
+                <div class="orderbook-placeholder">
+                  行情加载中…
+                </div>
+              </div>
+              <div class="orderbook-mid">
+                <strong data-orderbook-mid-price="">--</strong><span data-orderbook-index-price="">--</span>
+              </div>
+              <div class="orderbook-rows buy-rows" data-live-bids>
+                <div class="orderbook-placeholder">
+                  行情加载中…
+                </div>
+              </div>
+            </div>
+            <div class="orderbook-view" data-orderbook-view="trades" hidden="">
+              <div class="orderbook-head trade-head">
+                <span>时间</span><span>价格</span><span>数量</span>
+              </div>
+              <div class="time-sales-list" data-live-trades>
+                <div class="orderbook-placeholder">
+                  成交数据加载中…
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+        <div class="market-ticker favorite-market-strip" data-chart-market-ticker aria-label="我的自选市场">
+          <div class="favorite-market-strip-empty"><i class="bi bi-star"></i><span>正在加载自选市场…</span></div>
+        </div>
+      </section>
+      {if condition="$tradeMode == 'spot'"}
+      {include file="trade/spot_orders" /}
+      {else /}
+      {include file="trade/perp_orders" /}
+      {/if}
+    </div>
+    <aside aria-label="下单面板" class="order-panel terminal-panel">
+      <div class="order-panel-heading">
+        <span class="order-panel-title">{if condition="$tradeMode == 'swap'"}合约交易面板{else /}现货交易面板{/if}</span><small data-order-panel-symbol="">{$currentMarket.pair}{if condition="$tradeMode == 'swap'"} 永续{else /} 现货{/if}</small>
+      </div>
+      {if condition="$tradeMode == 'swap'"}
+      <div aria-label="下单杠杆倍数" class="leverage-selector" data-leverage-selector="" role="group">
+        <button aria-label="降低杠杆倍数" class="leverage-back" data-leverage-step="previous" type="button"><i aria-hidden="true" class="bi bi-chevron-left"></i></button><button aria-pressed="false" data-leverage="1" type="button">1x</button><button aria-pressed="false" data-leverage="2" type="button">2x</button><button aria-pressed="false" data-leverage="3" type="button">3x</button><button aria-pressed="true" class="is-active" data-leverage="5" type="button">5x</button><button aria-pressed="false" data-leverage="10" type="button">10x</button><button aria-pressed="false" data-leverage="20" type="button">20x</button>
+      </div>
+      {/if}
+      {if condition="$tradeMode == 'swap'"}
+      <div class="spot-account-gate" data-perp-account-gate hidden><i class="bi bi-shield-check" aria-hidden="true"></i><span data-perp-account-gate-text></span><a data-perp-account-gate-action href="/login?next=/trade-swap">登录</a></div>
+      {/if}
+      {if condition="$tradeMode == 'spot'"}
+      <div class="spot-account-gate" data-spot-account-gate hidden><i class="bi bi-shield-check" aria-hidden="true"></i><span data-spot-account-gate-text></span><a data-spot-account-gate-action href="/login?next=/trade-spot">登录</a></div>
+      {/if}
+      <div aria-label="买卖方向" class="order-side-tabs" role="tablist">
+        <button aria-controls="order-side-buy" aria-selected="true" class="is-active buy-tab" data-order-side="buy" role="tab" type="button">买入</button>
+        <button aria-controls="order-side-sell" aria-selected="false" class="sell-tab" data-order-side="sell" role="tab" type="button">卖出</button>
+      </div>
+      {if condition="$tradeMode == 'spot'"}
+      <div class="spot-execution-strip" data-spot-execution-strip>
+        <span class="spot-execution-badge"><i class="bi bi-lightning-charge" aria-hidden="true"></i>触价执行</span>
+        <span>买单参考卖一，卖单参考买一；达到限价后由后台执行。成交前冻结资金可撤单释放。</span>
+      </div>
+      {/if}
+      <section class="order-side-panel is-active" data-order-side-panel="buy" id="order-side-buy" role="tabpanel">
+        <div aria-label="买入委托类型" class="order-type-tabs" data-order-type-tabs="" role="tablist">
+          <button aria-selected="true" class="is-active" data-order-type="limit" type="button">限价委托</button>
+          {if condition="$tradeMode == 'spot'"}<button aria-selected="false" data-order-type="market" type="button" title="快捷按提交时的当前最优价生成限价委托">市价委托</button>{else /}<button aria-selected="false" data-order-type="market" type="button" disabled title="暂不支持市价委托">市价委托</button>{/if}
+        </div>
+        <form action="" class="order-form" data-order-form="buy" data-spot-live="{if condition="$tradeMode == 'spot'"}1{else /}0{/if}" data-perp-live="{if condition="$tradeMode == 'swap'"}1{else /}0{/if}" novalidate="">
+          <input data-order-quote-input="" name="quoteAsset" type="hidden"/><input data-order-base-input="" name="baseAsset" type="hidden"/><input data-order-symbol-input="" name="symbol" type="hidden"/>
+          <label data-limit-only=""><span data-order-price-label="">价格 (USDT)</span>
+          <div class="trade-input">
+            <input autocomplete="off" data-order-price-input="" inputmode="decimal" name="price" value="" data-live-price-input="true"/><button data-order-best-price="" type="button" title="恢复实时最优价">最新价</button>
+          </div>
+          </label>
+          <label><span data-order-quantity-label="">数量 (BTC) <i aria-hidden="true" class="bi bi-chevron-down"></i></span>
+          <div class="trade-input">
+            <input autocomplete="off" data-order-quantity-input="" inputmode="decimal" name="quantity" placeholder="最小数量 0.00001" required=""/><em data-base-asset-text="">BTC</em>
+          </div>
+          </label>
+          <div class="position-slider" data-position-slider="" style="--range-progress: 0%;">
+            <output class="position-slider-tooltip" data-range-tooltip="" for="position-range-1">0%</output>
+            <div class="position-slider-control">
+              <input aria-label="买入仓位比例" data-position-range="" id="position-range-1" max="100" min="0" step="1" type="range" value="0"/>
+              <div aria-hidden="true" class="position-slider-marks">
+                <span style="--mark-position:0%;"></span><span style="--mark-position:25%;"></span><span style="--mark-position:50%;"></span><span style="--mark-position:75%;"></span><span style="--mark-position:100%;"></span>
+              </div>
+            </div>
+            <div class="position-slider-labels">
+              <button aria-label="设置仓位比例为 0%" data-range-step="0" type="button">0%</button><button aria-label="设置仓位比例为 25%" data-range-step="25" type="button">25%</button><button aria-label="设置仓位比例为 50%" data-range-step="50" type="button">50%</button><button aria-label="设置仓位比例为 75%" data-range-step="75" type="button">75%</button><button aria-label="设置仓位比例为 100%" data-range-step="100" type="button">100%</button>
+            </div>
+          </div>
+          <label data-limit-only=""><span data-order-amount-label="">金额 (USDT)</span>
+          <div class="trade-input">
+            <input autocomplete="off" data-order-amount-input="" inputmode="decimal" name="amount"/><em data-quote-asset-text="">USDT</em>
+          </div>
+          </label>
+          <div class="market-order-hint" data-market-only="" hidden="">
+            {if condition="$tradeMode == 'spot'"}市价委托为快捷报价：买入取当前卖一、卖出取当前买一，并以该价格提交限价单；不是无限滑点市价单。{else /}将按当前市场最优价格成交{/if}
+          </div>
+          {if condition="$tradeMode == 'spot'"}
+          <div class="spot-market-rule-line" data-spot-market-rule-line>
+            <span data-spot-min-notional>最小成交额 -- USDT</span><span data-spot-min-quantity>最小数量 -- BTC</span>
+          </div>
+          {/if}
+          <div class="balance-line">
+            <span data-order-balance-primary="">可用 <b>0.00 USDT</b></span><span data-order-balance-secondary="">冻结 <b>0.00 USDT</b></span>
+          </div>
+          {if condition="$tradeMode == 'swap'"}
+          <div class="tpsl-switch-row">
+            <span>止盈/止损</span><button aria-checked="false" aria-label="止盈止损当前未开放" class="switch-control" data-tpsl-toggle="" role="switch" type="button" disabled title="暂不支持条件委托"><span></span></button>
+          </div>
+          <div class="tpsl-settings" data-tpsl-settings="" hidden="">
+            <label><span data-order-trigger-label="">止盈价格 (USDT) <i aria-hidden="true" class="bi bi-chevron-down"></i></span>
+            <div class="trade-input">
+              <input inputmode="decimal"/><button class="price-source-button" type="button">最新 <i aria-hidden="true" class="bi bi-chevron-down"></i></button>
+            </div>
+            </label>
+            <label><span data-order-trigger-label="">止损价格 (USDT) <i aria-hidden="true" class="bi bi-chevron-down"></i></span>
+            <div class="trade-input">
+              <input inputmode="decimal"/><button class="price-source-button" type="button">最新 <i aria-hidden="true" class="bi bi-chevron-down"></i></button>
+            </div>
+            </label>
+          </div>
+          {/if}
+          <button class="submit-order buy" data-order-submit="" type="submit">买入 BTC</button>
+          <div class="order-reference">
+            <span>最优卖价 <b data-order-reference-price="">--</b></span><span>预估费率 <b data-order-fee-rate>--</b></span>
+          </div>
+        </form>
+      </section>
+      <section class="order-side-panel" data-order-side-panel="sell" hidden="" id="order-side-sell" role="tabpanel">
+        <div aria-label="卖出委托类型" class="order-type-tabs" data-order-type-tabs="" role="tablist">
+          <button aria-selected="true" class="is-active" data-order-type="limit" type="button">限价委托</button>
+          {if condition="$tradeMode == 'spot'"}<button aria-selected="false" data-order-type="market" type="button" title="快捷按提交时的当前最优价生成限价委托">市价委托</button>{else /}<button aria-selected="false" data-order-type="market" type="button" disabled title="暂不支持市价委托">市价委托</button>{/if}
+        </div>
+        <form action="" class="order-form" data-order-form="sell" data-spot-live="{if condition="$tradeMode == 'spot'"}1{else /}0{/if}" data-perp-live="{if condition="$tradeMode == 'swap'"}1{else /}0{/if}" novalidate="">
+          <input data-order-quote-input="" name="quoteAsset" type="hidden"/><input data-order-base-input="" name="baseAsset" type="hidden"/><input data-order-symbol-input="" name="symbol" type="hidden"/>
+          <label data-limit-only=""><span data-order-price-label="">价格 (USDT)</span>
+          <div class="trade-input">
+            <input autocomplete="off" data-order-price-input="" inputmode="decimal" name="price" value="" data-live-price-input="true"/><button data-order-best-price="" type="button" title="恢复实时最优价">最新价</button>
+          </div>
+          </label>
+          <label><span data-order-quantity-label="">数量 (BTC) <i aria-hidden="true" class="bi bi-chevron-down"></i></span>
+          <div class="trade-input">
+            <input autocomplete="off" data-order-quantity-input="" inputmode="decimal" name="quantity" placeholder="最小数量 0.00001" required=""/><em data-base-asset-text="">BTC</em>
+          </div>
+          </label>
+          <div class="position-slider" data-position-slider="" style="--range-progress: 0%;">
+            <output class="position-slider-tooltip" data-range-tooltip="" for="position-range-2">0%</output>
+            <div class="position-slider-control">
+              <input aria-label="卖出仓位比例" data-position-range="" id="position-range-2" max="100" min="0" step="1" type="range" value="0"/>
+              <div aria-hidden="true" class="position-slider-marks">
+                <span style="--mark-position:0%;"></span><span style="--mark-position:25%;"></span><span style="--mark-position:50%;"></span><span style="--mark-position:75%;"></span><span style="--mark-position:100%;"></span>
+              </div>
+            </div>
+            <div class="position-slider-labels">
+              <button aria-label="设置仓位比例为 0%" data-range-step="0" type="button">0%</button><button aria-label="设置仓位比例为 25%" data-range-step="25" type="button">25%</button><button aria-label="设置仓位比例为 50%" data-range-step="50" type="button">50%</button><button aria-label="设置仓位比例为 75%" data-range-step="75" type="button">75%</button><button aria-label="设置仓位比例为 100%" data-range-step="100" type="button">100%</button>
+            </div>
+          </div>
+          <label data-limit-only=""><span data-order-amount-label="">金额 (USDT)</span>
+          <div class="trade-input">
+            <input autocomplete="off" data-order-amount-input="" inputmode="decimal" name="amount"/><em data-quote-asset-text="">USDT</em>
+          </div>
+          </label>
+          <div class="market-order-hint" data-market-only="" hidden="">
+            {if condition="$tradeMode == 'spot'"}市价委托为快捷报价：买入取当前卖一、卖出取当前买一，并以该价格提交限价单；不是无限滑点市价单。{else /}将按当前市场最优价格成交{/if}
+          </div>
+          {if condition="$tradeMode == 'spot'"}
+          <div class="spot-market-rule-line" data-spot-market-rule-line>
+            <span data-spot-min-notional>最小成交额 -- USDT</span><span data-spot-min-quantity>最小数量 -- BTC</span>
+          </div>
+          {/if}
+          <div class="balance-line">
+            <span data-order-balance-primary="">可用 <b>0.00000000 BTC</b></span><span data-order-balance-secondary="">冻结 <b>0.00000000 BTC</b></span>
+          </div>
+          {if condition="$tradeMode == 'swap'"}
+          <div class="tpsl-switch-row">
+            <span>止盈/止损</span><button aria-checked="false" aria-label="止盈止损当前未开放" class="switch-control" data-tpsl-toggle="" role="switch" type="button" disabled title="暂不支持条件委托"><span></span></button>
+          </div>
+          <div class="tpsl-settings" data-tpsl-settings="" hidden="">
+            <label><span data-order-trigger-label="">止盈价格 (USDT) <i aria-hidden="true" class="bi bi-chevron-down"></i></span>
+            <div class="trade-input">
+              <input inputmode="decimal"/><button class="price-source-button" type="button">最新 <i aria-hidden="true" class="bi bi-chevron-down"></i></button>
+            </div>
+            </label>
+            <label><span data-order-trigger-label="">止损价格 (USDT) <i aria-hidden="true" class="bi bi-chevron-down"></i></span>
+            <div class="trade-input">
+              <input inputmode="decimal"/><button class="price-source-button" type="button">最新 <i aria-hidden="true" class="bi bi-chevron-down"></i></button>
+            </div>
+            </label>
+          </div>
+          {/if}
+          <button class="submit-order sell" data-order-submit="" type="submit">卖出 BTC</button>
+          <div class="order-reference">
+            <span>最优买价 <b data-order-reference-price="">--</b></span><span>预估费率 <b data-order-fee-rate>--</b></span>
+          </div>
+        </form>
+      </section>
+    </aside>
+  </section>
+</main>
+<footer aria-label="交易终端状态栏" class="terminal-bottom-bar">
+  <div class="terminal-bottom-fixed terminal-bottom-left">
+    <i aria-hidden="true"
+    class="bi bi-wifi"></i><span>系统连接稳定</span>
+  </div>
+  <div aria-label="实时行情滚动" class="terminal-bottom-market">
+    <div class="terminal-bottom-track">
+      <div aria-hidden="false" class="terminal-bottom-group">
+        <span
+        class="terminal-bottom-quote"><b>行情</b><em>加载中</em><small>--</small></span>
+      </div>
+    </div>
+  </div>
+  <nav aria-label="交易终端快捷链接" class="terminal-bottom-fixed terminal-bottom-links">
+    <a href="#">活动中心</a><a
+    href="#">公告通知</a><a href="#">风险提示</a><a href="#">合约交流群</a><a href="#">Cookie偏好设置</a>
+  </nav>
+</footer>
+<div aria-atomic="true" aria-live="polite" class="trade-toast" data-trade-toast="" role="status">
+</div>
+<script src="/static/assets/js/lightweight-loader.js">
+</script>
+<script src="/static/assets/js/main.js?v=20260808-1">
+</script>
+<script src="/static/assets/js/market-favorites.js?v=20260812-favorites1"></script>
+<script src="/static/assets/js/trading-chart.js?v=4.0.0-rb2">
+</script>
+<script src="/static/assets/js/trade-market-data.js?v=4.0.0-stable-price2">
+</script>
+<script src="/static/assets/js/trading.js?v=20260812-favorites1">
+</script>
+{if condition="$tradeMode == 'spot'"}
+<script src="/static/assets/js/spot-trading.js?v=1.7.4-stable-price1"></script>
+{else /}
+<script src="/static/assets/js/perp-trading.js?v=20260812-position-side-cn1"></script>
+{/if}
+{/block}

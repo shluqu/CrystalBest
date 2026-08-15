@@ -1,0 +1,230 @@
+{extend name="layout/base" /}
+{block name="title"}持仓管理 — CrystalBest{/block}
+{block name="description"}统一查看当前现货资产持仓与永续合约净持仓。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=20260812-positions-v10" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body position-center-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main position-center-main">
+      <section class="account-hero-panel position-center-hero">
+        <div class="account-hero-copy">
+          <span class="account-kicker">TRADING / POSITIONS</span>
+          <h1>持仓管理</h1>
+          <p>集中查看当前永续合约净持仓和现货资产持仓；本页只读，不会修改余额、仓位或订单。</p>
+        </div>
+        <div class="position-hero-actions">
+          <a class="profile-secondary-button" href="/trade-spot"><i class="bi bi-graph-up"></i>现货交易</a>
+          <a class="profile-primary-button" href="/trade-swap"><i class="bi bi-lightning-charge"></i>合约交易</a>
+        </div>
+      </section>
+
+      <section class="position-stat-grid">
+        <article class="account-panel position-stat-card">
+          <span>合约持仓</span>
+          <strong>{$positionDashboard.summary.perpetual_count}</strong>
+          <small>当前非零净持仓</small>
+        </article>
+        <article class="account-panel position-stat-card">
+          <span>未实现盈亏</span>
+          <strong class="is-{$positionDashboard.summary.unrealized_pnl_class|htmlentities}">{$positionDashboard.summary.unrealized_pnl|htmlentities} <em>USDT</em></strong>
+          <small>按持仓最新标记价汇总</small>
+        </article>
+        <article class="account-panel position-stat-card">
+          <span>合约权益</span>
+          <strong>{if condition="$positionDashboard['summary']['equity'] !== null"}{$positionDashboard.summary.equity|htmlentities}{else /}--{/if} <em>USDT</em></strong>
+          <small>{if condition="!empty($positionDashboard['summary']['risk_updated_at_local'])"}风险快照 {$positionDashboard.summary.risk_updated_at_local|htmlentities}{else /}暂无风险快照{/if}</small>
+        </article>
+        <article class="account-panel position-stat-card">
+          <span>可用保证金</span>
+          <strong>{if condition="$positionDashboard['summary']['available_margin'] !== null"}{$positionDashboard.summary.available_margin|htmlentities}{else /}--{/if} <em>USDT</em></strong>
+          <small>现货非零资产 {$positionDashboard.summary.spot_asset_count} 种</small>
+        </article>
+      </section>
+
+      <section class="account-panel position-list-panel">
+        <div class="account-panel-head position-section-head">
+          <div>
+            <h2>合约持仓</h2>
+            <p>当前全仓单向净持仓；收益和强平价格直接读取已经落库的持仓风险数据。</p>
+          </div>
+          <span class="position-section-count">{$positionDashboard.summary.perpetual_count} 个持仓</span>
+        </div>
+
+        {if condition="empty($positionDashboard['perpetual_positions'])"}
+        <div class="spot-order-empty position-empty">
+          <i class="bi bi-lightning-charge"></i><strong>暂无合约持仓</strong><span>合约成交形成非零仓位后会显示在这里。</span>
+        </div>
+        {else /}
+        <div class="order-scroll-viewport position-table-scroll order-horizontal-drag" data-order-horizontal-drag>
+          <table class="order-compact-table position-table perpetual-position-table">
+            <colgroup>
+              <col class="col-market"><col class="col-qty"><col class="col-price"><col class="col-pnl"><col class="col-margin"><col class="col-liquidation"><col class="col-action">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>合约 / 方向</th>
+                <th>仓位数量</th>
+                <th>开仓均价 / 标记价</th>
+                <th>未实现盈亏</th>
+                <th>保证金 / 杠杆</th>
+                <th>强平价</th>
+                <th class="order-sticky-action">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {volist name="positionDashboard.perpetual_positions" id="position"}
+              <tr>
+                <td>
+                  <span class="position-primary">{$position.pair|htmlentities}</span>
+                  <span class="position-side is-{$position.side_class|htmlentities}">{$position.side_label|htmlentities}</span>
+                  <span class="position-secondary">全仓 · {$position.leverage|htmlentities}x</span>
+                </td>
+                <td>
+                  <span class="position-primary numeric">{$position.position_quantity|htmlentities} {$position.base_code|htmlentities}</span>
+                  <span class="position-secondary numeric">名义价值 {$position.position_notional|htmlentities} USDT</span>
+                </td>
+                <td>
+                  <span class="position-primary numeric">{$position.entry_price|htmlentities}</span>
+                  <span class="position-secondary numeric">标记 {$position.mark_price|htmlentities}</span>
+                </td>
+                <td>
+                  <span class="position-pnl is-{$position.pnl_class|htmlentities}">{$position.unrealized_pnl|htmlentities} USDT</span>
+                  <span class="position-secondary numeric">累计已实现 {$position.realized_pnl|htmlentities}</span>
+                </td>
+                <td>
+                  <span class="position-primary numeric">{$position.initial_margin|htmlentities} USDT</span>
+                  <span class="position-secondary">维持 {$position.maintenance_margin|htmlentities} · {$position.leverage|htmlentities}x</span>
+                </td>
+                <td>
+                  <span class="position-primary numeric">{$position.liquidation_price|htmlentities}</span>
+                  <span class="position-secondary">盈亏平衡 {$position.break_even_price|htmlentities}</span>
+                </td>
+                <td class="order-sticky-action">
+                  <div class="perp-dashboard-order-actions position-actions">
+                    <button class="order-detail-button" type="button" data-order-detail-open data-order-detail-template="position-detail-{$position.position_id}">详情</button>
+                    <a class="spot-order-trade-link" href="{$position.trade_url|htmlentities}">交易</a>
+                    <template id="position-detail-{$position.position_id}">
+                      <article class="order-modal-detail-card">
+                        <header class="order-modal-detail-head">
+                          <div><strong>{$position.pair|htmlentities} · {$position.side_label|htmlentities}</strong><span>全仓 · {$position.leverage|htmlentities}x · Position #{$position.position_id}</span></div>
+                        </header>
+                        <div class="order-modal-highlight-grid">
+                          <div><span>仓位数量</span><strong>{$position.position_quantity|htmlentities} {$position.base_code|htmlentities}</strong></div>
+                          <div><span>未实现盈亏</span><strong class="is-{$position.pnl_class|htmlentities}">{$position.unrealized_pnl|htmlentities} USDT</strong></div>
+                          <div><span>强平价</span><strong>{$position.liquidation_price|htmlentities}</strong></div>
+                        </div>
+                        <dl class="order-modal-detail-grid">
+                          <div><dt>合约</dt><dd>{$position.symbol|htmlentities}</dd></div>
+                          <div><dt>方向</dt><dd>{$position.side_label|htmlentities}</dd></div>
+                          <div><dt>签名仓位数量</dt><dd>{$position.signed_quantity|htmlentities} {$position.base_code|htmlentities}</dd></div>
+                          <div><dt>名义价值</dt><dd>{$position.position_notional|htmlentities} USDT</dd></div>
+                          <div><dt>开仓均价</dt><dd>{$position.entry_price|htmlentities}</dd></div>
+                          <div><dt>盈亏平衡价</dt><dd>{$position.break_even_price|htmlentities}</dd></div>
+                          <div><dt>最新标记价</dt><dd>{$position.mark_price|htmlentities}</dd></div>
+                          <div><dt>预估强平价</dt><dd>{$position.liquidation_price|htmlentities}</dd></div>
+                          <div><dt>累计已实现盈亏</dt><dd>{$position.realized_pnl|htmlentities} USDT</dd></div>
+                          <div><dt>未实现盈亏</dt><dd>{$position.unrealized_pnl|htmlentities} USDT</dd></div>
+                          <div><dt>初始保证金</dt><dd>{$position.initial_margin|htmlentities} USDT</dd></div>
+                          <div><dt>维持保证金</dt><dd>{$position.maintenance_margin|htmlentities} USDT</dd></div>
+                          <div><dt>累计资金费</dt><dd>{$position.cumulative_funding|htmlentities} USDT</dd></div>
+                          <div><dt>杠杆</dt><dd>{$position.leverage|htmlentities}x</dd></div>
+                          <div><dt>开仓时间</dt><dd>{$position.opened_at_local|htmlentities}</dd></div>
+                          <div><dt>最近更新</dt><dd>{$position.updated_at_local|htmlentities}</dd></div>
+                        </dl>
+                      </article>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+              {/volist}
+            </tbody>
+          </table>
+        </div>
+        {/if}
+      </section>
+
+      <section class="account-panel position-list-panel">
+        <div class="account-panel-head position-section-head">
+          <div>
+            <h2>现货持仓</h2>
+            <p>只展示现货账户中总余额不为 0 的资产；可用和冻结金额直接来自现货 Ledger 余额。</p>
+          </div>
+          <span class="position-section-count">{$positionDashboard.summary.spot_asset_count} 种资产</span>
+        </div>
+
+        {if condition="empty($positionDashboard['spot_holdings'])"}
+        <div class="spot-order-empty position-empty">
+          <i class="bi bi-wallet2"></i><strong>暂无现货持仓</strong><span>充值、买入或划转到现货账户后会显示在这里。</span>
+        </div>
+        {else /}
+        <div class="order-scroll-viewport position-table-scroll order-horizontal-drag" data-order-horizontal-drag>
+          <table class="order-compact-table position-table spot-position-table">
+            <colgroup><col class="col-asset"><col class="col-balance"><col class="col-balance"><col class="col-balance"><col class="col-state"><col class="col-action"></colgroup>
+            <thead>
+              <tr><th>资产</th><th>可用</th><th>冻结</th><th>总持仓</th><th>状态</th><th class="order-sticky-action">操作</th></tr>
+            </thead>
+            <tbody>
+              {volist name="positionDashboard.spot_holdings" id="holding"}
+              <tr>
+                <td><span class="position-primary">{$holding.code|htmlentities}</span><span class="position-secondary">{$holding.name|htmlentities}</span></td>
+                <td><span class="position-primary numeric">{$holding.available|htmlentities}</span></td>
+                <td><span class="position-primary numeric">{$holding.locked|htmlentities}</span></td>
+                <td><span class="position-primary numeric">{$holding.total|htmlentities} {$holding.code|htmlentities}</span></td>
+                <td>
+                  {if condition="$holding['spot_enabled']"}<span class="position-status is-active">可现货交易</span>{else /}<span class="position-status">资产持有</span>{/if}
+                  {if condition="!empty($holding['market_pair'])"}<span class="position-secondary">{$holding.market_pair|htmlentities}</span>{/if}
+                </td>
+                <td class="order-sticky-action">
+                  <div class="perp-dashboard-order-actions position-actions">
+                    <button class="order-detail-button" type="button" data-order-detail-open data-order-detail-template="spot-holding-detail-{$holding.asset_id}">详情</button>
+                    {if condition="!empty($holding['trade_url'])"}<a class="spot-order-trade-link" href="{$holding.trade_url|htmlentities}">交易</a>{else /}<a class="spot-order-trade-link" href="/dashboard/transfer">划转</a>{/if}
+                    <template id="spot-holding-detail-{$holding.asset_id}">
+                      <article class="order-modal-detail-card">
+                        <header class="order-modal-detail-head"><div><strong>{$holding.code|htmlentities} · 现货持仓</strong><span>{$holding.name|htmlentities}</span></div></header>
+                        <div class="order-modal-highlight-grid">
+                          <div><span>可用</span><strong>{$holding.available|htmlentities} {$holding.code|htmlentities}</strong></div>
+                          <div><span>冻结</span><strong>{$holding.locked|htmlentities} {$holding.code|htmlentities}</strong></div>
+                          <div><span>总持仓</span><strong>{$holding.total|htmlentities} {$holding.code|htmlentities}</strong></div>
+                        </div>
+                        <dl class="order-modal-detail-grid">
+                          <div><dt>资产</dt><dd>{$holding.code|htmlentities}</dd></div>
+                          <div><dt>名称</dt><dd>{$holding.name|htmlentities}</dd></div>
+                          <div><dt>现货交易</dt><dd>{if condition="$holding['spot_enabled']"}已启用{else /}未启用{/if}</dd></div>
+                          <div><dt>充值</dt><dd>{if condition="$holding['deposit_enabled']"}已启用{else /}未启用{/if}</dd></div>
+                          <div><dt>提现</dt><dd>{if condition="$holding['withdraw_enabled']"}已启用{else /}未启用{/if}</dd></div>
+                          <div><dt>交易市场</dt><dd>{if condition="!empty($holding['market_pair'])"}{$holding.market_pair|htmlentities}{else /}--{/if}</dd></div>
+                        </dl>
+                      </article>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+              {/volist}
+            </tbody>
+          </table>
+        </div>
+        {/if}
+      </section>
+    </section>
+  </div>
+</main>
+
+<div class="order-detail-modal" data-order-detail-modal hidden aria-hidden="true">
+  <div class="order-detail-modal-backdrop" data-order-detail-close></div>
+  <section class="order-detail-modal-panel" role="dialog" aria-modal="true" aria-label="持仓详情">
+    <button class="order-detail-modal-close" type="button" aria-label="关闭" data-order-detail-close><i class="bi bi-x-lg"></i></button>
+    <div class="order-detail-modal-content" data-order-detail-content></div>
+  </section>
+</div>
+
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/order-dashboard-modal.js?v=20260811-order-modal-v6"></script>
+<script src="/static/assets/js/order-table-horizontal-drag.js?v=20260811-trade-history-v9.3"></script>
+{/block}

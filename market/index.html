@@ -1,0 +1,352 @@
+{extend name="layout/base" /}
+{block name="title"}市场行情 — Aster Exchange{/block}
+{block name="description"}Aster Exchange 市场行情页面，展示热门资产、市场概览与数字资产价格列表。{/block}
+{block name="body_attributes"} class="markets-body" id="top"{/block}
+{block name="body"}
+<header class="site-header" data-site-header="">
+  <div class="announcement">
+    <div class="container announcement-inner">
+      <span class="announcement-label">NEW</span>
+      <span>新用户完成认证，可领取专属交易权益</span>
+      <span class="nav-placeholder">查看详情 <i aria-hidden="true" class="bi bi-arrow-right"></i></span>
+    </div>
+  </div>
+  <nav aria-label="主导航" class="nav-shell">
+    <div class="container nav-inner">
+      <a aria-label="Aster Exchange 首页" class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" src="/static/assets/images/logo_light.svg" width="628"/></a>
+      <div class="nav-links" data-nav-links="">
+        <a class="nav-direct-link" href="/c2c">一键买币</a>
+        <a aria-current="page" class="nav-direct-link is-active" href="/markets">市场</a>
+        <div class="nav-item" data-dropdown="">
+          <button aria-expanded="false" class="nav-trigger" data-dropdown-trigger="" type="button">
+          交易 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown nav-dropdown-trade" role="menu">
+            <a class="dropdown-link" href="/trade-spot" role="menuitem"><span><strong>现货交易</strong><small>快速买卖数字资产</small></span><i aria-hidden="true" class="bi bi-arrow-left-right"></i></a>
+            <a class="dropdown-link" href="/trade-swap" role="menuitem"><span><strong>合约交易</strong><small>灵活管理多空仓位</small></span><i aria-hidden="true" class="bi bi-graph-up-arrow"></i></a>
+          </div>
+        </div>
+        <div class="nav-item" data-dropdown="">
+          <button aria-expanded="false" class="nav-trigger" data-dropdown-trigger="" type="button">
+          新手学院 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown academy-dropdown" role="menu">
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-coin"></i><span><strong>了解数字资产</strong><small>基础概念与资产类型</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-wallet2"></i><span><strong>买币介绍</strong><small>完成你的首次购买</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-question-circle"></i><span><strong>常见问题</strong><small>快速解决使用疑问</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-newspaper"></i><span><strong>热门资讯</strong><small>掌握市场最新动态</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-journal-text"></i><span><strong>博客文章</strong><small>阅读深度行业观点</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-robot"></i><span><strong>学习 AI 交易</strong><small>了解智能策略工具</small></span></span>
+          </div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button aria-label="搜索币种" class="nav-icon-button" data-search-open="" type="button">
+        <i aria-hidden="true" class="bi bi-search"></i>
+        </button>
+        <button aria-label="切换夜色模式" class="nav-icon-button theme-toggle" data-theme-toggle="" title="切换夜色模式" type="button">
+        <i aria-hidden="true" class="bi bi-moon-stars" data-theme-icon=""></i>
+        </button>
+        <div class="nav-item language-menu nav-desktop-only" data-dropdown="">
+          <button aria-expanded="false" aria-label="选择语言" class="language-trigger" data-dropdown-trigger="" type="button">
+          <img alt="" data-language-flag="" decoding="async" src="/static/assets/images/flags/cn.png"/>
+          <span data-language-label="">简体中文</span>
+          <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown language-dropdown" role="menu">
+            <button class="language-option is-active" data-flag="/static/assets/images/flags/cn.png" data-label="简体中文" data-language="zh-CN" type="button"><img alt="中国国旗" decoding="async" src="/static/assets/images/flags/cn.png"/><span>简体中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/us.png" data-label="English" data-language="en-US" type="button"><img alt="美国国旗" decoding="async" src="/static/assets/images/flags/us.png"/><span>English</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/tw.png" data-label="繁體中文" data-language="zh-TW" type="button"><img alt="中国台湾地区旗帜" decoding="async" src="/static/assets/images/flags/tw.png"/><span>繁體中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/jp.png" data-label="日本語" data-language="ja-JP" type="button"><img alt="日本国旗" decoding="async" src="/static/assets/images/flags/jp.png"/><span>日本語</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/kr.png" data-label="한국어" data-language="ko-KR" type="button"><img alt="韩国国旗" decoding="async" src="/static/assets/images/flags/kr.png"/><span>한국어</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/fr.png" data-label="Français" data-language="fr-FR" type="button"><img alt="法国国旗" decoding="async" src="/static/assets/images/flags/fr.png"/><span>Français</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/es.png" data-label="Español" data-language="es-ES" type="button"><img alt="西班牙国旗" decoding="async" src="/static/assets/images/flags/es.png"/><span>Español</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+          </div>
+        </div>
+        <a class="nav-button nav-button-ghost nav-desktop-only" data-auth-nav-avatar href="/login">登录</a>
+        <a class="nav-button nav-button-primary" data-auth-nav-dashboard href="/register">注册</a>
+        <button aria-expanded="false" aria-label="打开菜单" class="nav-icon-button menu-button" data-menu-button="" type="button">
+        <i aria-hidden="true" class="bi bi-list"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+<div aria-hidden="true" class="header-spacer">
+</div>
+<div class="mobile-backdrop" data-mobile-backdrop="">
+</div>
+<aside aria-hidden="true" class="mobile-panel" data-mobile-panel="">
+  <div class="mobile-panel-head">
+    <a class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" src="/static/assets/images/logo_light.svg" width="628"/></a>
+    <button aria-label="关闭菜单" data-menu-button="" type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+  </div>
+  <div class="mobile-nav-list">
+    <a class="mobile-direct-link" href="/c2c">一键买币</a>
+    <a aria-current="page" class="mobile-direct-link is-active" href="/markets">市场</a>
+    <details>
+      <summary>
+        交易 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+      </summary>
+      <div class="mobile-submenu">
+        <a href="/trade-spot">现货交易</a><a href="/trade-swap">合约交易</a>
+      </div>
+    </details>
+    <details>
+      <summary>
+        新手学院 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+      </summary>
+      <div class="mobile-submenu mobile-submenu-grid">
+        <span class="mobile-placeholder">了解数字资产</span><span class="mobile-placeholder">买币介绍</span><span class="mobile-placeholder">常见问题</span><span class="mobile-placeholder">热门资讯</span><span class="mobile-placeholder">博客文章</span><span class="mobile-placeholder">学习 AI 交易</span>
+      </div>
+    </details>
+  </div>
+  <details class="mobile-language-details">
+    <summary class="mobile-language-summary">
+      <span><img alt="" data-language-flag="" decoding="async" src="/static/assets/images/flags/cn.png"/><span data-language-label="">简体中文</span></span><i aria-hidden="true" class="bi bi-chevron-down"></i>
+    </summary>
+    <div class="mobile-language-options">
+      <button class="language-option is-active" data-flag="/static/assets/images/flags/cn.png" data-label="简体中文" data-language="zh-CN" type="button"><img alt="中国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/cn.png"/><span>简体中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/us.png" data-label="English" data-language="en-US" type="button"><img alt="美国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/us.png"/><span>English</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/tw.png" data-label="繁體中文" data-language="zh-TW" type="button"><img alt="中国台湾地区旗帜" decoding="async" loading="lazy" src="/static/assets/images/flags/tw.png"/><span>繁體中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/jp.png" data-label="日本語" data-language="ja-JP" type="button"><img alt="日本国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/jp.png"/><span>日本語</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/kr.png" data-label="한국어" data-language="ko-KR" type="button"><img alt="韩国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/kr.png"/><span>한국어</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/fr.png" data-label="Français" data-language="fr-FR" type="button"><img alt="法国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/fr.png"/><span>Français</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/es.png" data-label="Español" data-language="es-ES" type="button"><img alt="西班牙国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/es.png"/><span>Español</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+    </div>
+  </details>
+  <div class="mobile-panel-actions">
+    <button data-search-open="" type="button"><i aria-hidden="true" class="bi bi-search"></i>搜索币种</button>
+    <button data-theme-toggle="" type="button"><i aria-hidden="true" class="bi bi-moon-stars" data-theme-icon=""></i><span data-theme-label="">切换夜色模式</span></button>
+  </div>
+</aside>
+{include file="common/search_modal" /}
+<main class="markets-main">
+  <section class="markets-hero markets-dashboard-hero" id="rankings">
+    <div class="container market-dashboard-layout">
+      <div class="market-dashboard-main">
+        <div class="markets-hero-copy reveal-up">
+          <span class="section-kicker">Markets</span>
+          <h1>数字资产市场行情</h1>
+          <p>快速查看热门资产、最新上线币种、市场规模与价格趋势，发现值得关注的交易机会。</p>
+        </div>
+        <div aria-label="热门与最新上线行情" class="market-ticker-grid market-ticker-composite">
+          <span aria-hidden="true" class="market-ticker-bridge-divider"><span class="market-bridge-arch"><i></i></span><span class="market-bridge-deck"></span></span>
+          <article class="market-ticker-card reveal-up" data-ticker-panel="hot">
+            <div class="market-ticker-head">
+              <div>
+                <span>热门</span><small>现货热度榜</small>
+              </div>
+              <a href="#prices">查看全部 <i aria-hidden="true" class="bi bi-arrow-right-short"></i></a>
+            </div>
+            <div aria-label="热门币种自动行情" class="market-ticker-viewport" data-css-ticker="" data-market-hot-ticker style="--ticker-duration: 80s">
+              <div class="market-ticker-track">
+                <div class="market-ticker-loop">
+                  <span class="market-data-placeholder">行情加载中…</span>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="market-ticker-card reveal-up" data-ticker-panel="new">
+            <div class="market-ticker-head">
+              <div>
+                <span>最新上线</span><small>新资产表现</small>
+              </div>
+              <a href="#prices">查看全部 <i aria-hidden="true" class="bi bi-arrow-right-short"></i></a>
+            </div>
+            <div aria-label="最新上线币种自动行情" class="market-ticker-viewport" data-css-ticker="" data-market-new-ticker style="--ticker-duration: 90s">
+              <div class="market-ticker-track">
+                <div class="market-ticker-loop">
+                  <span class="market-data-placeholder">行情加载中…</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+      <aside class="market-overview-card market-macro-card reveal-up" id="market-data">
+        <div class="overview-card-head">
+          <div>
+            <span>市场概览</span><small>全市场实时数据</small>
+          </div>
+          <span class="live-status"><i></i> 实时</span>
+        </div>
+        <div class="macro-grid">
+          <div>
+            <small>24h 总成交额</small><strong data-market-overview-turnover="">--</strong><em data-market-overview-turnover-change="">--</em>
+          </div>
+          <div>
+            <small>市场数量</small><strong data-market-overview-count="">--</strong><em>现货 + 永续</em>
+          </div>
+          <div>
+            <small>现货 / 永续</small><strong data-market-overview-market-types="">--</strong><em>可交易市场</em>
+          </div>
+          <div>
+            <small>情绪指数</small><strong data-market-overview-sentiment="">--</strong><em>待数据源</em>
+          </div>
+        </div>
+        <div class="market-sentiment">
+          <span>恐惧</span>
+          <div>
+            <i></i>
+          </div>
+          <span>贪婪</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+  <section class="market-prices-section lazy-render-section" id="prices">
+    <div class="container">
+      <div class="market-prices-heading reveal-up">
+        <div>
+          <span class="section-kicker">Asset Prices</span><h2>币种价格</h2><p>实时行情按接口可用字段展示；未提供的数据暂显示为 --。</p>
+        </div>
+        <label class="market-inline-search"><i aria-hidden="true" class="bi bi-search"></i><input aria-label="搜索市场币种" data-market-ajax-search="" placeholder="搜索币种" type="search"/></label>
+      </div>
+      <div aria-label="市场类型" class="market-type-tabs reveal-up" role="tablist">
+        <button data-market-ajax-type="watch" aria-selected="false" type="button">自选</button>
+        <button class="is-active" data-market-ajax-type="coins" aria-selected="true" type="button">币种</button>
+        <button data-market-ajax-type="spot" aria-selected="false" type="button">现货交易</button>
+        <button data-market-ajax-type="swap" aria-selected="false" type="button">合约交易</button>
+      </div>
+      <div class="market-filter-bar reveal-up">
+        <div aria-label="币种分类" class="market-category-tabs">
+          <button class="is-active" data-price-category="all" aria-selected="true" type="button">全部</button>
+        </div>
+        <button class="market-filter-button" type="button"><i aria-hidden="true" class="bi bi-sliders"></i> 筛选</button>
+      </div>
+      <div class="market-prices-panel reveal-up">
+        <div class="market-prices-scroll">
+          <table class="market-prices-table">
+            <thead>
+              <tr>
+                <th aria-label="自选"></th><th>名称</th><th>最新价</th><th>24h 涨跌</th><th>过去 24 小时</th><th>24h 价格区间</th><th>24h 成交额</th><th>操作</th>
+              </tr>
+            </thead>
+            <tbody
+              data-market-price-body="" data-market-ajax="" data-market-api="/md-api/pages/markets" data-market-page-size="10"
+              data-market-current-page="{$marketPagination.page}" data-market-total-pages="{$marketPagination.total_pages}"
+              data-market-current-type="coins">
+              {foreach $initialMarketRows as $market}
+              <tr
+                data-category="all" data-market-kind="{$market.mode}" data-market-realtime data-market-type="{$market.realtime_type}"
+                data-market-symbol="{$market.internal_symbol}" data-market-row
+                data-search="{$market.base_code} {$market.base_name} {$market.pair} {$market.market_label}">
+                <td>
+                <button aria-label="添加 {$market.base_code} 到自选" aria-pressed="false" class="watch-button" data-market-watch data-favorite-market-type="{$market.realtime_type}" data-favorite-symbol="{$market.internal_symbol}" type="button"><i aria-hidden="true" class="bi bi-star"></i></button>
+                </td>
+                <td>
+                <a class="market-asset" href="{$market.route}">
+                <img alt="{$market.base_name}" class="coin-logo market-coin" decoding="async" height="28" loading="lazy" src="/static/assets/images/coins/{$market.base_code|strtolower}.png" onerror="this.onerror=null;this.hidden=true;" width="28">
+                <span>
+                <strong>{$market.table_primary}</strong>
+                <small>{$market.table_secondary}</small>
+                </span>
+                </a>
+                </td>
+                <td><strong class="market-price-main" data-market-price>--</strong><small class="market-price-approx" data-market-price-approx>--</small></td>
+                <td><span data-market-change>--</span></td>
+                <td>
+                <div class="market-sparkline" data-market-sparkline>
+                  <span class="market-data-placeholder">--</span>
+                </div>
+                </td>
+                <td>
+                <div class="range-values">
+                  <span><em>低</em> <span data-market-low>--</span></span><span><em>高</em> <span data-market-high>--</span></span>
+                </div>
+                <div
+                  aria-label="当前价格在 24 小时区间中的位置" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="price-range" data-market-range
+                  role="progressbar" style="--range-position: 0%;">
+                  <span aria-hidden="true" class="price-range-fill"></span><span aria-hidden="true" class="price-range-marker"><i></i><small data-market-range-position>--</small></span>
+                </div>
+                </td>
+                <td><strong class="market-turnover-value" data-market-turnover>--</strong></td>
+                <td>
+                <div class="market-row-actions">
+                  <a href="{$market.route}">详情</a><a class="market-trade-button" href="{$market.route}">交易</a>
+                </div>
+                </td>
+              </tr>
+              {/foreach}
+            </tbody>
+          </table>
+        </div>
+        <div class="market-empty-state" data-market-ajax-empty="" hidden="">
+          当前筛选条件下暂无市场数据
+        </div>
+        <div class="market-pagination" data-market-ajax-pagination>
+          <button aria-label="上一页" data-market-page-action="previous" disabled type="button"><i aria-hidden="true" class="bi bi-chevron-left"></i></button>
+          <button class="is-active" data-market-page-number="1" type="button">1</button>
+          {if condition="$marketPagination.total_pages_display >= 2"}<button data-market-page-number="2" type="button">2</button>{/if}
+          {if condition="$marketPagination.total_pages_display >= 3"}<button data-market-page-number="3" type="button">3</button>{/if}
+          {if condition="$marketPagination.total_pages_display > 4"}<span data-market-page-ellipsis>…</span>{/if}
+          {if condition="$marketPagination.total_pages_display > 3"}<button data-market-page-number="{$marketPagination.total_pages_display}" type="button">{$marketPagination.total_pages_display}</button>{/if}
+          <button aria-label="下一页" data-market-page-action="next" {if condition="!$marketPagination.has_more"}disabled{/if} type="button"><i aria-hidden="true" class="bi bi-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div
+    aria-busy="true" class="deferred-section-shell" data-deferred-section="markets-cta"
+    style="--deferred-section-height:290px;--deferred-section-height-mobile:390px">
+    <template data-deferred-template="">
+    <section class="markets-cta-section reveal-up">
+      <div class="container markets-cta-inner">
+        <div>
+          <span class="section-kicker">Start Trading</span><h2>从市场趋势开始你的下一笔交易</h2><p>创建账户，使用现货、合约与多种专业交易工具。</p>
+        </div>
+        <div class="cta-actions">
+          <a class="button button-primary" href="/register">免费注册</a><a class="button button-light" href="#prices">浏览全部币种</a>
+        </div>
+      </div>
+    </section>
+    </template>
+    <div aria-hidden="true" class="deferred-section-placeholder">
+    </div>
+  </div>
+</main>
+<div
+  aria-busy="true" class="deferred-section-shell" data-deferred-section="site-footer"
+  style="--deferred-section-height:430px;--deferred-section-height-mobile:790px">
+  <template data-deferred-template="">
+  <footer class="footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" loading="lazy" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" loading="lazy" src="/static/assets/images/logo_light.svg" width="628"/></a>
+        <p>面向全球用户的数字资产交易平台概念官网。</p>
+        <div class="social-links">
+          <a aria-label="Twitter" href="/markets"><i aria-hidden="true" class="bi bi-twitter"></i></a><a aria-label="Telegram" href="/markets"><i aria-hidden="true" class="bi bi-telegram"></i></a><a aria-label="Discord" href="/markets"><i aria-hidden="true" class="bi bi-discord"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h3>交易</h3><a href="/markets">市场行情</a><a href="/trade-swap">现货交易</a><a href="/trade-swap">合约交易</a><a href="/#products">策略工具</a>
+      </div>
+      <div class="footer-column">
+        <h3>产品</h3><a href="/#products">简单理财</a><a href="/#products">机构服务</a><a href="/#products">API 文档</a><a href="/#products">下载中心</a>
+      </div>
+      <div class="footer-column">
+        <h3>支持</h3><a href="/markets">帮助中心</a><a href="/markets">公告中心</a><a href="/markets">费率说明</a><a href="/#security">安全中心</a>
+      </div>
+      <div class="footer-column">
+        <h3>关于</h3><a href="/markets">关于我们</a><a href="/markets">联系我们</a><a href="/markets">加入团队</a><a href="/markets">服务条款</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2026 Aster Exchange. Concept design.</span>
+    </div>
+  </footer>
+  </template>
+  <div aria-hidden="true" class="deferred-section-placeholder">
+  </div>
+</div>
+<script src="/static/assets/js/main.js?v=20260808-1">
+</script>
+<script src="/static/assets/js/market-favorites.js?v=20260812-favorites1"></script>
+<script src="/static/assets/js/market-pagination.js?v=20260812-favorites1">
+</script>
+<script src="/static/assets/js/market-realtime.js?v=4.0.0">
+</script>
+<script src="/static/assets/js/performance-loader.js">
+</script>
+{/block}

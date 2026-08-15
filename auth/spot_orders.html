@@ -1,0 +1,207 @@
+{extend name="layout/base" /}
+{block name="title"}现货订单 — CrystalBest{/block}
+{block name="description"}查看现货委托、成交状态、今日成交与成交额。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=20260811-order-ui8-full" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body spot-order-center-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main spot-order-center-main">
+      <section class="account-hero-panel spot-order-hero">
+        <div class="account-hero-copy">
+          <span class="account-kicker">TRADING / SPOT ORDERS</span>
+          <h1>现货订单</h1>
+          <p>所有用户创建的现货委托都在这里按时间列出；隐藏流动性对手单不会出现在用户订单页。</p>
+        </div>
+        <div class="spot-order-hero-actions">
+          <a class="profile-primary-button" href="/trade-spot"><i class="bi bi-arrow-left-right"></i>前往现货交易</a>
+        </div>
+      </section>
+
+      <section class="spot-order-stat-grid is-simple">
+        <article class="account-panel spot-order-stat-card">
+          <span>订单总数</span>
+          <strong>{$spotOrders.pagination.total}</strong>
+          <small>当前筛选条件</small>
+        </article>
+        <article class="account-panel spot-order-stat-card">
+          <span>今日成交</span>
+          <strong>{$spotOrders.today.fill_count}</strong>
+          <small>{$spotOrders.today.local_date|htmlentities} · {$spotOrders.today.timezone|htmlentities}</small>
+        </article>
+        <article class="account-panel spot-order-stat-card">
+          <span>今日成交额</span>
+          <strong>{$spotOrders.today.turnover_usdt|htmlentities} <em>USDT</em></strong>
+          <small>今日真实成交 Fill 汇总</small>
+        </article>
+      </section>
+
+      <section class="account-panel spot-order-list-panel order-history-list-panel">
+        <div class="account-panel-head spot-order-list-head order-history-list-head">
+          <div>
+            <h2>订单记录</h2>
+            <p>每页固定 20 条；页面宽度保持账户中心标准宽度，超宽订单列只在表格内部左右拖动。</p>
+          </div>
+          <span class="spot-order-range">第 {$spotOrders.pagination.from}–{$spotOrders.pagination.to} 条 / 共 {$spotOrders.pagination.total} 条</span>
+        </div>
+
+        <form class="spot-order-filter order-center-filter order-center-filter-spot" method="get" action="/dashboard/spot-orders">
+          <input type="hidden" name="page_size" value="20"/>
+          <label class="order-filter-field is-market">
+            <span>交易对</span>
+            <select name="symbol">
+              <option value="">全部交易对</option>
+              {volist name="spotOrders.markets" id="market"}
+              <option value="{$market.symbol|htmlentities}" {if condition="$spotOrders['filters']['symbol'] == $market['symbol']"}selected{/if}>{$market.symbol|htmlentities}</option>
+              {/volist}
+            </select>
+          </label>
+          <label class="order-filter-field is-side">
+            <span>方向</span>
+            <select name="side">
+              <option value="ALL" {if condition="$spotOrders['filters']['side'] == 'ALL'"}selected{/if}>全部方向</option>
+              <option value="BUY" {if condition="$spotOrders['filters']['side'] == 'BUY'"}selected{/if}>买入</option>
+              <option value="SELL" {if condition="$spotOrders['filters']['side'] == 'SELL'"}selected{/if}>卖出</option>
+            </select>
+          </label>
+          <label class="order-filter-field is-status">
+            <span>状态</span>
+            <select name="status">
+              <option value="all" {if condition="$spotOrders['filters']['status'] == 'all'"}selected{/if}>全部状态</option>
+              <option value="open" {if condition="$spotOrders['filters']['status'] == 'open'"}selected{/if}>当前委托</option>
+              <option value="filled" {if condition="$spotOrders['filters']['status'] == 'filled'"}selected{/if}>完全成交</option>
+              <option value="cancelled" {if condition="$spotOrders['filters']['status'] == 'cancelled'"}selected{/if}>已撤销</option>
+              <option value="rejected" {if condition="$spotOrders['filters']['status'] == 'rejected'"}selected{/if}>拒绝 / 失效</option>
+            </select>
+          </label>
+          <div class="order-filter-actions">
+            <button class="profile-secondary-button" type="submit"><i class="bi bi-funnel"></i>筛选</button>
+            <a class="spot-order-filter-reset" href="/dashboard/spot-orders">重置</a>
+          </div>
+        </form>
+
+        {if condition="empty($spotOrders['orders'])"}
+        <div class="spot-order-empty"><i class="bi bi-inbox"></i><strong>暂无现货订单</strong><span>创建现货委托后会显示在这里。</span></div>
+        {else /}
+        <div class="asset-table-wrap spot-order-table-wrap order-scroll-viewport order-horizontal-drag" data-order-horizontal-drag>
+          <table class="asset-balance-table spot-order-table order-compact-table">
+            <colgroup>
+              <col class="col-time"/><col class="col-market"/><col class="col-price"/><col class="col-qty"/>
+              <col class="col-value"/><col class="col-state"/><col class="col-action"/>
+            </colgroup>
+            <thead>
+              <tr>
+                <th>委托时间 / 订单号</th>
+                <th>交易对 / 方向</th>
+                <th>成交均价 / 委托价</th>
+                <th>已成交 / 委托数量</th>
+                <th>成交额</th>
+                <th>类型 / 状态</th>
+                <th class="order-sticky-action" data-order-sticky-action>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {volist name="spotOrders.orders" id="order"}
+              <tr>
+                <td>
+                  <strong class="order-primary-value">{$order.created_at|htmlentities}</strong>
+                  <button class="order-no-copy" type="button" data-copy-order-no="{$order.order_no|htmlentities}" title="点击复制订单号"><span>{$order.order_no|htmlentities}</span><i class="bi bi-copy"></i></button>
+                </td>
+                <td>
+                  <strong class="order-primary-value">{$order.pair|htmlentities}</strong>
+                  <span class="spot-order-side is-{$order.side_class|htmlentities}">{$order.side_label|htmlentities}</span>
+                </td>
+                <td>
+                  <strong class="order-primary-value numeric">{$order.average_price|htmlentities}</strong>
+                  <small class="order-secondary-value">委托 {$order.price|htmlentities}</small>
+                </td>
+                <td>
+                  <strong class="order-primary-value numeric">{$order.executed_quantity|htmlentities} {$order.base_code|htmlentities}</strong>
+                  <small class="order-secondary-value">委托 {$order.original_quantity|htmlentities}</small>
+                </td>
+                <td>
+                  <strong class="order-primary-value numeric">{$order.cumulative_quote_amount|htmlentities}</strong>
+                  <small class="order-secondary-value">{$order.quote_code|htmlentities}</small>
+                </td>
+                <td>
+                  <strong class="order-primary-value">{$order.type_label|htmlentities}</strong>
+                  <span class="spot-order-status is-{$order.status_class|htmlentities}">{$order.status_label|htmlentities}</span>
+                </td>
+                <td class="order-sticky-action" data-order-sticky-action>
+                  <div class="perp-dashboard-order-actions">
+                    <button class="order-detail-button" type="button" data-order-detail-open data-order-detail-template="spot-order-detail-{$order.id}">详情</button><a class="spot-order-trade-link order-action-link" href="{$order.trade_url|htmlentities}">交易</a>
+                    <template id="spot-order-detail-{$order.id}">
+                      <article class="order-modal-detail-card">
+                        <header class="order-modal-detail-head">
+                          <div><strong>{$order.pair|htmlentities} · {$order.side_label|htmlentities}</strong><span>{$order.type_label|htmlentities} · {$order.status_label|htmlentities}</span></div>
+                          <button class="order-modal-order-no" type="button" data-copy-order-no="{$order.order_no|htmlentities}" title="点击复制订单号"><span>{$order.order_no|htmlentities}</span><i class="bi bi-copy"></i></button>
+                        </header>
+                        <div class="order-modal-highlight-grid is-spot">
+                          <div><span>成交均价</span><strong>{$order.average_price|htmlentities} {$order.quote_code|htmlentities}</strong></div>
+                          <div><span>已成交数量</span><strong>{$order.executed_quantity|htmlentities} {$order.base_code|htmlentities}</strong></div>
+                          <div><span>成交额</span><strong>{$order.cumulative_quote_amount|htmlentities} {$order.quote_code|htmlentities}</strong></div>
+                        </div>
+                        <dl class="order-modal-detail-grid">
+                          <div><dt>委托价格</dt><dd>{$order.price|htmlentities} {$order.quote_code|htmlentities}</dd></div>
+                          <div><dt>委托数量</dt><dd>{$order.original_quantity|htmlentities} {$order.base_code|htmlentities}</dd></div>
+                          <div><dt>创建时间</dt><dd>{$order.created_at|htmlentities}</dd></div>
+                          <div><dt>完成时间</dt><dd>{if condition="!empty($order['completed_at'])"}{$order.completed_at|htmlentities}{else /}--{/if}</dd></div>
+                          <div><dt>订单状态</dt><dd>{$order.status_label|htmlentities}</dd></div>
+                          <div><dt>订单类型</dt><dd>{$order.type_label|htmlentities}</dd></div>
+                          {if condition="!empty($order['client_order_id'])"}<div><dt>Client Order ID</dt><dd>{$order.client_order_id|htmlentities}</dd></div>{/if}
+                          {if condition="!empty($order['reject_code'])"}<div><dt>拒绝代码</dt><dd>{$order.reject_code|htmlentities}</dd></div>{/if}
+                        </dl>
+                      </article>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+              {/volist}
+            </tbody>
+          </table>
+        </div>
+        {/if}
+
+        <div class="order-pagination-meta">第 {$spotOrders.pagination.from}–{$spotOrders.pagination.to} 条，共 {$spotOrders.pagination.total} 条 · 第 {$spotOrders.pagination.page} / {$spotOrders.pagination.total_pages} 页</div>
+        {if condition="$spotOrders['pagination']['total_pages'] > 1"}
+        <nav class="spot-order-pagination order-page-pagination" aria-label="现货订单分页">
+          {if condition="!empty($spotOrders['pagination']['previous_url'])"}
+          <a href="{$spotOrders.pagination.previous_url|htmlentities}"><i class="bi bi-chevron-left"></i>上一页</a>
+          {else /}
+          <span class="is-disabled"><i class="bi bi-chevron-left"></i>上一页</span>
+          {/if}
+          <div class="spot-order-page-numbers">
+            {volist name="spotOrders.pagination.pages" id="pageItem"}
+            <a class="{if condition="$pageItem['active']"}is-active{/if}" href="{$pageItem.url|htmlentities}">{$pageItem.page}</a>
+            {/volist}
+          </div>
+          {if condition="!empty($spotOrders['pagination']['next_url'])"}
+          <a href="{$spotOrders.pagination.next_url|htmlentities}">下一页<i class="bi bi-chevron-right"></i></a>
+          {else /}
+          <span class="is-disabled">下一页<i class="bi bi-chevron-right"></i></span>
+          {/if}
+        </nav>
+        {/if}
+      </section>
+    </section>
+  </div>
+</main>
+
+<div class="order-detail-modal" data-order-detail-modal hidden aria-hidden="true">
+  <div class="order-detail-modal-backdrop" data-order-detail-close></div>
+  <section class="order-detail-modal-panel" role="dialog" aria-modal="true" aria-label="订单明细">
+    <button class="order-detail-modal-close" type="button" aria-label="关闭" data-order-detail-close><i class="bi bi-x-lg"></i></button>
+    <div class="order-detail-modal-content" data-order-detail-content></div>
+  </section>
+</div>
+
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/order-dashboard-modal.js?v=20260811-ui7-full"></script>
+<script src="/static/assets/js/order-table-horizontal-drag.js?v=20260811-ui7-full"></script>
+{/block}

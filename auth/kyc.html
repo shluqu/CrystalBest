@@ -1,0 +1,698 @@
+{extend name="layout/base" /}
+{block name="title"}身份认证 — CrystalBest{/block}
+{block name="description"}提交身份资料并查看认证状态。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=1.6.0" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body kyc-center-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main kyc-center-main" data-kyc-root>
+      <section class="account-panel kyc-hero-panel">
+        <div class="kyc-hero-copy">
+          <span class="account-kicker">安全与身份 / KYC</span>
+          <h1>身份认证</h1>
+          <p>提交真实身份资料，完成认证后可使用相应账户功能。</p>
+        </div>
+        <div class="kyc-hero-status">
+          <span>当前认证等级</span>
+          <strong>KYC Lv.<span data-dashboard-param style="--param-skeleton-width:20px">{$kycContext.kyc_level}</span></strong>
+          {if condition="$kycContext['current_case']"}
+          <small class="kyc-status-pill is-status-{$kycContext.current_case.status}"><i class="bi bi-shield-check"></i>{$kycContext.current_case.status_label|htmlentities}</small>
+          {else /}
+          <small class="kyc-status-pill is-status-0"><i class="bi bi-shield"></i>未认证</small>
+          {/if}
+        </div>
+      </section>
+
+      {if condition="$kycContext['current_case']"}
+      <section class="account-panel kyc-status-panel">
+        <div class="account-panel-head kyc-panel-head">
+          <div>
+            <h2>认证状态</h2>
+            <p>认证进度与结果会在此持续更新。</p>
+          </div>
+          <span class="kyc-case-number" data-dashboard-param style="--param-skeleton-width:178px">{$kycContext.current_case.public_id|htmlentities}</span>
+        </div>
+
+        <div class="kyc-progress-track">
+          <div class="kyc-progress-step is-done">
+            <span><i class="bi bi-file-earmark-check"></i></span>
+            <div><strong>资料提交</strong><small>{if condition="$kycContext.current_case.submitted_at"}{$kycContext.current_case.submitted_at|htmlentities}{else /}已完成{/if}</small></div>
+          </div>
+          <i class="kyc-progress-line {if condition="$kycContext.current_case.status >= 2 && $kycContext.current_case.status != 4"}is-active{/if}"></i>
+          <div class="kyc-progress-step {if condition="$kycContext.current_case.status >= 2 && $kycContext.current_case.status != 4"}is-done{elseif condition="$kycContext.current_case.status == 1" /}is-current{/if}">
+            <span><i class="bi bi-search"></i></span>
+            <div><strong>资料审核</strong><small>{if condition="$kycContext.current_case.status == 1"}等待处理{elseif condition="$kycContext.current_case.reviewed_at" /}{$kycContext.current_case.reviewed_at|htmlentities}{else /}处理中{/if}</small></div>
+          </div>
+          <i class="kyc-progress-line {if condition="$kycContext.current_case.status == 3"}is-active{/if}"></i>
+          <div class="kyc-progress-step {if condition="$kycContext.current_case.status == 3"}is-done{elseif condition="$kycContext.current_case.status == 2" /}is-current{/if}">
+            <span><i class="bi bi-patch-check"></i></span>
+            <div><strong>认证完成</strong><small>{if condition="$kycContext.current_case.status == 3"}已通过{elseif condition="$kycContext.current_case.status == 4" /}请重新提交{else /}等待结果{/if}</small></div>
+          </div>
+        </div>
+
+        <div class="kyc-current-summary">
+          <div><span>证件类型</span><strong data-dashboard-param style="--param-skeleton-width:64px">{$kycContext.current_case.document_type_label|htmlentities}</strong></div>
+          {if condition="$kycContext.current_case.real_name"}
+          <div><span>姓名</span><strong data-dashboard-param style="--param-skeleton-width:86px">{$kycContext.current_case.real_name|htmlentities}</strong></div>
+          {/if}
+          {if condition="$kycContext.current_case.document_number_masked"}
+          <div><span>证件号码</span><strong class="profile-mono" data-dashboard-param style="--param-skeleton-width:118px">{$kycContext.current_case.document_number_masked|htmlentities}</strong></div>
+          {/if}
+          <div><span>认证状态</span><strong>{$kycContext.current_case.status_label|htmlentities}</strong></div>
+        </div>
+
+        {if condition="$kycContext.current_case.status == 4"}
+        <div class="kyc-review-note is-error">
+          <i class="bi bi-exclamation-circle"></i>
+          <div><strong>本次认证未通过</strong><span>{if condition="$kycContext.current_case.rejection_reason"}{$kycContext.current_case.rejection_reason|htmlentities}{else /}请检查身份资料后重新提交。{/if}</span></div>
+        </div>
+        {elseif condition="$kycContext.current_case.status == 3" /}
+        <div class="kyc-review-note is-success">
+          <i class="bi bi-patch-check-fill"></i>
+          <div><strong>身份认证已完成</strong><span>{if condition="$kycContext.current_case.expires_at"}认证有效期至 {$kycContext.current_case.expires_at|htmlentities}{else /}当前认证有效。{/if}</span></div>
+        </div>
+        {/if}
+      </section>
+      {/if}
+
+      {if condition="$kycContext['can_submit']"}
+      <section class="account-panel kyc-form-panel">
+        <div class="account-panel-head kyc-panel-head">
+          <div>
+            <h2>{if condition="$kycContext['current_case'] && $kycContext.current_case.status == 4"}重新提交认证{else /}提交认证资料{/if}</h2>
+            <p>请填写与证件一致的信息，并上传清晰完整的证件图片。</p>
+          </div>
+          <span class="kyc-security-badge"><i class="bi bi-lock"></i>隐私保护</span>
+        </div>
+
+        {if condition="!$kycContext['storage_configured']"}
+        <div class="kyc-review-note is-error"><i class="bi bi-cloud-slash"></i><div><strong>认证服务暂不可用</strong><span>文件存储服务尚未完成配置，请稍后再试。</span></div></div>
+        {else /}
+        <form class="kyc-form" data-kyc-form enctype="multipart/form-data" novalidate>
+          <section class="kyc-form-section">
+            <div class="kyc-section-title"><span>01</span><div><strong>基本信息</strong><small>信息必须与证件内容完全一致</small></div></div>
+            <div class="kyc-field-grid">
+              <label class="kyc-field">
+                <span>真实姓名</span>
+                <div class="kyc-input"><i class="bi bi-person-vcard"></i><input autocomplete="name" maxlength="80" name="real_name" placeholder="请输入证件上的姓名" required type="text"/></div>
+              </label>
+              <label class="kyc-field">
+                <span>出生日期</span>
+                <div class="kyc-input"><i class="bi bi-calendar3"></i><input name="birth_date" required type="date"/></div>
+              </label>
+              <label class="kyc-field">
+                <span>国籍</span>
+                <div class="kyc-select"><i class="bi bi-globe2"></i><select name="nationality" required><option value="">请选择国籍</option>
+                  <option value="CN">中国 · CN</option>
+                  <option value="HK">中国香港特别行政区 · HK</option>
+                  <option value="MO">中国澳门特别行政区 · MO</option>
+                  <option value="TW">台湾 · TW</option>
+                  <option value="SG">新加坡 · SG</option>
+                  <option value="US">美国 · US</option>
+                  <option value="GB">英国 · GB</option>
+                  <option value="CA">加拿大 · CA</option>
+                  <option value="AU">澳大利亚 · AU</option>
+                  <option value="JP">日本 · JP</option>
+                  <option value="KR">韩国 · KR</option>
+                  <option value="DE">德国 · DE</option>
+                  <option value="FR">法国 · FR</option>
+                  <option value="AE">阿拉伯联合酋长国 · AE</option>
+                  <option disabled>──────────</option>
+                  <option value="BT">不丹 · BT</option>
+                  <option value="TL">东帝汶 · TL</option>
+                  <option value="CF">中非共和国 · CF</option>
+                  <option value="DK">丹麦 · DK</option>
+                  <option value="UA">乌克兰 · UA</option>
+                  <option value="UZ">乌兹别克斯坦 · UZ</option>
+                  <option value="UG">乌干达 · UG</option>
+                  <option value="UY">乌拉圭 · UY</option>
+                  <option value="TD">乍得 · TD</option>
+                  <option value="YE">也门 · YE</option>
+                  <option value="AM">亚美尼亚 · AM</option>
+                  <option value="IL">以色列 · IL</option>
+                  <option value="IQ">伊拉克 · IQ</option>
+                  <option value="IR">伊朗 · IR</option>
+                  <option value="BZ">伯利兹 · BZ</option>
+                  <option value="CV">佛得角 · CV</option>
+                  <option value="RU">俄罗斯 · RU</option>
+                  <option value="BG">保加利亚 · BG</option>
+                  <option value="HR">克罗地亚 · HR</option>
+                  <option value="GU">关岛 · GU</option>
+                  <option value="GM">冈比亚 · GM</option>
+                  <option value="IS">冰岛 · IS</option>
+                  <option value="GN">几内亚 · GN</option>
+                  <option value="GW">几内亚比绍 · GW</option>
+                  <option value="LI">列支敦士登 · LI</option>
+                  <option value="CG">刚果（布） · CG</option>
+                  <option value="CD">刚果（金） · CD</option>
+                  <option value="LY">利比亚 · LY</option>
+                  <option value="LR">利比里亚 · LR</option>
+                  <option value="GH">加纳 · GH</option>
+                  <option value="GA">加蓬 · GA</option>
+                  <option value="HU">匈牙利 · HU</option>
+                  <option value="MK">北马其顿 · MK</option>
+                  <option value="MP">北马里亚纳群岛 · MP</option>
+                  <option value="GS">南乔治亚和南桑威奇群岛 · GS</option>
+                  <option value="AQ">南极洲 · AQ</option>
+                  <option value="SS">南苏丹 · SS</option>
+                  <option value="ZA">南非 · ZA</option>
+                  <option value="BW">博茨瓦纳 · BW</option>
+                  <option value="QA">卡塔尔 · QA</option>
+                  <option value="RW">卢旺达 · RW</option>
+                  <option value="LU">卢森堡 · LU</option>
+                  <option value="IN">印度 · IN</option>
+                  <option value="ID">印度尼西亚 · ID</option>
+                  <option value="GT">危地马拉 · GT</option>
+                  <option value="EC">厄瓜多尔 · EC</option>
+                  <option value="ER">厄立特里亚 · ER</option>
+                  <option value="SY">叙利亚 · SY</option>
+                  <option value="CU">古巴 · CU</option>
+                  <option value="KG">吉尔吉斯斯坦 · KG</option>
+                  <option value="DJ">吉布提 · DJ</option>
+                  <option value="KZ">哈萨克斯坦 · KZ</option>
+                  <option value="CO">哥伦比亚 · CO</option>
+                  <option value="CR">哥斯达黎加 · CR</option>
+                  <option value="CM">喀麦隆 · CM</option>
+                  <option value="TV">图瓦卢 · TV</option>
+                  <option value="TM">土库曼斯坦 · TM</option>
+                  <option value="TR">土耳其 · TR</option>
+                  <option value="LC">圣卢西亚 · LC</option>
+                  <option value="KN">圣基茨和尼维斯 · KN</option>
+                  <option value="ST">圣多美和普林西比 · ST</option>
+                  <option value="BL">圣巴泰勒米 · BL</option>
+                  <option value="VC">圣文森特和格林纳丁斯 · VC</option>
+                  <option value="PM">圣皮埃尔和密克隆群岛 · PM</option>
+                  <option value="CX">圣诞岛 · CX</option>
+                  <option value="SH">圣赫勒拿 · SH</option>
+                  <option value="SM">圣马力诺 · SM</option>
+                  <option value="GY">圭亚那 · GY</option>
+                  <option value="TZ">坦桑尼亚 · TZ</option>
+                  <option value="EG">埃及 · EG</option>
+                  <option value="ET">埃塞俄比亚 · ET</option>
+                  <option value="KI">基里巴斯 · KI</option>
+                  <option value="TJ">塔吉克斯坦 · TJ</option>
+                  <option value="SN">塞内加尔 · SN</option>
+                  <option value="RS">塞尔维亚 · RS</option>
+                  <option value="SL">塞拉利昂 · SL</option>
+                  <option value="CY">塞浦路斯 · CY</option>
+                  <option value="SC">塞舌尔 · SC</option>
+                  <option value="MX">墨西哥 · MX</option>
+                  <option value="TG">多哥 · TG</option>
+                  <option value="DM">多米尼克 · DM</option>
+                  <option value="DO">多米尼加共和国 · DO</option>
+                  <option value="AX">奥兰群岛 · AX</option>
+                  <option value="AT">奥地利 · AT</option>
+                  <option value="VE">委内瑞拉 · VE</option>
+                  <option value="BD">孟加拉国 · BD</option>
+                  <option value="AO">安哥拉 · AO</option>
+                  <option value="AI">安圭拉 · AI</option>
+                  <option value="AG">安提瓜和巴布达 · AG</option>
+                  <option value="AD">安道尔 · AD</option>
+                  <option value="FM">密克罗尼西亚 · FM</option>
+                  <option value="NI">尼加拉瓜 · NI</option>
+                  <option value="NG">尼日利亚 · NG</option>
+                  <option value="NE">尼日尔 · NE</option>
+                  <option value="NP">尼泊尔 · NP</option>
+                  <option value="PS">巴勒斯坦领土 · PS</option>
+                  <option value="BS">巴哈马 · BS</option>
+                  <option value="PK">巴基斯坦 · PK</option>
+                  <option value="BB">巴巴多斯 · BB</option>
+                  <option value="PG">巴布亚新几内亚 · PG</option>
+                  <option value="PY">巴拉圭 · PY</option>
+                  <option value="PA">巴拿马 · PA</option>
+                  <option value="BH">巴林 · BH</option>
+                  <option value="BR">巴西 · BR</option>
+                  <option value="BF">布基纳法索 · BF</option>
+                  <option value="BI">布隆迪 · BI</option>
+                  <option value="BV">布韦岛 · BV</option>
+                  <option value="GR">希腊 · GR</option>
+                  <option value="PW">帕劳 · PW</option>
+                  <option value="CK">库克群岛 · CK</option>
+                  <option value="CW">库拉索 · CW</option>
+                  <option value="KY">开曼群岛 · KY</option>
+                  <option value="IT">意大利 · IT</option>
+                  <option value="SB">所罗门群岛 · SB</option>
+                  <option value="TK">托克劳 · TK</option>
+                  <option value="LV">拉脱维亚 · LV</option>
+                  <option value="NO">挪威 · NO</option>
+                  <option value="CZ">捷克 · CZ</option>
+                  <option value="MD">摩尔多瓦 · MD</option>
+                  <option value="MA">摩洛哥 · MA</option>
+                  <option value="MC">摩纳哥 · MC</option>
+                  <option value="BN">文莱 · BN</option>
+                  <option value="FJ">斐济 · FJ</option>
+                  <option value="SZ">斯威士兰 · SZ</option>
+                  <option value="SK">斯洛伐克 · SK</option>
+                  <option value="SI">斯洛文尼亚 · SI</option>
+                  <option value="SJ">斯瓦尔巴和扬马延 · SJ</option>
+                  <option value="LK">斯里兰卡 · LK</option>
+                  <option value="NC">新喀里多尼亚 · NC</option>
+                  <option value="NZ">新西兰 · NZ</option>
+                  <option value="CL">智利 · CL</option>
+                  <option value="KP">朝鲜 · KP</option>
+                  <option value="KH">柬埔寨 · KH</option>
+                  <option value="GG">根西岛 · GG</option>
+                  <option value="GD">格林纳达 · GD</option>
+                  <option value="GL">格陵兰 · GL</option>
+                  <option value="GE">格鲁吉亚 · GE</option>
+                  <option value="VA">梵蒂冈 · VA</option>
+                  <option value="BE">比利时 · BE</option>
+                  <option value="MR">毛里塔尼亚 · MR</option>
+                  <option value="MU">毛里求斯 · MU</option>
+                  <option value="TO">汤加 · TO</option>
+                  <option value="SA">沙特阿拉伯 · SA</option>
+                  <option value="TF">法属南部领地 · TF</option>
+                  <option value="MF">法属圣马丁 · MF</option>
+                  <option value="GF">法属圭亚那 · GF</option>
+                  <option value="PF">法属波利尼西亚 · PF</option>
+                  <option value="FO">法罗群岛 · FO</option>
+                  <option value="PL">波兰 · PL</option>
+                  <option value="PR">波多黎各 · PR</option>
+                  <option value="BA">波斯尼亚和黑塞哥维那 · BA</option>
+                  <option value="TH">泰国 · TH</option>
+                  <option value="JE">泽西岛 · JE</option>
+                  <option value="ZW">津巴布韦 · ZW</option>
+                  <option value="HN">洪都拉斯 · HN</option>
+                  <option value="HT">海地 · HT</option>
+                  <option value="IE">爱尔兰 · IE</option>
+                  <option value="EE">爱沙尼亚 · EE</option>
+                  <option value="JM">牙买加 · JM</option>
+                  <option value="TC">特克斯和凯科斯群岛 · TC</option>
+                  <option value="TT">特立尼达和多巴哥 · TT</option>
+                  <option value="BO">玻利维亚 · BO</option>
+                  <option value="NR">瑙鲁 · NR</option>
+                  <option value="SE">瑞典 · SE</option>
+                  <option value="CH">瑞士 · CH</option>
+                  <option value="GP">瓜德罗普 · GP</option>
+                  <option value="WF">瓦利斯和富图纳 · WF</option>
+                  <option value="VU">瓦努阿图 · VU</option>
+                  <option value="RE">留尼汪 · RE</option>
+                  <option value="BY">白俄罗斯 · BY</option>
+                  <option value="BM">百慕大 · BM</option>
+                  <option value="PN">皮特凯恩群岛 · PN</option>
+                  <option value="GI">直布罗陀 · GI</option>
+                  <option value="FK">福克兰群岛 · FK</option>
+                  <option value="KW">科威特 · KW</option>
+                  <option value="KM">科摩罗 · KM</option>
+                  <option value="CI">科特迪瓦 · CI</option>
+                  <option value="CC">科科斯（基林）群岛 · CC</option>
+                  <option value="PE">秘鲁 · PE</option>
+                  <option value="TN">突尼斯 · TN</option>
+                  <option value="LT">立陶宛 · LT</option>
+                  <option value="SO">索马里 · SO</option>
+                  <option value="JO">约旦 · JO</option>
+                  <option value="NA">纳米比亚 · NA</option>
+                  <option value="NU">纽埃 · NU</option>
+                  <option value="MM">缅甸 · MM</option>
+                  <option value="RO">罗马尼亚 · RO</option>
+                  <option value="UM">美国本土外小岛屿 · UM</option>
+                  <option value="VI">美属维尔京群岛 · VI</option>
+                  <option value="AS">美属萨摩亚 · AS</option>
+                  <option value="LA">老挝 · LA</option>
+                  <option value="KE">肯尼亚 · KE</option>
+                  <option value="FI">芬兰 · FI</option>
+                  <option value="SD">苏丹 · SD</option>
+                  <option value="SR">苏里南 · SR</option>
+                  <option value="IO">英属印度洋领地 · IO</option>
+                  <option value="VG">英属维尔京群岛 · VG</option>
+                  <option value="NL">荷兰 · NL</option>
+                  <option value="BQ">荷属加勒比区 · BQ</option>
+                  <option value="SX">荷属圣马丁 · SX</option>
+                  <option value="MZ">莫桑比克 · MZ</option>
+                  <option value="LS">莱索托 · LS</option>
+                  <option value="PH">菲律宾 · PH</option>
+                  <option value="SV">萨尔瓦多 · SV</option>
+                  <option value="WS">萨摩亚 · WS</option>
+                  <option value="PT">葡萄牙 · PT</option>
+                  <option value="MN">蒙古 · MN</option>
+                  <option value="MS">蒙特塞拉特 · MS</option>
+                  <option value="EH">西撒哈拉 · EH</option>
+                  <option value="ES">西班牙 · ES</option>
+                  <option value="NF">诺福克岛 · NF</option>
+                  <option value="BJ">贝宁 · BJ</option>
+                  <option value="ZM">赞比亚 · ZM</option>
+                  <option value="GQ">赤道几内亚 · GQ</option>
+                  <option value="HM">赫德岛和麦克唐纳群岛 · HM</option>
+                  <option value="VN">越南 · VN</option>
+                  <option value="AZ">阿塞拜疆 · AZ</option>
+                  <option value="AF">阿富汗 · AF</option>
+                  <option value="DZ">阿尔及利亚 · DZ</option>
+                  <option value="AL">阿尔巴尼亚 · AL</option>
+                  <option value="OM">阿曼 · OM</option>
+                  <option value="AR">阿根廷 · AR</option>
+                  <option value="AW">阿鲁巴 · AW</option>
+                  <option value="MV">马尔代夫 · MV</option>
+                  <option value="IM">马恩岛 · IM</option>
+                  <option value="MW">马拉维 · MW</option>
+                  <option value="MQ">马提尼克 · MQ</option>
+                  <option value="MY">马来西亚 · MY</option>
+                  <option value="YT">马约特 · YT</option>
+                  <option value="MH">马绍尔群岛 · MH</option>
+                  <option value="MT">马耳他 · MT</option>
+                  <option value="MG">马达加斯加 · MG</option>
+                  <option value="ML">马里 · ML</option>
+                  <option value="LB">黎巴嫩 · LB</option>
+                  <option value="ME">黑山 · ME</option>
+                </select></div>
+              </label>
+              <label class="kyc-field">
+                <span>居住国家/地区</span>
+                <div class="kyc-select"><i class="bi bi-geo-alt"></i><select name="residence_country" required><option value="">请选择居住国家/地区</option>
+                  <option value="CN">中国 · CN</option>
+                  <option value="HK">中国香港特别行政区 · HK</option>
+                  <option value="MO">中国澳门特别行政区 · MO</option>
+                  <option value="TW">台湾 · TW</option>
+                  <option value="SG">新加坡 · SG</option>
+                  <option value="US">美国 · US</option>
+                  <option value="GB">英国 · GB</option>
+                  <option value="CA">加拿大 · CA</option>
+                  <option value="AU">澳大利亚 · AU</option>
+                  <option value="JP">日本 · JP</option>
+                  <option value="KR">韩国 · KR</option>
+                  <option value="DE">德国 · DE</option>
+                  <option value="FR">法国 · FR</option>
+                  <option value="AE">阿拉伯联合酋长国 · AE</option>
+                  <option disabled>──────────</option>
+                  <option value="BT">不丹 · BT</option>
+                  <option value="TL">东帝汶 · TL</option>
+                  <option value="CF">中非共和国 · CF</option>
+                  <option value="DK">丹麦 · DK</option>
+                  <option value="UA">乌克兰 · UA</option>
+                  <option value="UZ">乌兹别克斯坦 · UZ</option>
+                  <option value="UG">乌干达 · UG</option>
+                  <option value="UY">乌拉圭 · UY</option>
+                  <option value="TD">乍得 · TD</option>
+                  <option value="YE">也门 · YE</option>
+                  <option value="AM">亚美尼亚 · AM</option>
+                  <option value="IL">以色列 · IL</option>
+                  <option value="IQ">伊拉克 · IQ</option>
+                  <option value="IR">伊朗 · IR</option>
+                  <option value="BZ">伯利兹 · BZ</option>
+                  <option value="CV">佛得角 · CV</option>
+                  <option value="RU">俄罗斯 · RU</option>
+                  <option value="BG">保加利亚 · BG</option>
+                  <option value="HR">克罗地亚 · HR</option>
+                  <option value="GU">关岛 · GU</option>
+                  <option value="GM">冈比亚 · GM</option>
+                  <option value="IS">冰岛 · IS</option>
+                  <option value="GN">几内亚 · GN</option>
+                  <option value="GW">几内亚比绍 · GW</option>
+                  <option value="LI">列支敦士登 · LI</option>
+                  <option value="CG">刚果（布） · CG</option>
+                  <option value="CD">刚果（金） · CD</option>
+                  <option value="LY">利比亚 · LY</option>
+                  <option value="LR">利比里亚 · LR</option>
+                  <option value="GH">加纳 · GH</option>
+                  <option value="GA">加蓬 · GA</option>
+                  <option value="HU">匈牙利 · HU</option>
+                  <option value="MK">北马其顿 · MK</option>
+                  <option value="MP">北马里亚纳群岛 · MP</option>
+                  <option value="GS">南乔治亚和南桑威奇群岛 · GS</option>
+                  <option value="AQ">南极洲 · AQ</option>
+                  <option value="SS">南苏丹 · SS</option>
+                  <option value="ZA">南非 · ZA</option>
+                  <option value="BW">博茨瓦纳 · BW</option>
+                  <option value="QA">卡塔尔 · QA</option>
+                  <option value="RW">卢旺达 · RW</option>
+                  <option value="LU">卢森堡 · LU</option>
+                  <option value="IN">印度 · IN</option>
+                  <option value="ID">印度尼西亚 · ID</option>
+                  <option value="GT">危地马拉 · GT</option>
+                  <option value="EC">厄瓜多尔 · EC</option>
+                  <option value="ER">厄立特里亚 · ER</option>
+                  <option value="SY">叙利亚 · SY</option>
+                  <option value="CU">古巴 · CU</option>
+                  <option value="KG">吉尔吉斯斯坦 · KG</option>
+                  <option value="DJ">吉布提 · DJ</option>
+                  <option value="KZ">哈萨克斯坦 · KZ</option>
+                  <option value="CO">哥伦比亚 · CO</option>
+                  <option value="CR">哥斯达黎加 · CR</option>
+                  <option value="CM">喀麦隆 · CM</option>
+                  <option value="TV">图瓦卢 · TV</option>
+                  <option value="TM">土库曼斯坦 · TM</option>
+                  <option value="TR">土耳其 · TR</option>
+                  <option value="LC">圣卢西亚 · LC</option>
+                  <option value="KN">圣基茨和尼维斯 · KN</option>
+                  <option value="ST">圣多美和普林西比 · ST</option>
+                  <option value="BL">圣巴泰勒米 · BL</option>
+                  <option value="VC">圣文森特和格林纳丁斯 · VC</option>
+                  <option value="PM">圣皮埃尔和密克隆群岛 · PM</option>
+                  <option value="CX">圣诞岛 · CX</option>
+                  <option value="SH">圣赫勒拿 · SH</option>
+                  <option value="SM">圣马力诺 · SM</option>
+                  <option value="GY">圭亚那 · GY</option>
+                  <option value="TZ">坦桑尼亚 · TZ</option>
+                  <option value="EG">埃及 · EG</option>
+                  <option value="ET">埃塞俄比亚 · ET</option>
+                  <option value="KI">基里巴斯 · KI</option>
+                  <option value="TJ">塔吉克斯坦 · TJ</option>
+                  <option value="SN">塞内加尔 · SN</option>
+                  <option value="RS">塞尔维亚 · RS</option>
+                  <option value="SL">塞拉利昂 · SL</option>
+                  <option value="CY">塞浦路斯 · CY</option>
+                  <option value="SC">塞舌尔 · SC</option>
+                  <option value="MX">墨西哥 · MX</option>
+                  <option value="TG">多哥 · TG</option>
+                  <option value="DM">多米尼克 · DM</option>
+                  <option value="DO">多米尼加共和国 · DO</option>
+                  <option value="AX">奥兰群岛 · AX</option>
+                  <option value="AT">奥地利 · AT</option>
+                  <option value="VE">委内瑞拉 · VE</option>
+                  <option value="BD">孟加拉国 · BD</option>
+                  <option value="AO">安哥拉 · AO</option>
+                  <option value="AI">安圭拉 · AI</option>
+                  <option value="AG">安提瓜和巴布达 · AG</option>
+                  <option value="AD">安道尔 · AD</option>
+                  <option value="FM">密克罗尼西亚 · FM</option>
+                  <option value="NI">尼加拉瓜 · NI</option>
+                  <option value="NG">尼日利亚 · NG</option>
+                  <option value="NE">尼日尔 · NE</option>
+                  <option value="NP">尼泊尔 · NP</option>
+                  <option value="PS">巴勒斯坦领土 · PS</option>
+                  <option value="BS">巴哈马 · BS</option>
+                  <option value="PK">巴基斯坦 · PK</option>
+                  <option value="BB">巴巴多斯 · BB</option>
+                  <option value="PG">巴布亚新几内亚 · PG</option>
+                  <option value="PY">巴拉圭 · PY</option>
+                  <option value="PA">巴拿马 · PA</option>
+                  <option value="BH">巴林 · BH</option>
+                  <option value="BR">巴西 · BR</option>
+                  <option value="BF">布基纳法索 · BF</option>
+                  <option value="BI">布隆迪 · BI</option>
+                  <option value="BV">布韦岛 · BV</option>
+                  <option value="GR">希腊 · GR</option>
+                  <option value="PW">帕劳 · PW</option>
+                  <option value="CK">库克群岛 · CK</option>
+                  <option value="CW">库拉索 · CW</option>
+                  <option value="KY">开曼群岛 · KY</option>
+                  <option value="IT">意大利 · IT</option>
+                  <option value="SB">所罗门群岛 · SB</option>
+                  <option value="TK">托克劳 · TK</option>
+                  <option value="LV">拉脱维亚 · LV</option>
+                  <option value="NO">挪威 · NO</option>
+                  <option value="CZ">捷克 · CZ</option>
+                  <option value="MD">摩尔多瓦 · MD</option>
+                  <option value="MA">摩洛哥 · MA</option>
+                  <option value="MC">摩纳哥 · MC</option>
+                  <option value="BN">文莱 · BN</option>
+                  <option value="FJ">斐济 · FJ</option>
+                  <option value="SZ">斯威士兰 · SZ</option>
+                  <option value="SK">斯洛伐克 · SK</option>
+                  <option value="SI">斯洛文尼亚 · SI</option>
+                  <option value="SJ">斯瓦尔巴和扬马延 · SJ</option>
+                  <option value="LK">斯里兰卡 · LK</option>
+                  <option value="NC">新喀里多尼亚 · NC</option>
+                  <option value="NZ">新西兰 · NZ</option>
+                  <option value="CL">智利 · CL</option>
+                  <option value="KP">朝鲜 · KP</option>
+                  <option value="KH">柬埔寨 · KH</option>
+                  <option value="GG">根西岛 · GG</option>
+                  <option value="GD">格林纳达 · GD</option>
+                  <option value="GL">格陵兰 · GL</option>
+                  <option value="GE">格鲁吉亚 · GE</option>
+                  <option value="VA">梵蒂冈 · VA</option>
+                  <option value="BE">比利时 · BE</option>
+                  <option value="MR">毛里塔尼亚 · MR</option>
+                  <option value="MU">毛里求斯 · MU</option>
+                  <option value="TO">汤加 · TO</option>
+                  <option value="SA">沙特阿拉伯 · SA</option>
+                  <option value="TF">法属南部领地 · TF</option>
+                  <option value="MF">法属圣马丁 · MF</option>
+                  <option value="GF">法属圭亚那 · GF</option>
+                  <option value="PF">法属波利尼西亚 · PF</option>
+                  <option value="FO">法罗群岛 · FO</option>
+                  <option value="PL">波兰 · PL</option>
+                  <option value="PR">波多黎各 · PR</option>
+                  <option value="BA">波斯尼亚和黑塞哥维那 · BA</option>
+                  <option value="TH">泰国 · TH</option>
+                  <option value="JE">泽西岛 · JE</option>
+                  <option value="ZW">津巴布韦 · ZW</option>
+                  <option value="HN">洪都拉斯 · HN</option>
+                  <option value="HT">海地 · HT</option>
+                  <option value="IE">爱尔兰 · IE</option>
+                  <option value="EE">爱沙尼亚 · EE</option>
+                  <option value="JM">牙买加 · JM</option>
+                  <option value="TC">特克斯和凯科斯群岛 · TC</option>
+                  <option value="TT">特立尼达和多巴哥 · TT</option>
+                  <option value="BO">玻利维亚 · BO</option>
+                  <option value="NR">瑙鲁 · NR</option>
+                  <option value="SE">瑞典 · SE</option>
+                  <option value="CH">瑞士 · CH</option>
+                  <option value="GP">瓜德罗普 · GP</option>
+                  <option value="WF">瓦利斯和富图纳 · WF</option>
+                  <option value="VU">瓦努阿图 · VU</option>
+                  <option value="RE">留尼汪 · RE</option>
+                  <option value="BY">白俄罗斯 · BY</option>
+                  <option value="BM">百慕大 · BM</option>
+                  <option value="PN">皮特凯恩群岛 · PN</option>
+                  <option value="GI">直布罗陀 · GI</option>
+                  <option value="FK">福克兰群岛 · FK</option>
+                  <option value="KW">科威特 · KW</option>
+                  <option value="KM">科摩罗 · KM</option>
+                  <option value="CI">科特迪瓦 · CI</option>
+                  <option value="CC">科科斯（基林）群岛 · CC</option>
+                  <option value="PE">秘鲁 · PE</option>
+                  <option value="TN">突尼斯 · TN</option>
+                  <option value="LT">立陶宛 · LT</option>
+                  <option value="SO">索马里 · SO</option>
+                  <option value="JO">约旦 · JO</option>
+                  <option value="NA">纳米比亚 · NA</option>
+                  <option value="NU">纽埃 · NU</option>
+                  <option value="MM">缅甸 · MM</option>
+                  <option value="RO">罗马尼亚 · RO</option>
+                  <option value="UM">美国本土外小岛屿 · UM</option>
+                  <option value="VI">美属维尔京群岛 · VI</option>
+                  <option value="AS">美属萨摩亚 · AS</option>
+                  <option value="LA">老挝 · LA</option>
+                  <option value="KE">肯尼亚 · KE</option>
+                  <option value="FI">芬兰 · FI</option>
+                  <option value="SD">苏丹 · SD</option>
+                  <option value="SR">苏里南 · SR</option>
+                  <option value="IO">英属印度洋领地 · IO</option>
+                  <option value="VG">英属维尔京群岛 · VG</option>
+                  <option value="NL">荷兰 · NL</option>
+                  <option value="BQ">荷属加勒比区 · BQ</option>
+                  <option value="SX">荷属圣马丁 · SX</option>
+                  <option value="MZ">莫桑比克 · MZ</option>
+                  <option value="LS">莱索托 · LS</option>
+                  <option value="PH">菲律宾 · PH</option>
+                  <option value="SV">萨尔瓦多 · SV</option>
+                  <option value="WS">萨摩亚 · WS</option>
+                  <option value="PT">葡萄牙 · PT</option>
+                  <option value="MN">蒙古 · MN</option>
+                  <option value="MS">蒙特塞拉特 · MS</option>
+                  <option value="EH">西撒哈拉 · EH</option>
+                  <option value="ES">西班牙 · ES</option>
+                  <option value="NF">诺福克岛 · NF</option>
+                  <option value="BJ">贝宁 · BJ</option>
+                  <option value="ZM">赞比亚 · ZM</option>
+                  <option value="GQ">赤道几内亚 · GQ</option>
+                  <option value="HM">赫德岛和麦克唐纳群岛 · HM</option>
+                  <option value="VN">越南 · VN</option>
+                  <option value="AZ">阿塞拜疆 · AZ</option>
+                  <option value="AF">阿富汗 · AF</option>
+                  <option value="DZ">阿尔及利亚 · DZ</option>
+                  <option value="AL">阿尔巴尼亚 · AL</option>
+                  <option value="OM">阿曼 · OM</option>
+                  <option value="AR">阿根廷 · AR</option>
+                  <option value="AW">阿鲁巴 · AW</option>
+                  <option value="MV">马尔代夫 · MV</option>
+                  <option value="IM">马恩岛 · IM</option>
+                  <option value="MW">马拉维 · MW</option>
+                  <option value="MQ">马提尼克 · MQ</option>
+                  <option value="MY">马来西亚 · MY</option>
+                  <option value="YT">马约特 · YT</option>
+                  <option value="MH">马绍尔群岛 · MH</option>
+                  <option value="MT">马耳他 · MT</option>
+                  <option value="MG">马达加斯加 · MG</option>
+                  <option value="ML">马里 · ML</option>
+                  <option value="LB">黎巴嫩 · LB</option>
+                  <option value="ME">黑山 · ME</option>
+                </select></div>
+              </label>
+            </div>
+          </section>
+
+          <section class="kyc-form-section">
+            <div class="kyc-section-title"><span>02</span><div><strong>证件信息</strong><small>支持身份证或护照</small></div></div>
+            <div class="kyc-document-type-grid">
+              <label class="kyc-document-type is-selected" data-kyc-document-type-card>
+                <input checked name="document_type" type="radio" value="id_card"/>
+                <span class="kyc-document-type-icon"><i class="bi bi-person-vcard"></i></span>
+                <span><strong>身份证</strong><small>上传正面与反面</small></span>
+                <i class="bi bi-check-circle-fill"></i>
+              </label>
+              <label class="kyc-document-type" data-kyc-document-type-card>
+                <input name="document_type" type="radio" value="passport"/>
+                <span class="kyc-document-type-icon"><i class="bi bi-passport"></i></span>
+                <span><strong>护照</strong><small>上传个人资料页</small></span>
+                <i class="bi bi-check-circle-fill"></i>
+              </label>
+            </div>
+
+            <label class="kyc-field kyc-document-number-field">
+              <span>证件号码</span>
+              <div class="kyc-input"><i class="bi bi-credit-card-2-front"></i><input autocomplete="off" maxlength="64" name="document_number" placeholder="请输入证件号码" required type="text"/></div>
+            </label>
+
+            <div class="kyc-upload-grid">
+              <label class="kyc-upload-card" data-kyc-upload-card="front">
+                <input accept="image/jpeg,image/png,image/webp" hidden name="document_front" type="file" data-kyc-file="front"/>
+                <span class="kyc-upload-preview" data-kyc-preview="front"><i class="bi bi-image"></i></span>
+                <span class="kyc-upload-copy"><strong data-kyc-upload-title="front">身份证正面</strong><small data-kyc-filename="front">点击选择图片</small></span>
+                <span class="kyc-upload-action"><i class="bi bi-cloud-arrow-up"></i>选择图片</span>
+              </label>
+              <label class="kyc-upload-card" data-kyc-upload-card="back">
+                <input accept="image/jpeg,image/png,image/webp" hidden name="document_back" type="file" data-kyc-file="back"/>
+                <span class="kyc-upload-preview" data-kyc-preview="back"><i class="bi bi-image"></i></span>
+                <span class="kyc-upload-copy"><strong>身份证反面</strong><small data-kyc-filename="back">点击选择图片</small></span>
+                <span class="kyc-upload-action"><i class="bi bi-cloud-arrow-up"></i>选择图片</span>
+              </label>
+            </div>
+            <div class="kyc-upload-hint"><i class="bi bi-shield-lock"></i><span>支持 JPG、PNG、WEBP，单张最大 10MB。请确保边框完整、文字清晰、无反光遮挡。</span></div>
+          </section>
+
+          <section class="kyc-form-section kyc-submit-section">
+            <div class="kyc-section-title"><span>03</span><div><strong>确认提交</strong><small>提交后请等待认证结果</small></div></div>
+            <label class="kyc-confirm-check"><input name="confirm" type="checkbox" value="1"/><span>本人确认以上信息与证件真实、完整且属于本人。</span></label>
+            <button class="kyc-submit-button" data-kyc-submit type="submit"><i class="bi bi-shield-check"></i><span>提交身份认证</span></button>
+          </section>
+        </form>
+        {/if}
+      </section>
+      {/if}
+
+      <section class="account-panel kyc-history-panel">
+        <div class="account-panel-head kyc-panel-head"><div><h2>认证记录</h2><p>查看最近的身份认证申请与状态。</p></div></div>
+        {if condition="$kycContext['history']"}
+        <div class="kyc-history-list">
+          {volist name="kycContext.history" id="item"}
+          <div class="kyc-history-row">
+            <span class="kyc-history-icon"><i class="bi bi-person-badge"></i></span>
+            <div class="kyc-history-main"><strong>{$item.document_type_label|htmlentities}</strong><small class="profile-mono">{$item.public_id|htmlentities}</small></div>
+            <div class="kyc-history-time"><span>提交时间</span><strong>{if condition="$item.submitted_at"}{$item.submitted_at|htmlentities}{else /}—{/if}</strong></div>
+            <span class="kyc-history-state is-status-{$item.status}">{$item.status_label|htmlentities}</span>
+          </div>
+          {/volist}
+        </div>
+        {else /}
+        <div class="kyc-empty-state"><i class="bi bi-person-vcard"></i><strong>暂无认证记录</strong><span>完成首次身份认证后，记录会显示在这里。</span></div>
+        {/if}
+      </section>
+    </section>
+  </div>
+</main>
+
+<div class="auth-toast" data-auth-toast></div>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/dashboard-parameters.js?v=1.4.1"></script>
+<script src="/static/assets/js/kyc.js?v=1.6.0"></script>
+{/block}

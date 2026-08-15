@@ -1,0 +1,54 @@
+{extend name="layout/base" /}
+{block name="title"}{$pageTitle|htmlentities} — CrystalBest{/block}
+{block name="description"}{$pageDescription|htmlentities}{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=1.4.1" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body account-center-page"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main">
+      <section class="account-hero-panel account-center-hero">
+        <div class="account-hero-copy">
+          <span class="account-kicker">{$pageKicker|htmlentities}</span>
+          <h1>{$pageTitle|htmlentities}</h1>
+          <p>{$pageDescription|htmlentities}</p>
+        </div>
+        <div class="account-center-status">
+          <i class="bi {$pageIcon|htmlentities}"></i>
+          <div><span>当前状态</span><strong data-dashboard-param style="--param-skeleton-width:88px">{$pageStatus|htmlentities}</strong></div>
+        </div>
+      </section>
+
+      <section class="account-panel account-center-placeholder">
+        <div class="account-panel-head">
+          <div>
+            <h2>页面结构</h2>
+            <p>导航和页面入口已经补齐；在对应业务模块开发完成前，这里不会显示伪造资产、订单或认证数据。</p>
+          </div>
+        </div>
+        <div class="account-center-item-grid">
+          {volist name="pageItems" id="item"}
+          <article class="account-mini-card">
+            <i class="bi bi-check2-circle"></i>
+            <strong>{$item|htmlentities}</strong>
+            <span>对应业务接入后在此展示真实数据与操作入口。</span>
+          </article>
+          {/volist}
+        </div>
+      </section>
+
+      <section class="security-note-panel account-center-note">
+        <i class="bi bi-info-circle"></i>
+        <div><strong>当前为用户中心导航骨架</strong><p>这一版先把所有栏目和路由补齐，后续每完成一个业务模块，就直接替换对应页面内容，不需要再改左侧导航结构。</p></div>
+      </section>
+    </section>
+  </div>
+</main>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+{/block}

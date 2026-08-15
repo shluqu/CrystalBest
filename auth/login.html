@@ -1,0 +1,90 @@
+{extend name="layout/base" /}
+{block name="title"}登录 — CrystalBest{/block}
+{block name="description"}登录 CrystalBest 账户。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="auth-body auth-login"{/block}
+{block name="body"}
+<header class="auth-header">
+  <div class="container auth-header-inner">
+    <a class="auth-brand" href="/"><img alt="CrystalBest" class="brand-logo brand-logo-light-theme" src="/static/assets/images/logo.svg"/><img alt="CrystalBest" class="brand-logo brand-logo-dark-theme" src="/static/assets/images/logo_light.svg"/></a>
+    <div class="auth-header-actions"><a class="auth-home-link" href="/"><i class="bi bi-house"></i><span>返回首页</span></a><button aria-label="切换夜色模式" class="nav-icon-button theme-toggle" data-theme-toggle type="button"><i class="bi bi-moon-stars" data-theme-icon></i></button></div>
+  </div>
+</header>
+<main class="auth-main">
+  <section class="auth-showcase">
+    <div class="auth-showcase-inner">
+      <span class="auth-eyebrow"><i class="bi bi-shield-check"></i> SECURE SIGN IN</span>
+      <h1>选择最适合你的登录方式</h1>
+      <p>支持账号密码、邮箱验证码以及 Google / Microsoft 社交账号，最终统一创建本站安全会话。</p>
+      <div class="auth-feature-grid">
+        <article><i class="bi bi-key"></i><div><strong>账号密码</strong><span>UID 或邮箱 + 密码</span></div></article>
+        <article><i class="bi bi-envelope-check"></i><div><strong>邮箱验证码</strong><span>无需输入密码</span></div></article>
+        <article><i class="bi bi-google"></i><div><strong>Google</strong><span>OIDC 安全登录</span></div></article>
+        <article><i class="bi bi-microsoft"></i><div><strong>Microsoft</strong><span>OIDC 安全登录</span></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="auth-form-side">
+    <div class="auth-form-wrap">
+      <div class="auth-card" data-login-tabs>
+        <div class="auth-card-head"><span class="auth-kicker">WELCOME BACK</span><h2>登录账户</h2></div>
+
+        <div class="auth-login-tabs" role="tablist" aria-label="登录方式">
+          <button class="is-active" data-login-tab="password" type="button"><i class="bi bi-key"></i>账号密码</button>
+          <button data-login-tab="email" type="button"><i class="bi bi-envelope-check"></i>邮箱验证</button>
+          <button data-login-tab="social" type="button"><i class="bi bi-people"></i>社交账号</button>
+        </div>
+
+        <section class="auth-login-pane is-active" data-login-pane="password">
+          <form class="auth-form" data-auth-form="login" novalidate>
+            <label><span>账号 / 邮箱</span><div class="auth-input"><i class="bi bi-person"></i><input autocomplete="username" name="account" placeholder="UID 或 name@example.com" required type="text"/></div></label>
+            <label><span>密码</span><div class="auth-input"><i class="bi bi-lock"></i><input autocomplete="current-password" minlength="8" name="password" placeholder="请输入密码" required type="password"/><button aria-label="显示密码" data-password-toggle type="button"><i class="bi bi-eye"></i></button></div></label>
+            <div class="auth-form-row"><label class="auth-check"><input name="remember" type="checkbox"/>保持登录</label><a href="/forgot-password">忘记密码？</a></div>
+            <button class="auth-submit" type="submit"><span>登录</span><i class="bi bi-arrow-right"></i></button>
+          </form>
+        </section>
+
+        <section class="auth-login-pane" data-login-pane="email" hidden>
+          <form class="auth-form" data-email-login-request novalidate>
+            <label><span>邮箱</span><div class="auth-input"><i class="bi bi-envelope"></i><input autocomplete="email" name="email" placeholder="name@example.com" required type="email"/></div></label>
+            <div class="auth-captcha-box auth-captcha-box-compact">
+              <button class="auth-captcha-image" data-captcha-refresh="login-email" type="button" aria-label="刷新验证码"><img data-captcha-image="login-email" src="/captcha/login-email" alt="人机验证码"/></button>
+              <label><span>人机验证</span><div class="auth-input"><i class="bi bi-shield-check"></i><input autocomplete="off" maxlength="8" name="captcha" placeholder="输入图片字符" required type="text"/></div></label>
+            </div>
+            <button class="auth-submit" type="submit"><span>发送登录验证码</span><i class="bi bi-send"></i></button>
+          </form>
+
+          <form class="auth-form auth-email-code-login" data-email-login-verify hidden novalidate>
+            <div class="auth-success-panel auth-success-panel-compact"><i class="bi bi-envelope-check-fill"></i><div><strong>验证码已发送</strong><span>请输入发送到 <b data-email-login-label></b> 的 6 位验证码。</span></div></div>
+            <input name="email" data-email-login-email type="hidden"/>
+            <label><span>6 位验证码</span><div class="auth-input auth-code-input"><i class="bi bi-shield-check"></i><input autocomplete="one-time-code" inputmode="numeric" maxlength="6" minlength="6" name="code" pattern="[0-9]{6}" placeholder="000000" required type="text"/></div></label>
+            <label class="auth-check"><input name="remember" type="checkbox"/>保持登录</label>
+            <button class="auth-submit" type="submit"><span>验证并登录</span><i class="bi bi-arrow-right"></i></button>
+            <button class="auth-text-button" data-email-login-restart type="button">重新输入邮箱</button>
+          </form>
+        </section>
+
+        <section class="auth-login-pane" data-login-pane="social" hidden>
+          {if condition="$googleEnabled || $microsoftEnabled"}
+          <div class="auth-social auth-social-links auth-social-stack" aria-label="第三方登录">
+            {if condition="$googleEnabled"}<a class="auth-social-button auth-social-google" href="/auth/google?next=/dashboard"><i class="bi bi-google"></i><span>使用 Google 登录</span></a>{/if}
+            {if condition="$microsoftEnabled"}<a class="auth-social-button auth-social-microsoft" href="/auth/microsoft?next=/dashboard"><i class="bi bi-microsoft"></i><span>使用 Microsoft 登录</span></a>{/if}
+          </div>
+          {else /}
+          <div class="auth-empty-state"><i class="bi bi-info-circle"></i><span>当前未启用社交账号登录。</span></div>
+          {/if}
+        </section>
+
+        <div class="auth-switch">还没有账户？ <a href="/register">免费注册</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="auth-footer"><span>© CrystalBest</span><nav><a href="/">首页</a><a href="/markets">市场</a></nav></footer>
+<div class="auth-toast" data-auth-toast></div>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/auth.js"></script>
+{/block}

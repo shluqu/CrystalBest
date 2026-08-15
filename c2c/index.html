@@ -1,0 +1,638 @@
+{extend name="layout/base" /}
+{block name="title"}C2C 买币 — Aster Exchange{/block}
+{block name="description"}Aster Exchange C2C 买币市场，支持多种付款方式、商家筛选与主题切换。{/block}
+{block name="head_extra"}<link href="/static/assets/css/c2c.css" rel="stylesheet"/>{/block}
+{block name="body_attributes"} id="top"{/block}
+{block name="body"}
+<header class="site-header" data-site-header="">
+  <div class="announcement">
+    <div class="container announcement-inner">
+      <span class="announcement-label">NEW</span>
+      <span>新用户完成认证，可领取专属交易权益</span>
+      <span class="nav-placeholder">查看详情 <i aria-hidden="true" class="bi bi-arrow-right"></i></span>
+    </div>
+  </div>
+  <nav aria-label="主导航" class="nav-shell">
+    <div class="container nav-inner">
+      <a aria-label="Aster Exchange 首页" class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" src="/static/assets/images/logo_light.svg" width="628"/></a>
+      <div class="nav-links" data-nav-links="">
+        <a aria-current="page" class="nav-direct-link is-current" href="/c2c">一键买币</a>
+        <a class="nav-direct-link" href="/markets">市场</a>
+        <div class="nav-item" data-dropdown="">
+          <button aria-expanded="false" class="nav-trigger" data-dropdown-trigger="" type="button">
+          交易 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown nav-dropdown-trade" role="menu">
+            <a class="dropdown-link" href="/trade-spot" role="menuitem"><span><strong>现货交易</strong><small>快速买卖数字资产</small></span><i aria-hidden="true" class="bi bi-arrow-left-right"></i></a>
+            <a class="dropdown-link" href="/trade-swap" role="menuitem"><span><strong>合约交易</strong><small>灵活管理多空仓位</small></span><i aria-hidden="true" class="bi bi-graph-up-arrow"></i></a>
+          </div>
+        </div>
+        <div class="nav-item" data-dropdown="">
+          <button aria-expanded="false" class="nav-trigger" data-dropdown-trigger="" type="button">
+          新手学院 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown academy-dropdown" role="menu">
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-coin"></i><span><strong>了解数字资产</strong><small>基础概念与资产类型</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-wallet2"></i><span><strong>买币介绍</strong><small>完成你的首次购买</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-question-circle"></i><span><strong>常见问题</strong><small>快速解决使用疑问</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-newspaper"></i><span><strong>热门资讯</strong><small>掌握市场最新动态</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-journal-text"></i><span><strong>博客文章</strong><small>阅读深度行业观点</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-robot"></i><span><strong>学习 AI 交易</strong><small>了解智能策略工具</small></span></span>
+          </div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button aria-label="搜索币种" class="nav-icon-button" data-search-open="" type="button">
+        <i aria-hidden="true" class="bi bi-search"></i>
+        </button>
+        <button aria-label="切换夜色模式" class="nav-icon-button theme-toggle" data-theme-toggle="" title="切换夜色模式" type="button">
+        <i aria-hidden="true" class="bi bi-moon-stars" data-theme-icon=""></i>
+        </button>
+        <div class="nav-item language-menu nav-desktop-only" data-dropdown="">
+          <button aria-expanded="false" aria-label="选择语言" class="language-trigger" data-dropdown-trigger="" type="button">
+          <img alt="" data-language-flag="" decoding="async" src="/static/assets/images/flags/cn.png"/>
+          <span data-language-label="">简体中文</span>
+          <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown language-dropdown" role="menu">
+            <button class="language-option is-active" data-flag="/static/assets/images/flags/cn.png" data-label="简体中文" data-language="zh-CN" type="button"><img alt="中国国旗" decoding="async" src="/static/assets/images/flags/cn.png"/><span>简体中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/us.png" data-label="English" data-language="en-US" type="button"><img alt="美国国旗" decoding="async" src="/static/assets/images/flags/us.png"/><span>English</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/tw.png" data-label="繁體中文" data-language="zh-TW" type="button"><img alt="中国台湾地区旗帜" decoding="async" src="/static/assets/images/flags/tw.png"/><span>繁體中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/jp.png" data-label="日本語" data-language="ja-JP" type="button"><img alt="日本国旗" decoding="async" src="/static/assets/images/flags/jp.png"/><span>日本語</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/kr.png" data-label="한국어" data-language="ko-KR" type="button"><img alt="韩国国旗" decoding="async" src="/static/assets/images/flags/kr.png"/><span>한국어</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/fr.png" data-label="Français" data-language="fr-FR" type="button"><img alt="法国国旗" decoding="async" src="/static/assets/images/flags/fr.png"/><span>Français</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/es.png" data-label="Español" data-language="es-ES" type="button"><img alt="西班牙国旗" decoding="async" src="/static/assets/images/flags/es.png"/><span>Español</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+          </div>
+        </div>
+        <a class="nav-button nav-button-ghost nav-desktop-only" data-auth-nav-avatar href="/login">登录</a>
+        <a class="nav-button nav-button-primary" data-auth-nav-dashboard href="/register">注册</a>
+        <button aria-expanded="false" aria-label="打开菜单" class="nav-icon-button menu-button" data-menu-button="" type="button">
+        <i aria-hidden="true" class="bi bi-list"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+<div aria-hidden="true" class="header-spacer">
+</div>
+<div class="mobile-backdrop" data-mobile-backdrop="">
+</div>
+<aside aria-hidden="true" class="mobile-panel" data-mobile-panel="">
+  <div class="mobile-panel-head">
+    <a class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" src="/static/assets/images/logo_light.svg" width="628"/></a>
+    <button aria-label="关闭菜单" data-menu-button="" type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+  </div>
+  <div class="mobile-nav-list">
+    <a aria-current="page" class="mobile-direct-link is-active" href="/c2c">一键买币</a>
+    <a class="mobile-direct-link" href="/markets">市场</a>
+    <details>
+      <summary>
+        交易 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+      </summary>
+      <div class="mobile-submenu">
+        <a href="/trade-spot">现货交易</a><a href="/trade-swap">合约交易</a>
+      </div>
+    </details>
+    <details>
+      <summary>
+        新手学院 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+      </summary>
+      <div class="mobile-submenu mobile-submenu-grid">
+        <span class="mobile-placeholder">了解数字资产</span><span class="mobile-placeholder">买币介绍</span><span class="mobile-placeholder">常见问题</span><span class="mobile-placeholder">热门资讯</span><span class="mobile-placeholder">博客文章</span><span class="mobile-placeholder">学习 AI 交易</span>
+      </div>
+    </details>
+  </div>
+  <details class="mobile-language-details">
+    <summary class="mobile-language-summary">
+      <span><img alt="" data-language-flag="" decoding="async" src="/static/assets/images/flags/cn.png"/><span data-language-label="">简体中文</span></span><i aria-hidden="true" class="bi bi-chevron-down"></i>
+    </summary>
+    <div class="mobile-language-options">
+      <button class="language-option is-active" data-flag="/static/assets/images/flags/cn.png" data-label="简体中文" data-language="zh-CN" type="button"><img alt="中国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/cn.png"/><span>简体中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/us.png" data-label="English" data-language="en-US" type="button"><img alt="美国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/us.png"/><span>English</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/tw.png" data-label="繁體中文" data-language="zh-TW" type="button"><img alt="中国台湾地区旗帜" decoding="async" loading="lazy" src="/static/assets/images/flags/tw.png"/><span>繁體中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/jp.png" data-label="日本語" data-language="ja-JP" type="button"><img alt="日本国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/jp.png"/><span>日本語</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/kr.png" data-label="한국어" data-language="ko-KR" type="button"><img alt="韩国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/kr.png"/><span>한국어</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/fr.png" data-label="Français" data-language="fr-FR" type="button"><img alt="法国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/fr.png"/><span>Français</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/es.png" data-label="Español" data-language="es-ES" type="button"><img alt="西班牙国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/es.png"/><span>Español</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+    </div>
+  </details>
+  <div class="mobile-panel-actions">
+    <button data-search-open="" type="button"><i aria-hidden="true" class="bi bi-search"></i>搜索币种</button>
+    <button data-theme-toggle="" type="button"><i aria-hidden="true" class="bi bi-moon-stars" data-theme-icon=""></i><span data-theme-label="">切换夜色模式</span></button>
+  </div>
+</aside>
+{include file="common/search_modal" /}
+<main class="c2c-main">
+  <section class="c2c-hero">
+    <div class="container c2c-hero-inner">
+      <div class="c2c-hero-copy">
+        <span class="section-kicker">C2C Marketplace</span><h1>C2C 买币</h1><p>与认证商家直接交易，按价格、付款方式和交易限额快速筛选适合你的报价。</p>
+      </div>
+      <div class="c2c-hero-badges">
+        <span><i class="bi bi-shield-check"></i> 平台托管保护</span><span><i class="bi bi-patch-check"></i> 认证商家</span><span><i class="bi bi-headset"></i> 争议协助</span>
+      </div>
+    </div>
+  </section>
+  <section class="c2c-market-section lazy-render-section">
+    <div class="container">
+      <div class="c2c-market-shell" data-c2c-shell="" data-side="buy">
+        <div aria-label="C2C 区域" class="c2c-zone-tabs" role="tablist">
+          <button aria-selected="true" class="c2c-zone-tab is-active" data-zone="fast" role="tab" type="button">快捷区</button>
+          <button aria-selected="false" class="c2c-zone-tab" data-zone="favorite" role="tab" type="button">自选区</button>
+          <button aria-selected="false" class="c2c-zone-tab" data-zone="bulk" role="tab" type="button">大宗区</button>
+        </div>
+        <div class="c2c-toolbar">
+          <div class="c2c-toolbar-top">
+            <div aria-label="交易方向" class="c2c-side-switch" role="tablist">
+              <button aria-selected="true" class="c2c-side-button is-active" data-side="buy" role="tab" type="button">购买</button><button aria-selected="false" class="c2c-side-button" data-side="sell" role="tab" type="button">出售</button>
+            </div>
+            <div aria-label="选择数字资产" class="c2c-asset-tabs" role="tablist">
+              <button aria-selected="true" class="c2c-asset-tab is-active" data-asset="USDT" role="tab" type="button">USDT</button><button aria-selected="false" class="c2c-asset-tab" data-asset="BTC" role="tab" type="button">BTC</button><button aria-selected="false" class="c2c-asset-tab" data-asset="USDC" role="tab" type="button">USDC</button><button aria-selected="false" class="c2c-asset-tab" data-asset="ETH" role="tab" type="button">ETH</button><button aria-selected="false" class="c2c-asset-tab" data-asset="BNB" role="tab" type="button">BNB</button><button aria-selected="false" class="c2c-asset-tab" data-asset="SOL" role="tab" type="button">SOL</button>
+            </div>
+            <a class="c2c-help-link" href="#how-it-works"><i class="bi bi-question-circle"></i> C2C 帮助中心</a>
+          </div>
+          <div class="c2c-filter-row">
+            <div class="c2c-filter-group">
+              <label class="c2c-filter-field"><span>广告方</span><span class="c2c-search-shell"><i class="bi bi-search"></i><input data-merchant-search="" placeholder="搜索商家" type="search"/></span></label>
+              <label class="c2c-filter-field"><span>法币</span><select aria-label="选择法币" class="c2c-select"><option>USD</option><option>EUR</option><option>CNY</option><option>HKD</option></select></label>
+              <label class="c2c-filter-field"><span>付款方式</span><select aria-label="选择付款方式" class="c2c-select" data-payment-filter=""><option value="all">所有付款方式</option><option value="tbc">TBC Bank</option><option value="bog">Bank of Georgia</option><option value="aba">ABA</option><option value="prudential">Prudential</option><option value="guayaquil">Banco Guayaquil</option></select></label>
+              <button aria-label="聚焦商家筛选" class="c2c-filter-button" data-filter-focus="" type="button"><i class="bi bi-funnel"></i></button>
+            </div>
+            <label class="c2c-filter-field"><span>排序方式</span><select aria-label="排序方式" class="c2c-select" data-sort-filter=""><option value="price-asc">价格从低到高</option><option value="price-desc">价格从高到低</option><option value="orders-desc">成交量优先</option></select></label>
+          </div>
+        </div>
+        <div class="c2c-table-wrap">
+          <table class="c2c-market-table">
+            <colgroup><col/><col/><col/><col/><col/></colgroup>
+            <thead>
+              <tr>
+                <th>广告方</th><th>价格</th><th class="c2c-availability-head">数量</th><th>限额 / 付款方式</th><th>交易</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                class="is-featured" data-availability-usd="1649.37120000" data-c2c-row="" data-max="1800" data-merchant="NovaTrade" data-min="20"
+                data-orders="1706" data-payments="prudential,guayaquil" data-price="1.004" data-usdt-price="1.004" data-zone="fast,favorite">
+                <td>
+                <div class="c2c-merchant">
+                  <span class="c2c-avatar">NT</span>
+                  <div>
+                    <div class="c2c-merchant-name">
+                      <strong>NovaTrade</strong><i aria-label="认证商家" class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <div class="c2c-merchant-stats">
+                      <span>1706 笔成交</span><span>99.60% 成交率</span><span><i class="bi bi-clock"></i> 15 分钟</span>
+                    </div>
+                  </div>
+                </div>
+                </td>
+                <td>
+                <div class="c2c-price">
+                  <strong data-row-price="">$ 1.004</strong><span>单价 / <span data-asset-label="">USDT</span></span>
+                </div>
+                </td>
+                <td class="c2c-availability"><strong><span data-row-availability="">1,642.80</span> <span data-asset-label="">USDT</span></strong><small>可用数量</small></td>
+                <td>
+                <div class="c2c-limit">
+                  <strong>20.00 USD - 1,800.00 USD</strong><small>限额</small>
+                </div>
+                <div class="c2c-payment-list">
+                  <span>Prudential</span><span>Banco Guayaquil</span>
+                </div>
+                </td>
+                <td><button class="c2c-trade-button" data-c2c-open="" type="button"><span data-trade-label="">购买USDT</span></button></td>
+              </tr>
+              <tr
+                data-availability-usd="10710.84176000" data-c2c-row="" data-max="10000" data-merchant="Freedom_Desk" data-min="150" data-orders="1525"
+                data-payments="bog" data-price="1.006" data-usdt-price="1.006" data-zone="fast,bulk">
+                <td>
+                <div class="c2c-merchant">
+                  <span class="c2c-avatar">FD</span>
+                  <div>
+                    <div class="c2c-merchant-name">
+                      <strong>Freedom_Desk</strong><i aria-label="认证商家" class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <div class="c2c-merchant-stats">
+                      <span>1525 笔成交</span><span>99.40% 成交率</span><span><i class="bi bi-clock"></i> 15 分钟</span>
+                    </div>
+                  </div>
+                </div>
+                </td>
+                <td>
+                <div class="c2c-price">
+                  <strong data-row-price="">$ 1.006</strong><span>单价 / <span data-asset-label="">USDT</span></span>
+                </div>
+                </td>
+                <td class="c2c-availability"><strong><span data-row-availability="">10,646.96</span> <span data-asset-label="">USDT</span></strong><small>可用数量</small></td>
+                <td>
+                <div class="c2c-limit">
+                  <strong>150.00 USD - 10,000.00 USD</strong><small>限额</small>
+                </div>
+                <div class="c2c-payment-list">
+                  <span>Bank of Georgia</span>
+                </div>
+                </td>
+                <td><button class="c2c-trade-button" data-c2c-open="" type="button"><span data-trade-label="">购买USDT</span></button></td>
+              </tr>
+              <tr
+                data-availability-usd="49706.94994000" data-c2c-row="" data-max="24000" data-merchant="Irishka77" data-min="200" data-orders="2613"
+                data-payments="bog" data-price="1.007" data-usdt-price="1.007" data-zone="fast,bulk">
+                <td>
+                <div class="c2c-merchant">
+                  <span class="c2c-avatar">IR</span>
+                  <div>
+                    <div class="c2c-merchant-name">
+                      <strong>Irishka77</strong><i aria-label="认证商家" class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <div class="c2c-merchant-stats">
+                      <span>2613 笔成交</span><span>99.20% 成交率</span><span><i class="bi bi-clock"></i> 15 分钟</span>
+                    </div>
+                  </div>
+                </div>
+                </td>
+                <td>
+                <div class="c2c-price">
+                  <strong data-row-price="">$ 1.007</strong><span>单价 / <span data-asset-label="">USDT</span></span>
+                </div>
+                </td>
+                <td class="c2c-availability"><strong><span data-row-availability="">49,361.42</span> <span data-asset-label="">USDT</span></strong><small>可用数量</small></td>
+                <td>
+                <div class="c2c-limit">
+                  <strong>200.00 USD - 24,000.00 USD</strong><small>限额</small>
+                </div>
+                <div class="c2c-payment-list">
+                  <span>Bank of Georgia</span>
+                </div>
+                </td>
+                <td><button class="c2c-trade-button" data-c2c-open="" type="button"><span data-trade-label="">购买USDT</span></button></td>
+              </tr>
+              <tr
+                data-availability-usd="432.32623000" data-c2c-row="" data-max="428" data-merchant="Trevor_Philips" data-min="30" data-orders="1029"
+                data-payments="tbc,bog" data-price="1.009" data-usdt-price="1.009" data-zone="fast,favorite">
+                <td>
+                <div class="c2c-merchant">
+                  <span class="c2c-avatar">TP</span>
+                  <div>
+                    <div class="c2c-merchant-name">
+                      <strong>Trevor_Philips</strong><i aria-label="认证商家" class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <div class="c2c-merchant-stats">
+                      <span>1029 笔成交</span><span>100.00% 成交率</span><span><i class="bi bi-clock"></i> 15 分钟</span>
+                    </div>
+                  </div>
+                </div>
+                </td>
+                <td>
+                <div class="c2c-price">
+                  <strong data-row-price="">$ 1.009</strong><span>单价 / <span data-asset-label="">USDT</span></span>
+                </div>
+                </td>
+                <td class="c2c-availability"><strong><span data-row-availability="">428.47</span> <span data-asset-label="">USDT</span></strong><small>可用数量</small></td>
+                <td>
+                <div class="c2c-limit">
+                  <strong>30.00 USD - 428.00 USD</strong><small>限额</small>
+                </div>
+                <div class="c2c-payment-list">
+                  <span>TBC Bank</span><span>Bank of Georgia</span>
+                </div>
+                </td>
+                <td><button class="c2c-trade-button" data-c2c-open="" type="button"><span data-trade-label="">购买USDT</span></button></td>
+              </tr>
+              <tr
+                data-availability-usd="1506.02331000" data-c2c-row="" data-max="1491" data-merchant="Unity_Exchange" data-min="300" data-orders="444"
+                data-payments="tbc" data-price="1.009" data-usdt-price="1.009" data-zone="fast">
+                <td>
+                <div class="c2c-merchant">
+                  <span class="c2c-avatar">UE</span>
+                  <div>
+                    <div class="c2c-merchant-name">
+                      <strong>Unity_Exchange</strong><i aria-label="认证商家" class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <div class="c2c-merchant-stats">
+                      <span>444 笔成交</span><span>98.70% 成交率</span><span><i class="bi bi-clock"></i> 15 分钟</span>
+                    </div>
+                  </div>
+                </div>
+                </td>
+                <td>
+                <div class="c2c-price">
+                  <strong data-row-price="">$ 1.009</strong><span>单价 / <span data-asset-label="">USDT</span></span>
+                </div>
+                </td>
+                <td class="c2c-availability"><strong><span data-row-availability="">1,492.59</span> <span data-asset-label="">USDT</span></strong><small>可用数量</small></td>
+                <td>
+                <div class="c2c-limit">
+                  <strong>300.00 USD - 1,491.00 USD</strong><small>限额</small>
+                </div>
+                <div class="c2c-payment-list">
+                  <span>TBC Bank</span>
+                </div>
+                </td>
+                <td><button class="c2c-trade-button" data-c2c-open="" type="button"><span data-trade-label="">购买USDT</span></button></td>
+              </tr>
+              <tr
+                data-availability-usd="2943.14201000" data-c2c-row="" data-max="2913" data-merchant="RACOON" data-min="150" data-orders="838"
+                data-payments="tbc" data-price="1.009" data-usdt-price="1.009" data-zone="fast,favorite">
+                <td>
+                <div class="c2c-merchant">
+                  <span class="c2c-avatar">RA</span>
+                  <div>
+                    <div class="c2c-merchant-name">
+                      <strong>RACOON</strong><i aria-label="认证商家" class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <div class="c2c-merchant-stats">
+                      <span>838 笔成交</span><span>99.80% 成交率</span><span><i class="bi bi-clock"></i> 15 分钟</span>
+                    </div>
+                  </div>
+                </div>
+                </td>
+                <td>
+                <div class="c2c-price">
+                  <strong data-row-price="">$ 1.009</strong><span>单价 / <span data-asset-label="">USDT</span></span>
+                </div>
+                </td>
+                <td class="c2c-availability"><strong><span data-row-availability="">2,916.89</span> <span data-asset-label="">USDT</span></strong><small>可用数量</small></td>
+                <td>
+                <div class="c2c-limit">
+                  <strong>150.00 USD - 2,913.00 USD</strong><small>限额</small>
+                </div>
+                <div class="c2c-payment-list">
+                  <span>TBC Bank</span>
+                </div>
+                </td>
+                <td><button class="c2c-trade-button" data-c2c-open="" type="button"><span data-trade-label="">购买USDT</span></button></td>
+              </tr>
+              <tr
+                data-availability-usd="1965.02570000" data-c2c-row="" data-max="1943" data-merchant="TheJokerisback" data-min="200" data-orders="518"
+                data-payments="bog" data-price="1.01" data-usdt-price="1.01" data-zone="fast">
+                <td>
+                <div class="c2c-merchant">
+                  <span class="c2c-avatar">TJ</span>
+                  <div>
+                    <div class="c2c-merchant-name">
+                      <strong>TheJokerisback</strong><i aria-label="认证商家" class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <div class="c2c-merchant-stats">
+                      <span>518 笔成交</span><span>98.30% 成交率</span><span><i class="bi bi-clock"></i> 15 分钟</span>
+                    </div>
+                  </div>
+                </div>
+                </td>
+                <td>
+                <div class="c2c-price">
+                  <strong data-row-price="">$ 1.010</strong><span>单价 / <span data-asset-label="">USDT</span></span>
+                </div>
+                </td>
+                <td class="c2c-availability"><strong><span data-row-availability="">1,945.57</span> <span data-asset-label="">USDT</span></strong><small>可用数量</small></td>
+                <td>
+                <div class="c2c-limit">
+                  <strong>200.00 USD - 1,943.00 USD</strong><small>限额</small>
+                </div>
+                <div class="c2c-payment-list">
+                  <span>Bank of Georgia</span>
+                </div>
+                </td>
+                <td><button class="c2c-trade-button" data-c2c-open="" type="button"><span data-trade-label="">购买USDT</span></button></td>
+              </tr>
+              <tr
+                data-availability-usd="21915.81096000" data-c2c-row="" data-max="21655" data-merchant="Apexfidelity" data-min="400" data-orders="1494"
+                data-payments="tbc,bog" data-price="1.011" data-usdt-price="1.011" data-zone="fast,bulk">
+                <td>
+                <div class="c2c-merchant">
+                  <span class="c2c-avatar">AF</span>
+                  <div>
+                    <div class="c2c-merchant-name">
+                      <strong>Apexfidelity</strong><i aria-label="认证商家" class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <div class="c2c-merchant-stats">
+                      <span>1494 笔成交</span><span>99.60% 成交率</span><span><i class="bi bi-clock"></i> 15 分钟</span>
+                    </div>
+                  </div>
+                </div>
+                </td>
+                <td>
+                <div class="c2c-price">
+                  <strong data-row-price="">$ 1.011</strong><span>单价 / <span data-asset-label="">USDT</span></span>
+                </div>
+                </td>
+                <td class="c2c-availability"><strong><span data-row-availability="">21,677.36</span> <span data-asset-label="">USDT</span></strong><small>可用数量</small></td>
+                <td>
+                <div class="c2c-limit">
+                  <strong>400.00 USD - 21,655.00 USD</strong><small>限额</small>
+                </div>
+                <div class="c2c-payment-list">
+                  <span>TBC Bank</span><span>Bank of Georgia</span>
+                </div>
+                </td>
+                <td><button class="c2c-trade-button" data-c2c-open="" type="button"><span data-trade-label="">购买USDT</span></button></td>
+              </tr>
+              <tr
+                data-availability-usd="1844.99744000" data-c2c-row="" data-max="1821" data-merchant="LEE-EXCHANGER" data-min="150" data-orders="62"
+                data-payments="aba" data-price="1.012" data-usdt-price="1.012" data-zone="fast">
+                <td>
+                <div class="c2c-merchant">
+                  <span class="c2c-avatar">LE</span>
+                  <div>
+                    <div class="c2c-merchant-name">
+                      <strong>LEE-EXCHANGER</strong><i aria-label="认证商家" class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <div class="c2c-merchant-stats">
+                      <span>62 笔成交</span><span>95.40% 成交率</span><span><i class="bi bi-clock"></i> 15 分钟</span>
+                    </div>
+                  </div>
+                </div>
+                </td>
+                <td>
+                <div class="c2c-price">
+                  <strong data-row-price="">$ 1.012</strong><span>单价 / <span data-asset-label="">USDT</span></span>
+                </div>
+                </td>
+                <td class="c2c-availability"><strong><span data-row-availability="">1,823.12</span> <span data-asset-label="">USDT</span></strong><small>可用数量</small></td>
+                <td>
+                <div class="c2c-limit">
+                  <strong>150.00 USD - 1,821.00 USD</strong><small>限额</small>
+                </div>
+                <div class="c2c-payment-list">
+                  <span>ABA</span>
+                </div>
+                </td>
+                <td><button class="c2c-trade-button" data-c2c-open="" type="button"><span data-trade-label="">购买USDT</span></button></td>
+              </tr>
+              <tr
+                data-availability-usd="10698.37404000" data-c2c-row="" data-max="5000" data-merchant="zzZzz" data-min="400" data-orders="694"
+                data-payments="tbc,bog" data-price="1.013" data-usdt-price="1.013" data-zone="fast,bulk">
+                <td>
+                <div class="c2c-merchant">
+                  <span class="c2c-avatar">ZZ</span>
+                  <div>
+                    <div class="c2c-merchant-name">
+                      <strong>zzZzz</strong><i aria-label="认证商家" class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <div class="c2c-merchant-stats">
+                      <span>694 笔成交</span><span>97.40% 成交率</span><span><i class="bi bi-clock"></i> 15 分钟</span>
+                    </div>
+                  </div>
+                </div>
+                </td>
+                <td>
+                <div class="c2c-price">
+                  <strong data-row-price="">$ 1.013</strong><span>单价 / <span data-asset-label="">USDT</span></span>
+                </div>
+                </td>
+                <td class="c2c-availability"><strong><span data-row-availability="">10,561.08</span> <span data-asset-label="">USDT</span></strong><small>可用数量</small></td>
+                <td>
+                <div class="c2c-limit">
+                  <strong>400.00 USD - 5,000.00 USD</strong><small>限额</small>
+                </div>
+                <div class="c2c-payment-list">
+                  <span>TBC Bank</span><span>Bank of Georgia</span>
+                </div>
+                </td>
+                <td><button class="c2c-trade-button" data-c2c-open="" type="button"><span data-trade-label="">购买USDT</span></button></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="c2c-table-empty" data-c2c-empty="" hidden="">
+            <i class="bi bi-search"></i><strong>没有找到匹配的商家</strong><span>请调整付款方式、区域或搜索关键词。</span>
+          </div>
+        </div>
+        <div class="c2c-pagination">
+          <button aria-label="上一页" disabled="" type="button"><i class="bi bi-chevron-left"></i></button><button class="is-active" data-page-button="" type="button">1</button><button data-page-button="" type="button">2</button><button data-page-button="" type="button">3</button><span>…</span><button data-page-button="" type="button">12</button><button aria-label="下一页" type="button"><i class="bi bi-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div
+    aria-busy="true" class="deferred-section-shell" data-deferred-section="c2c-info"
+    style="--deferred-section-height:240px;--deferred-section-height-mobile:410px">
+    <template data-deferred-template="">
+    <section class="c2c-info-strip">
+      <div class="container">
+        <div class="c2c-info-card">
+          <div>
+            <span class="section-kicker">Protected Trading</span><h2>使用你熟悉的付款方式交易数字资产</h2><p>资产由平台托管，确认收款后才会释放，降低点对点交易风险。</p>
+          </div>
+          <div class="c2c-info-metrics">
+            <div>
+              <strong>0 手续费</strong><span>面向普通用户</span>
+            </div>
+            <div>
+              <strong>15 分钟</strong><span>平均付款窗口</span>
+            </div>
+            <div>
+              <strong>24/7</strong><span>争议协助</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    </template>
+    <div aria-hidden="true" class="deferred-section-placeholder">
+    </div>
+  </div>
+  <div
+    aria-busy="true" class="deferred-section-shell" data-deferred-section="c2c-steps"
+    style="--deferred-section-height:620px;--deferred-section-height-mobile:1080px">
+    <template data-deferred-template="">
+    <section class="c2c-steps-section" id="how-it-works">
+      <div class="container">
+        <div class="c2c-steps-head">
+          <div>
+            <span class="section-kicker">How It Works</span><h2>C2C 如何运作</h2>
+          </div>
+          <p>从挑选广告到资产到账，整个流程清晰可控。请始终使用本人实名付款账户。</p>
+        </div>
+        <div class="c2c-steps-grid">
+          <article class="c2c-step-card">
+            <span class="c2c-step-icon"><i class="bi bi-ui-checks-grid"></i></span><small>步骤 01</small><h3>选择报价并下单</h3><p>比较商家的价格、限额、成交率与付款方式，选择适合你的广告。</p>
+          </article>
+          <article class="c2c-step-card">
+            <span class="c2c-step-icon"><i class="bi bi-send-check"></i></span><small>步骤 02</small><h3>按订单信息付款</h3><p>在订单时限内使用已验证的付款账户完成转账，并在页面点击“已付款”。</p>
+          </article>
+          <article class="c2c-step-card">
+            <span class="c2c-step-icon"><i class="bi bi-wallet2"></i></span><small>步骤 03</small><h3>收到数字资产</h3><p>商家确认到账后，托管中的数字资产会释放至你的资金账户。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+    </template>
+    <div aria-hidden="true" class="deferred-section-placeholder">
+    </div>
+  </div>
+</main>
+<dialog class="c2c-dialog" data-c2c-dialog="">
+  <div class="c2c-dialog-head">
+    <div>
+      <h2 data-order-title="">购买 USDT</h2><p>订单创建后，请在规定时间内完成付款。</p>
+    </div>
+    <button aria-label="关闭" class="c2c-dialog-close" data-dialog-close="" type="button"><i class="bi bi-x-lg"></i></button>
+  </div>
+  <div class="c2c-order-summary">
+    <div>
+      <span>广告方</span><strong data-order-merchant="">—</strong>
+    </div>
+    <div>
+      <span>单价</span><strong data-order-price="">—</strong>
+    </div>
+    <div>
+      <span>交易限额</span><strong data-order-limit="">—</strong>
+    </div>
+  </div>
+  <form class="c2c-order-form">
+    <label>支付金额
+    <div class="c2c-order-input">
+      <input data-order-amount="" inputmode="decimal" min="0" placeholder="请输入金额" required="" type="number"/><strong>USD</strong>
+    </div>
+    </label>
+    <div class="c2c-order-estimate">
+      <span>预计获得</span><strong data-order-estimate="">0.00 USDT</strong>
+    </div>
+    <div class="c2c-order-notice">
+      <i class="bi bi-shield-check"></i><span>数字资产将在订单期间由平台托管。不要在平台外进行沟通或付款。</span>
+    </div>
+    <input data-order-asset="" hidden="" value="USDT"/><button class="c2c-order-submit" data-order-submit="" type="submit">确认购买</button>
+  </form>
+</dialog>
+<div aria-live="polite" class="c2c-toast" data-c2c-toast="" role="status">
+</div>
+<div
+  aria-busy="true" class="deferred-section-shell" data-deferred-section="site-footer"
+  style="--deferred-section-height:430px;--deferred-section-height-mobile:790px">
+  <template data-deferred-template="">
+  <footer class="footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" loading="lazy" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" loading="lazy" src="/static/assets/images/logo_light.svg" width="628"/></a>
+        <p>面向全球用户的数字资产交易平台概念官网。</p>
+        <div class="social-links">
+          <a aria-label="Twitter" href="/"><i aria-hidden="true" class="bi bi-twitter"></i></a><a aria-label="Telegram" href="/"><i aria-hidden="true" class="bi bi-telegram"></i></a><a aria-label="Discord" href="/"><i aria-hidden="true" class="bi bi-discord"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h3>交易</h3><a href="/c2c">C2C 买币</a><a href="/markets">市场行情</a><a href="/trade-spot">现货交易</a><a href="/trade-swap">合约交易</a><a href="/#products">策略工具</a>
+      </div>
+      <div class="footer-column">
+        <h3>产品</h3><a href="/#products">简单理财</a><a href="/#products">机构服务</a><a href="/#products">API 文档</a><a href="/#products">下载中心</a>
+      </div>
+      <div class="footer-column">
+        <h3>支持</h3><a href="/">帮助中心</a><a href="/">公告中心</a><a href="/">费率说明</a><a href="/#security">安全中心</a>
+      </div>
+      <div class="footer-column">
+        <h3>关于</h3><a href="/">关于我们</a><a href="/">联系我们</a><a href="/">加入团队</a><a href="/">服务条款</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2026 Aster Exchange. Concept design.</span>
+    </div>
+  </footer>
+  </template>
+  <div aria-hidden="true" class="deferred-section-placeholder">
+  </div>
+</div>
+<script src="/static/assets/js/main.js?v=20260808-1">
+</script>
+<script src="/static/assets/js/c2c.js">
+</script>
+<script src="/static/assets/js/performance-loader.js">
+</script>
+{/block}

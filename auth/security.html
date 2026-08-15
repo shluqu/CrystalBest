@@ -1,0 +1,149 @@
+{extend name="layout/base" /}
+{block name="title"}安全中心 — CrystalBest{/block}
+{block name="description"}CrystalBest 账户安全中心。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=1.4.1" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body security-center-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main security-main" data-security-root
+      data-has-password="{$securityOverview.has_password}"
+      data-totp-enabled="{$securityOverview.totp_enabled}"
+      data-login-methods-count="{$securityOverview.login_methods_count}">
+      <section class="account-hero-panel security-hero">
+        <div class="account-hero-copy">
+          <span class="account-kicker">SECURITY CENTER</span>
+          <h1>账户安全中心</h1>
+          <p>敏感操作采用邮箱二次验证；启用 Google Authenticator 后，修改密码、社交账号绑定/解绑和关闭 TOTP 还需要动态验证码。</p>
+          <div class="account-hero-meta">
+            <span><i class="bi bi-envelope-check"></i><span data-dashboard-param style="--param-skeleton-width:132px">{$securityOverview.email_masked|htmlentities}</span></span>
+            <span><i class="bi bi-shield-check"></i>安全等级 <span data-dashboard-param style="--param-skeleton-width:18px">{$securityOverview.security_level}</span></span>
+            <span><i class="bi bi-person-check"></i><span data-dashboard-param style="--param-skeleton-width:18px">{$securityOverview.login_methods_count}</span> 种登录方式</span>
+          </div>
+        </div>
+        <div class="security-score-card">
+          <span>当前保护</span>
+          <strong data-dashboard-param style="--param-skeleton-width:72px">{if condition="$securityOverview.totp_enabled"}增强保护{else /}基础保护{/if}</strong>
+          <small>{if condition="$securityOverview.totp_enabled"}邮箱 + Google Authenticator 已启用{else /}建议启用 Google Authenticator{/if}</small>
+        </div>
+      </section>
+
+      <section class="security-setting-list">
+        <article class="security-setting-row" id="password">
+          <div class="security-setting-icon"><i class="bi bi-key"></i></div>
+          <div class="security-setting-copy">
+            <div class="security-setting-title"><h2>登录密码</h2><span class="security-status is-ok" data-dashboard-param style="--param-skeleton-width:48px">{if condition="$securityOverview.has_password"}已设置{else /}未设置{/if}</span></div>
+            <p>{if condition="$securityOverview.has_password"}修改密码需要先通过邮箱验证；如已开启 TOTP，还需要 Google Authenticator 动态码。{else /}当前账户可通过社交账号登录，建议补充本地密码作为恢复方式。{/if}</p>
+          </div>
+          <button class="security-action-button" data-security-action="password_change" type="button">{if condition="$securityOverview.has_password"}修改密码{else /}设置密码{/if}</button>
+        </article>
+
+        <div class="security-section-divider" id="social">
+          <div>
+            <span class="account-kicker">SOCIAL ACCOUNTS</span>
+            <h2>社交账号管理</h2>
+            <p>绑定 Google / Microsoft 后可以作为额外登录方式。绑定和解绑都先验证安全邮箱；已启用 TOTP 时还需要 Google Authenticator。</p>
+          </div>
+          {if condition="$securityOverview.has_password == false"}
+          <a class="security-inline-warning" href="#password"><i class="bi bi-exclamation-triangle"></i><span>当前没有本地密码。解绑最后一个社交账号前，请先设置登录密码。</span></a>
+          {/if}
+        </div>
+
+        <article class="security-setting-row security-social-row">
+          <div class="security-setting-icon security-social-google"><i class="bi bi-google"></i></div>
+          <div class="security-setting-copy">
+            <div class="security-setting-title"><h2>Google</h2>{if condition="$socialGoogle.linked"}<span class="security-status is-ok">已绑定</span>{else /}<span class="security-status is-warn">未绑定</span>{/if}</div>
+            {if condition="$socialGoogle.linked"}
+            <p data-dashboard-param style="--param-skeleton-width:260px">{if condition="$socialGoogle.display_name"}{$socialGoogle.display_name|htmlentities} · {/if}{if condition="$socialGoogle.email_masked"}{$socialGoogle.email_masked|htmlentities}{else /}Google 身份已绑定{/if}。绑定时间：{$socialGoogle.linked_at|htmlentities}</p>
+            {else /}
+            <p>绑定后可直接使用 Google 登录当前 CrystalBest 账户，不会创建新的用户账户。</p>
+            {/if}
+          </div>
+          {if condition="$socialGoogle.linked"}
+            {if condition="$socialGoogle.can_unlink"}
+            <button class="security-action-button is-danger" data-security-action="social_unlink_google" type="button">解绑 Google</button>
+            {else /}
+            <button class="security-action-button" disabled title="请先设置密码或绑定其他社交账号" type="button">最后登录方式</button>
+            {/if}
+          {else /}
+            {if condition="$socialGoogle.available"}
+            <button class="security-action-button" data-security-action="social_link_google" type="button">绑定 Google</button>
+            {else /}
+            <button class="security-action-button" disabled type="button">Google 未启用</button>
+            {/if}
+          {/if}
+        </article>
+
+        <article class="security-setting-row security-social-row">
+          <div class="security-setting-icon security-social-microsoft"><i class="bi bi-microsoft"></i></div>
+          <div class="security-setting-copy">
+            <div class="security-setting-title"><h2>Microsoft</h2>{if condition="$socialMicrosoft.linked"}<span class="security-status is-ok">已绑定</span>{else /}<span class="security-status is-warn">未绑定</span>{/if}</div>
+            {if condition="$socialMicrosoft.linked"}
+            <p data-dashboard-param style="--param-skeleton-width:260px">{if condition="$socialMicrosoft.display_name"}{$socialMicrosoft.display_name|htmlentities} · {/if}{if condition="$socialMicrosoft.email_masked"}{$socialMicrosoft.email_masked|htmlentities}{else /}Microsoft 身份已绑定{/if}。绑定时间：{$socialMicrosoft.linked_at|htmlentities}</p>
+            {else /}
+            <p>绑定后可直接使用 Microsoft 登录当前 CrystalBest 账户，不会创建新的用户账户。</p>
+            {/if}
+          </div>
+          {if condition="$socialMicrosoft.linked"}
+            {if condition="$socialMicrosoft.can_unlink"}
+            <button class="security-action-button is-danger" data-security-action="social_unlink_microsoft" type="button">解绑 Microsoft</button>
+            {else /}
+            <button class="security-action-button" disabled title="请先设置密码或绑定其他社交账号" type="button">最后登录方式</button>
+            {/if}
+          {else /}
+            {if condition="$socialMicrosoft.available"}
+            <button class="security-action-button" data-security-action="social_link_microsoft" type="button">绑定 Microsoft</button>
+            {else /}
+            <button class="security-action-button" disabled type="button">Microsoft 未启用</button>
+            {/if}
+          {/if}
+        </article>
+
+        <article class="security-setting-row" id="security-email">
+          <div class="security-setting-icon"><i class="bi bi-envelope"></i></div>
+          <div class="security-setting-copy">
+            <div class="security-setting-title"><h2>安全邮箱</h2>{if condition="$securityOverview.email_verified"}<span class="security-status is-ok">已验证</span>{else /}<span class="security-status is-warn">未验证</span>{/if}</div>
+            <p><span data-dashboard-param style="--param-skeleton-width:132px">{$securityOverview.email_masked|htmlentities}</span>。验证码、账号恢复和高风险安全通知均发送到此邮箱。邮箱修改统一从安全中心处理。</p>
+          </div>
+          <button class="security-action-button" data-security-action="email_change" type="button">修改安全邮箱</button>
+        </article>
+
+        <article class="security-setting-row" id="totp">
+          <div class="security-setting-icon"><i class="bi bi-shield-lock"></i></div>
+          <div class="security-setting-copy">
+            <div class="security-setting-title"><h2>Google 身份验证器</h2>{if condition="$securityOverview.totp_enabled"}<span class="security-status is-ok">已启用</span>{else /}<span class="security-status is-warn">未启用</span>{/if}</div>
+            <p>使用标准 TOTP，每 30 秒生成一组 6 位动态码。开启前先验证邮箱，再扫描二维码并输入 Google Authenticator 动态码确认。</p>
+          </div>
+          {if condition="$securityOverview.totp_enabled"}
+          <button class="security-action-button is-danger" data-security-action="totp_disable" type="button">关闭验证器</button>
+          {else /}
+          <button class="security-action-button" data-security-action="totp_enable" type="button">立即启用</button>
+          {/if}
+        </article>
+
+      </section>
+
+      <section class="security-note-panel">
+        <i class="bi bi-info-circle"></i>
+        <div><strong>Google Authenticator 不需要调用 Google 登录 API</strong><p>它使用标准 TOTP。二维码中的密钥只在你的浏览器与服务器之间展示；服务器仅加密保存 TOTP 密钥，不会交给第三方二维码服务。</p></div>
+      </section>
+    </section>
+  </div>
+</main>
+
+<div class="security-modal-backdrop" data-security-modal hidden>
+  <section class="security-modal" role="dialog" aria-modal="true" aria-labelledby="security-modal-title">
+    <button class="security-modal-close" data-security-close aria-label="关闭" type="button"><i class="bi bi-x-lg"></i></button>
+    <div data-security-modal-body></div>
+  </section>
+</div>
+<div class="auth-toast" data-auth-toast></div>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/security.js"></script>
+{/block}

@@ -1,0 +1,120 @@
+{extend name="layout/base" /}
+{block name="title"}仪表盘 — CrystalBest{/block}
+{block name="description"}CrystalBest 用户仪表盘。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=1.4.1" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main" id="dashboard-overview">
+      <section class="account-hero-panel">
+        <div class="account-hero-copy">
+          <span class="account-kicker">USER CENTER</span>
+          <h1>欢迎回来{if condition="$currentUser.nickname"}，<span data-dashboard-param style="--param-skeleton-width:96px">{$currentUser.nickname|htmlentities}</span>{/if}</h1>
+          <p>这里统一承载资产、交易、身份认证、安全设置与后续平台服务入口，整体宽度与首页保持一致。</p>
+          <div class="account-hero-meta">
+            <span><i class="bi bi-envelope"></i><span data-dashboard-param style="--param-skeleton-width:132px">{$currentUser.email_masked|htmlentities}</span></span>
+            <span><i class="bi bi-shield-check"></i>风险等级 <span data-dashboard-param style="--param-skeleton-width:18px">{$currentUser.risk_level}</span></span>
+            <span><i class="bi bi-clock-history"></i>{if condition="$currentUser.last_login_at"}最近登录 <span data-dashboard-param style="--param-skeleton-width:138px">{$currentUser.last_login_at|htmlentities}</span>{else /}<span data-dashboard-param style="--param-skeleton-width:96px">最近登录待记录</span>{/if}</span>
+          </div>
+        </div>
+        <div class="account-hero-actions">
+          <a class="account-primary-action" href="/markets"><i class="bi bi-bar-chart-line"></i>查看市场</a>
+          <a class="account-secondary-action" href="/trade-spot"><i class="bi bi-currency-exchange"></i>开始交易</a>
+          <a class="account-secondary-action" href="/dashboard/assets"><i class="bi bi-wallet2"></i>充值 / 提币</a>
+        </div>
+      </section>
+
+      <section class="account-stat-grid">
+        <article class="account-stat-card"><span>账户状态</span><strong data-dashboard-param style="--param-skeleton-width:48px">{if condition="$currentUser.status == 1"}正常{else /}受限{/if}</strong><small>当前登录账户可用状态</small></article>
+        <article class="account-stat-card"><span>身份等级</span><strong>KYC <span data-dashboard-param style="--param-skeleton-width:18px">{$currentUser.kyc_level}</span></strong><small>用于提现、法币与高级权限</small></article>
+        <article class="account-stat-card"><span>登录方式</span><strong data-dashboard-param style="--param-skeleton-width:80px">{if condition="$currentUser.social_provider"}{$currentUser.social_provider|htmlentities}{else /}邮箱密码{/if}</strong><small>{if condition="$currentUser.has_password"}已配置本地密码{else /}建议补充本地密码{/if}</small></article>
+        <article class="account-stat-card"><span>安全强度</span><strong data-dashboard-param style="--param-skeleton-width:72px">{if condition="$currentUser.totp_enabled"}增强保护{else /}{if condition="$currentUser.has_password"}基础保护{else /}待完善{/if}{/if}</strong><small>{if condition="$currentUser.totp_enabled"}邮箱 + Google Authenticator 已启用{else /}建议前往安全中心启用 TOTP{/if}</small></article>
+      </section>
+
+      <section class="account-panel" id="profile-center">
+        <div class="account-panel-head">
+          <div>
+            <h2>快捷功能导航</h2>
+            <p>集中保留当前已启用和正在使用的账户、资产、交易与安全功能。</p>
+          </div>
+        </div>
+        <div class="account-feature-grid">
+          <a class="account-feature-card" href="/dashboard/assets"><i class="bi bi-wallet2"></i><strong>资产总览</strong><span>查看总资产、可用余额与估值。</span></a>
+          <a class="account-feature-card" href="/dashboard/spot-orders"><i class="bi bi-bar-chart"></i><strong>订单中心</strong><span>现货、合约、历史委托统一入口。</span></a>
+          <a class="account-feature-card" href="/dashboard/security"><i class="bi bi-shield-lock"></i><strong>安全中心</strong><span>密码、MFA、安全邮箱与风险防护。</span></a>
+          <a class="account-feature-card" href="/dashboard/kyc"><i class="bi bi-patch-check"></i><strong>身份认证</strong><span>KYC 审核、证件状态与等级提升。</span></a>
+          <a class="account-feature-card" href="/dashboard/api"><i class="bi bi-key"></i><strong>API 管理</strong><span>后续给量化与程序化交易使用。</span></a>
+          <a class="account-feature-card" href="/dashboard/notifications"><i class="bi bi-bell"></i><strong>消息通知</strong><span>系统消息、风控提醒与站内通知。</span></a>
+        </div>
+      </section>
+
+      <section class="account-panel-grid">
+        <article class="account-panel" id="asset-center">
+          <div class="account-panel-head">
+            <div>
+              <h2>资产中心</h2>
+              <p>适合后续接入总资产、法币估值、充值提现、资金划转和账单流水。</p>
+            </div>
+          </div>
+          <ul class="account-list">
+            <li><span>总资产概览</span><small>现货资产 / 合约保证金 / 法币折算</small></li>
+            <li><span>充值与提现</span><small>链上地址、到账状态、提币审核</small></li>
+            <li><span>资金划转</span><small>现货、合约、资金账户之间划转</small></li>
+            <li><span>账单流水</span><small>手续费、充值、提现与其他资金明细</small></li>
+          </ul>
+        </article>
+
+        <article class="account-panel" id="trading-center">
+          <div class="account-panel-head">
+            <div>
+              <h2>交易中心</h2>
+              <p>后续可以在这里承载全部交易相关页面与状态摘要。</p>
+            </div>
+          </div>
+          <ul class="account-list">
+            <li><span>现货订单</span><small>当前委托、历史委托、成交记录</small></li>
+            <li><span>永续合约</span><small>持仓、委托、止盈止损、资金费</small></li>
+            <li><span>自选市场</span><small>收藏的交易对与快捷交易入口</small></li>
+            <li><span>策略/API</span><small>给后续自动化交易接口预留入口</small></li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="account-panel" id="security-center">
+          <div class="account-panel-head">
+            <div>
+              <h2>安全与身份</h2>
+              <p>基于你已经设计的用户表，这里可继续扩展更完整的安全能力。</p>
+            </div>
+          </div>
+          <div class="account-security-grid">
+            <div class="account-mini-card">
+              <strong>登录密码</strong>
+              <span data-dashboard-param style="--param-skeleton-width:112px">{if condition="$currentUser.has_password"}已设置本地密码{/if}{if condition="!$currentUser.has_password"}当前未设置本地密码{/if}</span>
+            </div>
+            <div class="account-mini-card">
+              <strong>第三方登录</strong>
+              <span data-dashboard-param style="--param-skeleton-width:128px">{if condition="$currentUser.social_provider"}已绑定 {$currentUser.social_provider|htmlentities}{else /}暂未检测到社交登录{/if}</span>
+            </div>
+            <div class="account-mini-card">
+              <strong>身份认证</strong>
+              <span>当前 KYC 等级：<span data-dashboard-param style="--param-skeleton-width:18px">{$currentUser.kyc_level}</span></span>
+            </div>
+            <div class="account-mini-card">
+              <strong>设备管理</strong>
+              <span>已接入活动会话查看、单设备退出与退出其他设备</span>
+            </div>
+          </div>
+      </section>
+    </section>
+  </div>
+</main>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+{/block}

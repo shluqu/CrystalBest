@@ -1,0 +1,152 @@
+{extend name="layout/base" /}
+{block name="title"}API 管理 — CrystalBest{/block}
+{block name="description"}创建和管理 CrystalBest 只读 HMAC API Key。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=20260812-api-v12-db-native" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body api-center-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+    <section class="account-main api-center-main">
+      <section class="account-hero-panel api-center-hero">
+        <div class="account-hero-copy">
+          <span class="account-kicker">SECURITY / API</span>
+          <h1>API 管理</h1>
+          <p>默认账户没有 API Key，由用户主动创建。当前仅开放账户只读数据，不支持下单、撤单、划转或提币，也不提供任何实时行情数据。</p>
+        </div>
+        <button class="profile-primary-button api-create-trigger" type="button" data-api-create-open><i class="bi bi-plus-lg"></i>创建 API Key</button>
+      </section>
+
+      <section class="api-stat-grid">
+        <article class="account-panel api-stat-card"><span>启用中的 Key</span><strong>{$apiDashboard.active_count}</strong><small>最多 {$apiDashboard.max_active_keys} 个</small></article>
+        <article class="account-panel api-stat-card"><span>认证方式</span><strong>HMAC-SHA256</strong><small>时间戳 + Nonce + 请求签名</small></article>
+        <article class="account-panel api-stat-card"><span>数据范围</span><strong>5 类只读</strong><small>不含任何行情数据</small></article>
+      </section>
+
+      <section class="account-panel api-key-panel">
+        <div class="account-panel-head api-section-head">
+          <div>
+            <h2>API Key</h2>
+            <p>数据库复用既有 API Key 表。完整 API Key 与 Secret 创建成功时只显示一次，后续页面只展示 Key 前缀。</p>
+          </div>
+          <span class="api-slot-label">剩余 {$apiDashboard.available_slots} 个可用名额</span>
+        </div>
+
+        {if condition="empty($apiDashboard['keys'])"}
+        <div class="spot-order-empty api-empty">
+          <i class="bi bi-key"></i>
+          <strong>你还没有 API Key</strong>
+          <span>点击右上角“创建 API Key”后才会生成访问凭证。</span>
+        </div>
+        {else /}
+        <div class="api-key-list">
+          {volist name="apiDashboard.keys" id="key"}
+          <article class="api-key-row {if condition="$key.status != 1"}is-revoked{/if}">
+            <div class="api-key-main">
+              <strong>{$key.name|htmlentities}</strong>
+              <div class="api-key-prefix"><code>{$key.display_key|htmlentities}</code></div>
+              <small>Key ID：{$key.public_id|htmlentities}</small>
+            </div>
+            <div class="api-key-meta">
+              <span class="api-key-status {if condition="$key.status == 1"}is-active{/if}">{$key.status_label|htmlentities}</span>
+              <span>创建 {$key.created_at|htmlentities}</span>
+              <span>最近使用 {if condition="!empty($key['last_used_at'])"}{$key.last_used_at|htmlentities}{else /}从未使用{/if}</span>
+              {if condition="!empty($key['expires_at'])"}<span>到期 {$key.expires_at|htmlentities}</span>{/if}
+            </div>
+            <div class="api-key-permissions">
+              {volist name="key.permissions" id="perm"}<span>{$perm|htmlentities}</span>{/volist}
+            </div>
+            <div class="api-key-actions">
+              {if condition="$key.status == 1"}
+              <button type="button" class="api-revoke-button" data-api-revoke="{$key.public_id|htmlentities}">撤销</button>
+              {else /}
+              <span>已失效</span>
+              {/if}
+            </div>
+          </article>
+          {/volist}
+        </div>
+        {/if}
+      </section>
+
+      <section class="account-panel api-doc-panel">
+        <div class="account-panel-head api-section-head">
+          <div>
+            <h2>请求签名</h2>
+            <p>每个 OpenAPI 请求都使用 HMAC-SHA256。Secret 不直接发送到服务器请求头中。</p>
+          </div>
+        </div>
+
+        <div class="api-auth-grid">
+          <div><span>Header</span><code>X-CB-API-KEY</code><small>创建时生成的完整 API Key</small></div>
+          <div><span>Header</span><code>X-CB-API-TIMESTAMP</code><small>Unix 秒或 13 位毫秒时间戳，允许 ±{$apiDashboard.signature_window_seconds} 秒</small></div>
+          <div><span>Header</span><code>X-CB-API-NONCE</code><small>16–64 位随机字符串，每次请求必须不同</small></div>
+          <div><span>Header</span><code>X-CB-API-SIGNATURE</code><small>64 位十六进制 HMAC-SHA256 签名</small></div>
+        </div>
+
+        <div class="api-signature-rule">
+          <strong>Canonical String</strong>
+          <code>timestamp\nnonce\nMETHOD\n/path\nnormalized_query\nsha256(body)</code>
+          <p>Query 按参数名排序并使用 RFC3986 编码。当前接口全部是 GET，因此 body 为空字符串。</p>
+          <code>signature = HMAC_SHA256_HEX(api_secret, canonical_string)</code>
+        </div>
+      </section>
+
+      <section class="account-panel api-doc-panel">
+        <div class="account-panel-head api-section-head">
+          <div>
+            <h2>只读 API V1</h2>
+            <p>以下接口只读取已提交到数据库的账户/交易配置数据，不读取 Ticker、K 线、盘口、BBO、指数价、标记价或实时资金费率。</p>
+          </div>
+        </div>
+        <div class="api-endpoint-list">
+          <div><span class="api-method">GET</span><code>/openapi/v1/account/profile</code><p>用户资料：UID、掩码邮箱/手机、昵称、KYC、风险等级、语言、时区等。</p></div>
+          <div><span class="api-method">GET</span><code>/openapi/v1/account/perpetual-positions</code><p>当前非零合约持仓；返回方向、数量、开仓价、盈亏平衡价、已实现盈亏、杠杆等，不返回标记价和未实现盈亏。</p></div>
+          <div><span class="api-method">GET</span><code>/openapi/v1/account/balances</code><p>用户持币：现货与永续全仓账户的可用、冻结和总余额。</p></div>
+          <div><span class="api-method">GET</span><code>/openapi/v1/account/deposits?page=1&amp;page_size=20</code><p>充值记录；默认 20 条，最多每页 100 条。</p></div>
+          <div><span class="api-method">GET</span><code>/openapi/v1/account/withdrawals?page=1&amp;page_size=20</code><p>提币记录；包括地址、数量、费用、状态、Tx Hash 与处理时间。</p></div>
+          <div><span class="api-method">GET</span><code>/openapi/v1/markets/supported</code><p>平台支持资产、现货交易对、永续合约及静态交易参数；market_data_included=false。</p></div>
+        </div>
+      </section>
+    </section>
+  </div>
+</main>
+
+<div class="api-create-modal" data-api-create-modal hidden aria-hidden="true">
+  <div class="api-create-backdrop" data-api-create-close></div>
+  <section class="api-create-panel" role="dialog" aria-modal="true" aria-label="创建 API Key">
+    <button class="api-create-close" type="button" data-api-create-close aria-label="关闭"><i class="bi bi-x-lg"></i></button>
+
+    <div data-api-create-form-view>
+      <span class="account-kicker">READ ONLY / HMAC</span>
+      <h2>创建 API Key</h2>
+      <p>当前 Key 固定拥有 5 项只读权限，不允许交易和资金操作。IP 白名单字段沿用数据库预留结构，但本版暂不开放前台编辑。</p>
+      <label class="api-name-field">
+        <span>API 名称</span>
+        <input type="text" maxlength="64" placeholder="例如：个人数据脚本" data-api-key-name/>
+      </label>
+      <div class="api-permission-preview"><span>用户资料</span><span>合约持仓</span><span>用户持币</span><span>充值/提币记录</span><span>支持交易币种</span></div>
+      <button class="profile-primary-button api-confirm-create" type="button" data-api-create-submit>创建</button>
+    </div>
+
+    <div class="api-secret-result" data-api-secret-view hidden>
+      <span class="account-kicker">CREATED</span>
+      <h2>立即保存访问凭证</h2>
+      <p class="api-secret-warning">完整 API Key 和 API Secret 关闭后都不会再次显示。</p>
+      <label><span>API Key</span><div><code data-created-api-key></code><button type="button" data-copy-created-key><i class="bi bi-copy"></i>复制</button></div></label>
+      <label><span>API Secret</span><div><code data-created-api-secret></code><button type="button" data-copy-created-secret><i class="bi bi-copy"></i>复制</button></div></label>
+      <label><span>Key ID</span><div><code data-created-public-id></code><button type="button" data-copy-created-public-id><i class="bi bi-copy"></i>复制</button></div></label>
+      <button class="profile-primary-button" type="button" data-api-created-done>我已保存</button>
+    </div>
+
+    <p class="api-form-message" data-api-form-message></p>
+  </section>
+</div>
+
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/api-management.js?v=20260812-api-v12-db-native"></script>
+{/block}

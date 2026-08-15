@@ -1,0 +1,197 @@
+{extend name="layout/base" /}
+{block name="title"}成交历史 — CrystalBest{/block}
+{block name="description"}统一查看合约成交、现货成交、充值、提现与账户划转历史。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=20260811-trade-history-v9" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body trade-history-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main trade-history-main">
+      <section class="account-hero-panel trade-history-hero">
+        <div class="account-hero-copy">
+          <span class="account-kicker">TRADING / HISTORY</span>
+          <h1>成交历史</h1>
+          <p>合约、现货、充值、提现和划转统一按时间排列；列表只保留各业务共用字段，业务专属信息放在详情中。</p>
+        </div>
+      </section>
+
+      <section class="account-panel trade-history-panel">
+        <div class="account-panel-head trade-history-head">
+          <div>
+            <h2>全部记录</h2>
+            <p>每页固定 20 条；超宽字段只在表格内部左右滚动。</p>
+          </div>
+          <span class="trade-history-count">第 {$tradeHistory.pagination.from}–{$tradeHistory.pagination.to} 条 / 共 {$tradeHistory.pagination.total} 条</span>
+        </div>
+
+        <form class="order-center-filter trade-history-filter" method="get" action="/dashboard/trade-history">
+          <label class="order-filter-field is-history-type">
+            <span>类型</span>
+            <select name="type">
+              <option value="all" {if condition="$tradeHistory['filters']['type'] == 'all'"}selected{/if}>全部类型</option>
+              <option value="perpetual" {if condition="$tradeHistory['filters']['type'] == 'perpetual'"}selected{/if}>合约成交</option>
+              <option value="spot" {if condition="$tradeHistory['filters']['type'] == 'spot'"}selected{/if}>现货成交</option>
+              <option value="deposit" {if condition="$tradeHistory['filters']['type'] == 'deposit'"}selected{/if}>充值</option>
+              <option value="withdrawal" {if condition="$tradeHistory['filters']['type'] == 'withdrawal'"}selected{/if}>提现</option>
+              <option value="transfer" {if condition="$tradeHistory['filters']['type'] == 'transfer'"}selected{/if}>划转</option>
+            </select>
+          </label>
+
+          <label class="order-filter-field is-history-asset">
+            <span>资产</span>
+            <select name="asset">
+              <option value="">全部资产</option>
+              {volist name="tradeHistory.assets" id="asset"}
+              <option value="{$asset.code|htmlentities}" {if condition="$tradeHistory['filters']['asset'] == $asset['code']"}selected{/if}>{$asset.code|htmlentities}</option>
+              {/volist}
+            </select>
+          </label>
+
+          <label class="order-filter-field is-status">
+            <span>状态</span>
+            <select name="status">
+              <option value="all" {if condition="$tradeHistory['filters']['status'] == 'all'"}selected{/if}>全部状态</option>
+              <option value="completed" {if condition="$tradeHistory['filters']['status'] == 'completed'"}selected{/if}>已完成</option>
+              <option value="processing" {if condition="$tradeHistory['filters']['status'] == 'processing'"}selected{/if}>处理中</option>
+              <option value="failed" {if condition="$tradeHistory['filters']['status'] == 'failed'"}selected{/if}>失败</option>
+              <option value="cancelled" {if condition="$tradeHistory['filters']['status'] == 'cancelled'"}selected{/if}>已取消 / 退回</option>
+            </select>
+          </label>
+
+          <label class="order-filter-field is-period">
+            <span>时间范围</span>
+            <select name="period" data-order-period-select>
+              <option value="all" {if condition="$tradeHistory['filters']['period'] == 'all'"}selected{/if}>全部时间</option>
+              <option value="today" {if condition="$tradeHistory['filters']['period'] == 'today'"}selected{/if}>今天</option>
+              <option value="7d" {if condition="$tradeHistory['filters']['period'] == '7d'"}selected{/if}>最近 7 天</option>
+              <option value="30d" {if condition="$tradeHistory['filters']['period'] == '30d'"}selected{/if}>最近 30 天</option>
+              <option value="90d" {if condition="$tradeHistory['filters']['period'] == '90d'"}selected{/if}>最近 90 天</option>
+              <option value="custom" {if condition="$tradeHistory['filters']['period'] == 'custom'"}selected{/if}>自定义</option>
+            </select>
+          </label>
+
+          <label class="order-filter-field is-date-range">
+            <span>日期</span>
+            <span class="order-date-range-control">
+              <input type="date" name="start_date" value="{$tradeHistory.filters.start_date|htmlentities}" data-order-date-input/>
+              <i class="bi bi-arrow-right"></i>
+              <input type="date" name="end_date" value="{$tradeHistory.filters.end_date|htmlentities}" data-order-date-input/>
+            </span>
+          </label>
+
+          <div class="order-filter-actions">
+            <button class="profile-secondary-button" type="submit"><i class="bi bi-funnel"></i>筛选</button>
+            <a class="spot-order-filter-reset" href="/dashboard/trade-history">重置</a>
+          </div>
+        </form>
+
+        {if condition="empty($tradeHistory['records'])"}
+        <div class="spot-order-empty trade-history-empty">
+          <i class="bi bi-clock-history"></i>
+          <strong>暂无匹配记录</strong>
+          <span>修改筛选条件后再试。</span>
+        </div>
+        {else /}
+        <div class="order-scroll-viewport trade-history-scroll order-horizontal-drag" data-order-horizontal-drag>
+          <table class="spot-order-table order-compact-table trade-history-table">
+            <colgroup>
+              <col class="col-time"><col class="col-type"><col class="col-direction"><col class="col-qty"><col class="col-finance"><col class="col-status"><col class="col-action">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>时间 / 记录编号</th>
+                <th>类型 / 资产</th>
+                <th>方向 / 业务</th>
+                <th>数量 / 金额</th>
+                <th>费用 / 收益</th>
+                <th>状态</th>
+                <th class="order-sticky-action">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {volist name="tradeHistory.records" id="record"}
+              <tr>
+                <td>
+                  <span class="history-primary">{$record.occurred_at_local|htmlentities}</span>
+                  <button class="order-no-copy trade-history-no" type="button" data-copy-order-no="{$record.business_no|htmlentities}" title="点击复制编号"><span>{$record.business_no|htmlentities}</span><i class="bi bi-copy"></i></button>
+                </td>
+                <td>
+                  <span class="trade-history-type is-{$record.type_class|htmlentities}">{$record.type_label|htmlentities}</span>
+                  <span class="history-secondary">{$record.asset_label|htmlentities}</span>
+                </td>
+                <td>
+                  <span class="trade-history-direction is-{$record.direction_class|htmlentities}">{$record.direction_label|htmlentities}</span>
+                  <span class="history-secondary">{$record.type_label|htmlentities}</span>
+                </td>
+                <td>
+                  <span class="history-primary">{$record.quantity|htmlentities} {$record.quantity_asset|htmlentities}</span>
+                  {if condition="$record['amount'] !== null"}<span class="history-secondary">{$record.amount|htmlentities} {$record.amount_asset|htmlentities}</span>{else /}<span class="history-secondary">--</span>{/if}
+                </td>
+                <td>
+                  {if condition="$record['fee'] !== null"}<span class="history-secondary">手续费 -{$record.fee|htmlentities} {$record.fee_asset|htmlentities}</span>{else /}<span class="history-secondary">手续费 --</span>{/if}
+                  {if condition="$record['pnl'] !== null"}<span class="trade-history-pnl is-{$record.pnl_class|htmlentities}">盈亏 {$record.pnl|htmlentities} USDT</span>{else /}<span class="history-secondary">盈亏 --</span>{/if}
+                </td>
+                <td><span class="trade-history-status is-{$record.status_group|htmlentities}">{$record.status_label|htmlentities}</span></td>
+                <td class="order-sticky-action">
+                  <div class="perp-dashboard-order-actions trade-history-actions">
+                    <button class="order-detail-button" type="button" data-order-detail-open data-order-detail-template="trade-history-detail-{$record.event_type|htmlentities}-{$record.source_id}">详情</button>
+                    <template id="trade-history-detail-{$record.event_type|htmlentities}-{$record.source_id}">
+                      <article class="order-modal-detail-card">
+                        <header class="order-modal-detail-head">
+                          <div><strong>{$record.type_label|htmlentities}</strong><span>{$record.asset_label|htmlentities} · {$record.direction_label|htmlentities} · {$record.status_label|htmlentities}</span></div>
+                          <button class="order-modal-order-no" type="button" data-copy-order-no="{$record.business_no|htmlentities}" title="点击复制编号"><span>{$record.business_no|htmlentities}</span><i class="bi bi-copy"></i></button>
+                        </header>
+                        <div class="order-modal-highlight-grid">
+                          <div><span>时间</span><strong>{$record.occurred_at_local|htmlentities}</strong></div>
+                          <div><span>数量</span><strong>{$record.quantity|htmlentities} {$record.quantity_asset|htmlentities}</strong></div>
+                          <div><span>状态</span><strong>{$record.status_label|htmlentities}</strong></div>
+                        </div>
+                        <dl class="order-modal-detail-grid">
+                          {volist name="record.detail" id="detailItem"}
+                          <div><dt>{$detailItem.label|htmlentities}</dt><dd>{$detailItem.value|htmlentities}</dd></div>
+                          {/volist}
+                        </dl>
+                      </article>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+              {/volist}
+            </tbody>
+          </table>
+        </div>
+        {/if}
+
+        <div class="order-pagination-meta">第 {$tradeHistory.pagination.from}–{$tradeHistory.pagination.to} 条，共 {$tradeHistory.pagination.total} 条 · 第 {$tradeHistory.pagination.page} / {$tradeHistory.pagination.total_pages} 页</div>
+        {if condition="$tradeHistory['pagination']['total_pages'] > 1"}
+        <nav class="spot-order-pagination order-page-pagination" aria-label="成交历史分页">
+          {if condition="!empty($tradeHistory['pagination']['previous_url'])"}<a href="{$tradeHistory.pagination.previous_url|htmlentities}"><i class="bi bi-chevron-left"></i>上一页</a>{else /}<span class="is-disabled"><i class="bi bi-chevron-left"></i>上一页</span>{/if}
+          <div class="spot-order-page-numbers">
+            {volist name="tradeHistory.pagination.pages" id="pageItem"}<a class="{if condition="$pageItem['active']"}is-active{/if}" href="{$pageItem.url|htmlentities}">{$pageItem.page}</a>{/volist}
+          </div>
+          {if condition="!empty($tradeHistory['pagination']['next_url'])"}<a href="{$tradeHistory.pagination.next_url|htmlentities}">下一页<i class="bi bi-chevron-right"></i></a>{else /}<span class="is-disabled">下一页<i class="bi bi-chevron-right"></i></span>{/if}
+        </nav>
+        {/if}
+      </section>
+    </section>
+  </div>
+</main>
+
+<div class="order-detail-modal" data-order-detail-modal hidden aria-hidden="true">
+  <div class="order-detail-modal-backdrop" data-order-detail-close></div>
+  <section class="order-detail-modal-panel" role="dialog" aria-modal="true" aria-label="成交记录详情">
+    <button class="order-detail-modal-close" type="button" aria-label="关闭" data-order-detail-close><i class="bi bi-x-lg"></i></button>
+    <div class="order-detail-modal-content" data-order-detail-content></div>
+  </section>
+</div>
+
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/order-dashboard-modal.js?v=20260811-trade-history-v9"></script>
+<script src="/static/assets/js/order-table-horizontal-drag.js?v=20260811-trade-history-v9.3"></script>
+{/block}

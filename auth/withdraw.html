@@ -1,0 +1,237 @@
+{extend name="layout/base" /}
+{block name="title"}提币 — CrystalBest{/block}
+{block name="description"}选择资产与网络，填写收款地址并提交提币申请。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=1.5.2" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body withdraw-center-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main withdraw-center-main" data-withdraw-root>
+      <section class="account-panel withdraw-compact-header">
+        <div class="withdraw-header-copy">
+          <span class="account-kicker">资产中心 / 提币</span>
+          <h1>提币</h1>
+          <p>选择资产与网络，确认收款信息后提交。</p>
+        </div>
+        <div class="withdraw-header-actions">
+          <a class="profile-secondary-button" href="/dashboard/assets"><i class="bi bi-wallet2"></i>资产总览</a>
+          <a class="profile-secondary-button" href="/dashboard/deposit"><i class="bi bi-download"></i>充值</a>
+          <a class="profile-secondary-button" href="/dashboard/transfer"><i class="bi bi-arrow-left-right"></i>资金划转</a>
+        </div>
+      </section>
+
+      <section class="withdraw-layout-grid">
+        <section class="account-panel withdraw-form-panel">
+          <div class="account-panel-head withdraw-panel-heading">
+            <div>
+              <h2>提币信息</h2>
+              <p>请确认网络、地址与数量准确无误。</p>
+            </div>
+            <span class="withdraw-form-state"><i class="bi bi-shield-check"></i>安全验证</span>
+          </div>
+
+          <section class="withdraw-form-section">
+            <div class="withdraw-section-heading">
+              <span class="withdraw-section-index">01</span>
+              <div><strong>选择资产与网络</strong><small>网络必须与收款平台保持一致</small></div>
+            </div>
+            <div class="withdraw-form-grid">
+              <div class="withdraw-field withdraw-field-wide">
+                <label for="withdrawAssetSelect">提币资产</label>
+                <select id="withdrawAssetSelect" class="deposit-select" data-withdraw-asset-select>
+                  <option value="BTC" {if condition="$selectedAsset == 'BTC'"}selected{/if}>BTC · Bitcoin</option>
+                  <option value="ETH" {if condition="$selectedAsset == 'ETH'"}selected{/if}>ETH · Ethereum</option>
+                  <option value="USDT" {if condition="$selectedAsset == 'USDT'"}selected{/if}>USDT · Tether USD</option>
+                  <option value="DOGE" {if condition="$selectedAsset == 'DOGE'"}selected{/if}>DOGE · Dogecoin</option>
+                  <option value="SOL" {if condition="$selectedAsset == 'SOL'"}selected{/if}>SOL · Solana</option>
+                </select>
+              </div>
+
+              <div class="withdraw-field withdraw-field-wide">
+                <div class="deposit-section-caption withdraw-network-caption">
+                  <strong>提币网络</strong>
+                  <span>请选择正确网络</span>
+                </div>
+                <div class="withdraw-network-list" data-withdraw-network-list>
+                  {volist name="withdrawContext.routes" id="route"}
+                  <button type="button"
+                          class="withdraw-network-option"
+                          {if condition="$route['asset_code'] != $selectedAsset"}hidden{/if}
+                          data-withdraw-route
+                          data-asset="{$route.asset_code|htmlentities}"
+                          data-route="{$route.route_code|htmlentities}"
+                          data-network="{$route.network_code|htmlentities}"
+                          data-network-name="{$route.network_name|htmlentities}"
+                          data-standard="{$route.token_standard|htmlentities}"
+                          data-available="{if condition="$route['available']"}1{else /}0{/if}"
+                          data-balance="{$route.available_balance|htmlentities}"
+                          data-min="{$route.min_withdraw_amount|htmlentities}"
+                          data-max="{if condition="$route['max_withdraw_amount'] !== null"}{$route.max_withdraw_amount|htmlentities}{/if}"
+                          data-fee="{$route.withdraw_fee|htmlentities}"
+                          data-decimals="{$route.display_decimals}"
+                          data-memo-required="{if condition="$route['memo_required']"}1{else /}0{/if}">
+                    <span class="withdraw-network-main">
+                      <span class="withdraw-network-icon" aria-hidden="true">
+                        {if condition="$route['network_code'] == 'BITCOIN'"}
+                        <img src="/static/assets/images/coins/btc.png" alt=""/>
+                        {elseif condition="$route['network_code'] == 'ETHEREUM'" /}
+                        <img src="/static/assets/images/coins/eth.png" alt=""/>
+                        {elseif condition="$route['network_code'] == 'TRON'" /}
+                        <img src="/static/assets/images/coins/trx.png" alt=""/>
+                        {elseif condition="$route['network_code'] == 'DOGECOIN'" /}
+                        <img src="/static/assets/images/coins/doge.png" alt=""/>
+                        {elseif condition="$route['network_code'] == 'SOLANA'" /}
+                        <img src="/static/assets/images/coins/sol.png" alt=""/>
+                        {else /}
+                        <i class="bi bi-diagram-3"></i>
+                        {/if}
+                      </span>
+                      <span class="withdraw-network-copy">
+                        <strong>{$route.network_name|htmlentities}</strong>
+                        <small>{$route.route_code|htmlentities} · {$route.token_standard|htmlentities}</small>
+                      </span>
+                    </span>
+                    {if condition="$route['available']"}
+                    <em class="deposit-route-state is-ready">可提币</em>
+                    {else /}
+                    <em class="deposit-route-state">维护中</em>
+                    {/if}
+                  </button>
+                  {/volist}
+                </div>
+              </div>
+
+              <div class="withdraw-summary-strip withdraw-field-wide" data-withdraw-route-summary hidden>
+                <div><span><i class="bi bi-wallet2"></i>可用余额</span><strong data-withdraw-balance data-dashboard-param data-param-async="1" style="--param-skeleton-width:92px"></strong></div>
+                <div><span><i class="bi bi-arrow-down-circle"></i>最小提币</span><strong data-withdraw-min data-dashboard-param data-param-async="1" style="--param-skeleton-width:92px"></strong></div>
+                <div><span><i class="bi bi-receipt"></i>手续费</span><strong data-withdraw-fee data-dashboard-param data-param-async="1" style="--param-skeleton-width:92px"></strong></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="withdraw-form-section">
+            <div class="withdraw-section-heading">
+              <span class="withdraw-section-index">02</span>
+              <div><strong>填写收款信息</strong><small>请再次核对地址与到账数量</small></div>
+            </div>
+            <div class="withdraw-form-grid">
+              <div class="withdraw-field withdraw-field-wide">
+                <label for="withdrawAddress">收款地址</label>
+                <input id="withdrawAddress" class="security-input" type="text" autocomplete="off" spellcheck="false" placeholder="请输入收款地址" data-withdraw-address/>
+                <small>请确认地址格式及网络一致，链上交易确认后无法撤回。</small>
+              </div>
+
+              <div class="withdraw-field withdraw-field-wide" data-withdraw-memo-wrap hidden>
+                <label for="withdrawMemo">Memo / Tag</label>
+                <input id="withdrawMemo" class="security-input" type="text" autocomplete="off" placeholder="请输入 Memo / Tag" data-withdraw-memo/>
+              </div>
+
+              <div class="withdraw-field">
+                <label for="withdrawAmount">到账数量</label>
+                <div class="withdraw-amount-input">
+                  <input id="withdrawAmount" class="security-input" type="text" inputmode="decimal" autocomplete="off" placeholder="请输入数量" data-withdraw-amount/>
+                  <button type="button" data-withdraw-max>最大</button>
+                </div>
+                <small>收款地址预计收到的资产数量。</small>
+              </div>
+
+              <div class="withdraw-field">
+                <label>账户扣减</label>
+                <div class="withdraw-calculated-value dashboard-param-skeleton" data-dashboard-param data-param-async="1" data-withdraw-gross style="--param-skeleton-width:112px"></div>
+                <small>到账数量 + 手续费</small>
+              </div>
+            </div>
+          </section>
+
+          <section class="withdraw-form-section withdraw-security-section">
+            <div class="withdraw-section-heading">
+              <span class="withdraw-section-index">03</span>
+              <div><strong>安全验证</strong><small>完成账户安全校验后即可提交</small></div>
+            </div>
+            <div class="withdraw-security-content">
+              {if condition="$withdrawContext['security']['totp_required']"}
+              <div class="withdraw-field withdraw-field-wide">
+                <label for="withdrawTotp">Google Authenticator</label>
+                <input id="withdrawTotp" class="security-input withdraw-totp-input" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="请输入 6 位动态验证码" data-withdraw-totp/>
+              </div>
+              {/if}
+
+              <div class="withdraw-security-row">
+                <span class="{if condition="$withdrawContext['security']['email_verified']"}is-ok{else /}is-warn{/if}"><i class="bi bi-envelope-check"></i>安全邮箱</span>
+                <span class="{if condition="$withdrawContext['security']['kyc_level'] >= 1"}is-ok{else /}is-warn{/if}"><i class="bi bi-person-check"></i>实名认证</span>
+                <span class="{if condition="$withdrawContext['security']['totp_enabled']"}is-ok{else /}is-warn{/if}"><i class="bi bi-shield-lock"></i>动态验证</span>
+              </div>
+            </div>
+          </section>
+
+
+          <button class="profile-primary-button withdraw-submit-button" type="button" data-withdraw-submit>
+            <i class="bi bi-send-check"></i><span>提交提币申请</span>
+          </button>
+
+          <div class="withdraw-safe-note">
+            <i class="bi bi-info-circle"></i>
+            <span>提交前请确认资产、网络、收款地址和到账数量。</span>
+          </div>
+        </section>
+
+        <aside class="account-panel withdraw-side-panel">
+          <div class="withdraw-side-icon"><i class="bi bi-arrow-up-right-circle"></i></div>
+          <div class="account-panel-head withdraw-side-heading">
+            <div><h2>提币进度</h2><p>提交后可在最近提币记录中查看最新状态。</p></div>
+          </div>
+          <div class="withdraw-timeline">
+            <div class="is-active"><span>1</span><div><strong>提交申请</strong><small>锁定本次提币所需金额</small></div></div>
+            <div><span>2</span><div><strong>安全校验</strong><small>核对账户与提币信息</small></div></div>
+            <div><span>3</span><div><strong>链上处理</strong><small>交易提交至对应区块链网络</small></div></div>
+            <div><span>4</span><div><strong>完成</strong><small>更新交易哈希与最终状态</small></div></div>
+          </div>
+          <div class="withdraw-side-notice"><i class="bi bi-shield-exclamation"></i><span>请确认收款网络和地址正确，链上交易确认后无法撤回。</span></div>
+        </aside>
+      </section>
+
+      <section class="account-panel withdraw-history-panel">
+        <div class="account-panel-head withdraw-history-head">
+          <div><h2>最近提币记录</h2><p>查看处理状态与链上交易信息。</p></div>
+        </div>
+        {if condition="empty($withdrawContext['history'])"}
+        <div class="deposit-history-empty withdraw-history-empty"><i class="bi bi-clock-history"></i><span>暂无提币记录</span></div>
+        {else /}
+        <div class="asset-table-wrap">
+          <table class="asset-balance-table withdraw-history-table">
+            <thead><tr><th>资产 / 网络</th><th>到账数量</th><th>手续费</th><th>收款地址</th><th>状态</th><th>交易哈希</th><th>申请时间</th><th>操作</th></tr></thead>
+            <tbody>
+              {volist name="withdrawContext.history" id="item"}
+              <tr>
+                <td><strong>{$item.asset_code|htmlentities}</strong><small class="deposit-table-sub">{$item.route_code|htmlentities}</small></td>
+                <td><span data-dashboard-param data-param-format="decimal" data-param-value="{$item.receive_amount|htmlentities}" data-param-decimals="8" style="--param-skeleton-width:72px">{$item.receive_amount|htmlentities}</span></td>
+                <td><span data-dashboard-param data-param-format="decimal" data-param-value="{$item.platform_fee|htmlentities}" data-param-decimals="8" style="--param-skeleton-width:58px">{$item.platform_fee|htmlentities}</span></td>
+                <td><code class="withdraw-address-short">{$item.destination_short|htmlentities}</code></td>
+                <td><span class="withdraw-status-badge withdraw-status-{$item.status}" data-dashboard-param style="--param-skeleton-width:60px">{$item.status_label|htmlentities}</span></td>
+                <td>
+                  {if condition="!empty($item['tx_hash'])"}
+                    {if condition="!empty($item['explorer_tx_url'])"}<a class="deposit-tx-link" href="{$item.explorer_tx_url|htmlentities}" target="_blank" rel="noopener noreferrer"><code class="deposit-tx-hash">{$item.tx_hash|htmlentities}</code><i class="bi bi-box-arrow-up-right"></i></a>{else /}<code class="deposit-tx-hash">{$item.tx_hash|htmlentities}</code>{/if}
+                  {else /}<span class="withdraw-muted">—</span>{/if}
+                </td>
+                <td><span data-dashboard-param style="--param-skeleton-width:132px">{$item.requested_at|htmlentities}</span></td>
+                <td>{if condition="$item['can_cancel']"}<button class="withdraw-cancel-link" type="button" data-withdraw-cancel="{$item.withdrawal_no|htmlentities}">取消</button>{else /}<span class="withdraw-muted">—</span>{/if}</td>
+              </tr>
+              {/volist}
+            </tbody>
+          </table>
+        </div>
+        {/if}
+      </section>
+    </section>
+  </div>
+</main>
+<div class="auth-toast" data-auth-toast></div>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/withdraw.js?v=1.5.2"></script>
+{/block}

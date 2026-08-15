@@ -1,0 +1,63 @@
+<section aria-label="合约委托与仓位" class="positions-panel terminal-panel spot-orders-panel" data-perp-orders-panel>
+  <div class="positions-tabs">
+    <div aria-label="合约委托与仓位标签" class="positions-tab-buttons" role="tablist">
+      <button aria-controls="position-panel-open-orders" aria-selected="true" class="is-active" data-position-tab="open-orders" id="position-tab-open-orders" role="tab" type="button">当前委托 <span data-perp-open-count>0</span></button>
+      <button aria-controls="position-panel-order-history" aria-selected="false" data-position-tab="order-history" id="position-tab-order-history" role="tab" type="button">历史委托</button>
+      <button aria-controls="position-panel-open-positions" aria-selected="false" data-position-tab="open-positions" id="position-tab-open-positions" role="tab" type="button">当前仓位 <span data-perp-position-count>0</span></button>
+    </div>
+    <div aria-label="合约账户摘要" class="positions-account-summary spot-account-summary">
+      <span>可用保证金 <strong data-perp-summary-available>-- USDT</strong></span>
+      <span>冻结 <strong data-perp-summary-locked>-- USDT</strong></span>
+      <span>权益 <strong data-perp-summary-equity>-- USDT</strong></span>
+    </div>
+  </div>
+
+  <div aria-labelledby="position-tab-open-orders" class="position-tab-panel is-active" data-position-panel="open-orders" id="position-panel-open-orders" role="tabpanel">
+    <div class="positions-table-wrap">
+      <table aria-label="当前合约委托列表" class="positions-data-table spot-order-table">
+        <thead>
+          <tr>
+            <th>合约</th><th>时间</th><th>方向</th><th>委托价</th><th>数量</th><th>杠杆</th><th>只减仓</th><th>冻结保证金</th><th>执行状态</th><th>订单编号</th><th>操作</th>
+          </tr>
+        </thead>
+        <tbody data-perp-open-orders-body>
+          <tr><td class="spot-order-empty" colspan="11"><span class="data-skeleton" aria-hidden="true"></span><span>正在加载合约委托...</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div aria-labelledby="position-tab-order-history" class="position-tab-panel" data-position-panel="order-history" hidden id="position-panel-order-history" role="tabpanel">
+    <div class="perp-history-list-toolbar">
+      <span>最近最多 50 条历史委托</span>
+      <a href="/dashboard/perpetual-orders">查看全部合约订单 <i class="bi bi-arrow-up-right"></i></a>
+    </div>
+    <div class="positions-table-wrap">
+      <table aria-label="历史合约委托列表" class="positions-data-table spot-order-table">
+        <thead>
+          <tr>
+            <th>合约</th><th>时间</th><th>方向</th><th class="perp-history-average-head">成交均价</th><th>订单收益</th><th>数量</th><th>已成交</th><th>委托价</th><th>杠杆</th><th>状态</th><th>完成时间</th><th>订单编号</th>
+          </tr>
+        </thead>
+        <tbody data-perp-history-orders-body>
+          <tr><td class="spot-order-empty" colspan="12"><span class="data-skeleton" aria-hidden="true"></span><span>正在加载历史委托...</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div aria-labelledby="position-tab-open-positions" class="position-tab-panel" data-position-panel="open-positions" hidden id="position-panel-open-positions" role="tabpanel">
+    <div class="positions-table-wrap">
+      <table aria-label="当前合约仓位列表" class="positions-data-table spot-order-table">
+        <thead>
+          <tr>
+            <th>合约</th><th>方向</th><th>持仓数量</th><th>开仓均价</th><th>标记价格</th><th>未实现盈亏</th><th>初始保证金</th><th>维持保证金</th><th>预估强平价</th><th>更新时间</th><th>操作</th>
+          </tr>
+        </thead>
+        <tbody data-perp-positions-body>
+          <tr><td class="spot-order-empty" colspan="11"><span>当前没有合约持仓</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

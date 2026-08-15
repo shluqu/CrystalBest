@@ -1,0 +1,220 @@
+{extend name="layout/base" /}
+{block name="title"}充值中心 — CrystalBest{/block}
+{block name="description"}选择充值资产和网络，查看专属充值地址。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=1.5.0" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body deposit-center-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main deposit-center-main" data-deposit-root data-deposit-auto-poll="{if condition="$depositContext['allocation_state']['poll']"}1{else /}0{/if}">
+      <section class="account-panel deposit-compact-header">
+        <div class="deposit-compact-header-main">
+          <span class="account-kicker">资产中心 / 充值</span>
+          <h1>充值中心</h1>
+          <p>选择资产和网络，立即查看你的专属充值地址。</p>
+        </div>
+        <div class="deposit-compact-header-actions">
+          <a class="profile-secondary-button" href="/dashboard/assets"><i class="bi bi-wallet2"></i>资产总览</a>
+          <a class="profile-secondary-button" href="/dashboard/withdraw"><i class="bi bi-upload"></i>提币</a>
+          <a class="profile-secondary-button" href="/dashboard/transfer"><i class="bi bi-arrow-left-right"></i>资金划转</a>
+        </div>
+      </section>
+
+      <section class="deposit-top-grid">
+        {if condition="$depositContext['allocation_state']['blocked']"}
+        <section class="account-panel deposit-requirement-panel">
+          <div class="deposit-requirement-hero">
+            <span class="deposit-requirement-icon"><i class="bi bi-person-check"></i></span>
+            <div>
+              <span class="account-kicker">充值地址开通条件</span>
+              <h2>{$depositContext.allocation_state.title|htmlentities}</h2>
+              <p>{$depositContext.allocation_state.message|htmlentities}</p>
+            </div>
+          </div>
+
+          <div class="deposit-requirement-grid">
+            {volist name="depositContext.allocation_eligibility.requirements" id="requirement"}
+            <article class="deposit-requirement-item {if condition="$requirement['complete']"}is-complete{else /}is-missing{/if}">
+              <i class="bi {if condition="$requirement['complete']"}bi-check-circle-fill{else /}bi-exclamation-circle{/if}"></i>
+              <div>
+                <strong>{$requirement.label|htmlentities}</strong>
+                <span>{if condition="$requirement['complete']"}已完成{else /}{$requirement.message|htmlentities}{/if}</span>
+              </div>
+              {if condition="!$requirement['complete'] && !empty($requirement['action_url'])"}
+              <a class="profile-secondary-button" href="{$requirement.action_url|htmlentities}">{$requirement.action_label|htmlentities}</a>
+              {/if}
+            </article>
+            {/volist}
+          </div>
+
+          <div class="security-note-panel deposit-requirement-note">
+            <i class="bi bi-lightning-charge"></i>
+            <div><strong>满足条件后自动处理</strong><p>无需返回本页点击“生成地址”。后台 User Worker 检测到条件满足后会自动分配 BTC、Ethereum、Tron、DOGE、SOL 地址组。</p></div>
+          </div>
+        </section>
+        {else /}
+        <section class="account-panel deposit-config-panel deposit-priority-panel">
+          <div class="account-panel-head">
+            <div>
+              <h2>第一步：选择充值资产与网络</h2>
+              <p>请务必选择正确网络，否则资产可能无法找回。</p>
+            </div>
+          </div>
+
+          <div class="deposit-section-group">
+            <label class="deposit-field-label" for="depositAssetSelect">充值资产</label>
+            <div class="deposit-select-wrap">
+              <select class="deposit-select" id="depositAssetSelect" data-deposit-asset-select>
+                <option value="BTC" {if condition="$selectedAsset == 'BTC'"}selected{/if}>BTC · Bitcoin</option>
+                <option value="ETH" {if condition="$selectedAsset == 'ETH'"}selected{/if}>ETH · Ethereum</option>
+                <option value="USDT" {if condition="$selectedAsset == 'USDT'"}selected{/if}>USDT · Tether USD</option>
+                <option value="DOGE" {if condition="$selectedAsset == 'DOGE'"}selected{/if}>DOGE · Dogecoin</option>
+                <option value="SOL" {if condition="$selectedAsset == 'SOL'"}selected{/if}>SOL · Solana</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="deposit-section-group">
+            <div class="deposit-section-caption">
+              <strong>可用网络</strong>
+              <span>根据资产自动筛选</span>
+            </div>
+
+            <div class="deposit-network-list" data-deposit-network-list>
+              {volist name="depositContext.routes" id="route"}
+              <button type="button"
+                      class="deposit-network-option"
+                      {if condition="$route['asset_code'] != $selectedAsset"}hidden{/if}
+                      data-deposit-route
+                      data-asset="{$route.asset_code|htmlentities}"
+                      data-route="{$route.route_code|htmlentities}"
+                      data-network="{$route.network_code|htmlentities}"
+                      data-network-name="{$route.network_name|htmlentities}"
+                      data-standard="{$route.token_standard|htmlentities}"
+                      data-min="{$route.effective_min_deposit_display|htmlentities}"
+                      data-confirmations="{$route.effective_required_confirmations}"
+                      data-available="{if condition="$route['available']"}1{else /}0{/if}"
+                      data-reason="{$route.availability_reason|htmlentities}"
+                      data-address="{if condition="$route['address_assigned']"}{$route.address.address|htmlentities}{/if}">
+                <span>
+                  <strong>{$route.network_name|htmlentities}</strong>
+                  <small>{$route.route_code|htmlentities} · {$route.token_standard|htmlentities}</small>
+                </span>
+                {if condition="$route['available']"}
+                <em class="deposit-route-state is-ready">可充值</em>
+                {else /}
+                <em class="deposit-route-state">暂不可用</em>
+                {/if}
+              </button>
+              {/volist}
+            </div>
+          </div>
+
+          <div class="deposit-tip-inline-list">
+            <span><i class="bi bi-shield-check"></i>仅充值对应链资产</span>
+            <span><i class="bi bi-hourglass-split"></i>到账需等待链上确认</span>
+            <span><i class="bi bi-info-circle"></i>建议先小额测试</span>
+          </div>
+        </section>
+
+        <section class="account-panel deposit-address-panel deposit-priority-panel">
+          <div class="account-panel-head">
+            <div>
+              <h2>第二步：充值地址</h2>
+              <p data-deposit-route-summary>请选择充值资产和网络。</p>
+            </div>
+          </div>
+
+          <div class="deposit-address-empty" data-deposit-empty>
+            <i class="bi bi-wallet2"></i>
+            <strong>尚未选择充值网络</strong>
+            <span>选择左侧网络后，这里会直接展示已经自动分配的充值地址。</span>
+          </div>
+
+          <div class="deposit-address-content" data-deposit-content hidden>
+            <div class="deposit-address-meta-grid">
+              <div><span>网络</span><strong data-deposit-network-value data-dashboard-param data-param-async="1" style="--param-skeleton-width:88px"></strong></div>
+              <div><span>最小充值</span><strong data-deposit-min-value data-dashboard-param data-param-async="1" style="--param-skeleton-width:92px"></strong></div>
+              <div><span>到账确认数</span><strong data-deposit-confirmations-value data-dashboard-param data-param-async="1" style="--param-skeleton-width:48px"></strong></div>
+            </div>
+
+            <div class="deposit-address-box" data-deposit-address-box hidden>
+              <span>充值地址</span>
+              <code data-deposit-address-value></code>
+              <div class="deposit-action-row">
+                <button type="button" class="profile-secondary-button" data-deposit-copy><i class="bi bi-copy"></i>复制地址</button>
+              </div>
+            </div>
+
+            <div class="deposit-address-allocation" data-deposit-allocation>
+              <i class="bi bi-arrow-repeat"></i>
+              <div>
+                <strong>{$depositContext.allocation_state.title|htmlentities}</strong>
+                <p data-deposit-allocation-message>{$depositContext.allocation_state.message|htmlentities}</p>
+              </div>
+            </div>
+
+            <div class="security-message" data-deposit-message hidden></div>
+
+            <div class="deposit-mini-note-grid">
+              <div class="deposit-mini-note"><i class="bi bi-check2-circle"></i><span>地址由后台自动分配，无需手动生成</span></div>
+              <div class="deposit-mini-note"><i class="bi bi-exclamation-triangle"></i><span>请勿向错误网络充值</span></div>
+            </div>
+          </div>
+        </section>
+        {/if}
+      </section>
+
+      <section class="account-panel deposit-history-panel">
+        <div class="account-panel-head">
+          <div>
+            <h2>最近充值记录</h2>
+            <p>仅显示最近链上检测到的充值记录。</p>
+          </div>
+        </div>
+
+        {if condition="empty($depositContext['history'])"}
+        <div class="deposit-history-empty"><i class="bi bi-clock-history"></i><span>暂无充值记录</span></div>
+        {else /}
+        <div class="asset-table-wrap">
+          <table class="asset-balance-table deposit-history-table">
+            <thead>
+              <tr><th>资产 / 网络</th><th>数量</th><th>确认数</th><th>状态</th><th>交易哈希</th><th>检测时间</th></tr>
+            </thead>
+            <tbody>
+              {volist name="depositContext.history" id="item"}
+              <tr>
+                <td><strong>{$item.asset_code|htmlentities}</strong><small class="deposit-table-sub">{$item.route_code|htmlentities}</small></td>
+                <td><span data-dashboard-param data-param-format="decimal" data-param-value="{$item.amount|htmlentities}" data-param-decimals="8" style="--param-skeleton-width:72px">{$item.amount|htmlentities}</span></td>
+                <td><span data-dashboard-param style="--param-skeleton-width:58px">{$item.confirmation_display|htmlentities}</span></td>
+                <td><span class="deposit-status-badge deposit-status-{$item.status}" data-dashboard-param style="--param-skeleton-width:54px">{$item.status_label|htmlentities}</span></td>
+                <td>
+                  {if condition="!empty($item['explorer_tx_url'])"}
+                  <a class="deposit-tx-link" href="{$item.explorer_tx_url|htmlentities}" target="_blank" rel="noopener noreferrer">
+                    <code class="deposit-tx-hash">{$item.tx_hash|htmlentities}</code><i class="bi bi-box-arrow-up-right"></i>
+                  </a>
+                  {else /}
+                  <code class="deposit-tx-hash">{$item.tx_hash|htmlentities}</code>
+                  {/if}
+                </td>
+                <td><span data-dashboard-param style="--param-skeleton-width:132px">{$item.detected_at|htmlentities}</span></td>
+              </tr>
+              {/volist}
+            </tbody>
+          </table>
+        </div>
+        {/if}
+      </section>
+    </section>
+  </div>
+</main>
+<div class="auth-toast" data-auth-toast></div>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/deposit.js?v=1.5.0"></script>
+{/block}

@@ -1,0 +1,84 @@
+{extend name="layout/base" /}
+{block name="title"}自选市场 — CrystalBest{/block}
+{block name="description"}管理个人收藏的现货与永续合约市场。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=20260812-favorites1" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body favorite-center-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main favorite-center-main">
+      <section class="account-hero-panel favorite-center-hero">
+        <div class="account-hero-copy">
+          <span class="account-kicker">TRADING / FAVORITES</span>
+          <h1>自选市场</h1>
+          <p>收藏常看的现货与永续市场；市场页和交易终端会同步显示同一份个人自选。</p>
+        </div>
+        <div class="favorite-hero-actions">
+          <a class="profile-primary-button" href="/markets"><i class="bi bi-star"></i>添加自选</a>
+        </div>
+      </section>
+
+      <section class="favorite-stat-grid">
+        <article class="account-panel favorite-stat-card">
+          <span>全部自选</span><strong data-favorite-summary-total>{$favoriteSummary.total}</strong><small>现货 + 永续</small>
+        </article>
+        <article class="account-panel favorite-stat-card">
+          <span>现货市场</span><strong data-favorite-summary-spot>{$favoriteSummary.spot}</strong><small>Spot</small>
+        </article>
+        <article class="account-panel favorite-stat-card">
+          <span>合约市场</span><strong data-favorite-summary-perpetual>{$favoriteSummary.perpetual}</strong><small>USDT 永续</small>
+        </article>
+      </section>
+
+      <section class="account-panel favorite-list-panel">
+        <div class="account-panel-head favorite-section-head">
+          <div>
+            <h2>我的自选</h2>
+            <p>点击星标可移除；最新价和 24h 涨跌由实时行情自动更新。</p>
+          </div>
+          <a class="favorite-market-link" href="/markets">市场行情 <i class="bi bi-arrow-up-right"></i></a>
+        </div>
+
+        <div class="spot-order-empty favorite-empty" data-favorites-dashboard-empty {if condition="!empty($favorites)"}hidden{/if}>
+          <i class="bi bi-star"></i><strong>还没有自选市场</strong><span>前往市场页或交易页点击 ☆ 添加常看的币种。</span><a href="/markets">去添加</a>
+        </div>
+
+        <div class="order-scroll-viewport favorite-table-scroll order-horizontal-drag" data-order-horizontal-drag {if condition="empty($favorites)"}hidden{/if}>
+          <table class="order-compact-table favorite-table">
+            <colgroup><col class="col-market"><col class="col-price"><col class="col-change"><col class="col-time"><col class="col-action"></colgroup>
+            <thead><tr><th>市场 / 类型</th><th>最新价</th><th>24h 涨跌</th><th>加入时间</th><th class="order-sticky-action">操作</th></tr></thead>
+            <tbody data-favorites-dashboard-list>
+              {volist name="favorites" id="market"}
+              <tr data-favorite-dashboard-row data-market-realtime data-market-type="{$market.market_type|htmlentities}" data-market-symbol="{$market.symbol|htmlentities}">
+                <td>
+                  <span class="favorite-market-name"><img alt="{$market.base_name|htmlentities}" class="coin-logo" src="/static/assets/images/coins/{$market.base_code|strtolower}.png" onerror="this.onerror=null;this.hidden=true;"><span><strong>{$market.pair|htmlentities}</strong><small>{if condition="$market['market_type'] == 'spot'"}现货{else /}USDT 永续{/if}</small></span></span>
+                </td>
+                <td><span class="favorite-live-price" data-market-price>--</span></td>
+                <td><span class="favorite-live-change" data-market-change>--</span></td>
+                <td><span class="favorite-added-time">{$market.favorited_at|htmlentities}</span></td>
+                <td class="order-sticky-action">
+                  <div class="favorite-row-actions">
+                    <button class="favorite-remove-button is-active" type="button" data-favorite-toggle data-favorite-market-type="{$market.market_type|htmlentities}" data-favorite-symbol="{$market.symbol|htmlentities}" aria-pressed="true"><i class="bi bi-star-fill"></i><span>移除</span></button>
+                    <a class="spot-order-trade-link" href="{$market.route|htmlentities}">交易</a>
+                  </div>
+                </td>
+              </tr>
+              {/volist}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </div>
+</main>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/market-favorites.js?v=20260812-favorites1"></script>
+<script src="/static/assets/js/market-realtime.js?v=4.0.0"></script>
+<script src="/static/assets/js/order-table-horizontal-drag.js?v=20260811-trade-history-v9.3"></script>
+{/block}

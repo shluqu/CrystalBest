@@ -1,0 +1,67 @@
+<aside class="account-sidebar">
+  <div class="account-sidebar-card account-sidebar-profile">
+    <div class="account-dashboard-avatar account-dashboard-avatar-lg">
+      {if condition="$currentUser.avatar_url"}<img alt="" referrerpolicy="no-referrer" src="{$currentUser.avatar_url|htmlentities}"/>{else /}<i class="bi bi-person-fill"></i>{/if}
+    </div>
+    <div class="account-sidebar-usertext">
+      <strong data-dashboard-param style="--param-skeleton-width:112px">{if condition="$currentUser.nickname"}{$currentUser.nickname|htmlentities}{else /}CrystalBest 用户{/if}</strong>
+      <span data-dashboard-param style="--param-skeleton-width:132px">{$currentUser.email_masked|htmlentities}</span>
+      <small>UID：<span data-dashboard-param style="--param-skeleton-width:112px">{$currentUser.uid|htmlentities}</span></small>
+    </div>
+    <div class="account-sidebar-tags">
+      <span class="account-tag">KYC Lv.<span data-dashboard-param style="--param-skeleton-width:18px">{$currentUser.kyc_level}</span></span>
+      <span class="account-tag" data-dashboard-param style="--param-skeleton-width:54px">{if condition="$currentUser.social_provider"}{$currentUser.social_provider|htmlentities}{else /}Email{/if}</span>
+      <button class="account-secondary-action account-sidebar-logout" data-dashboard-logout type="button"><i class="bi bi-box-arrow-right"></i>退出登录</button>
+    </div>
+  </div>
+
+  <nav class="account-side-nav" aria-label="用户中心菜单" data-account-side-nav>
+    <section class="account-side-group {if condition="$activeGroup == 'overview'"}is-open{/if}" data-account-nav-group="overview">
+      <button class="account-side-group-toggle" data-account-nav-toggle type="button" aria-expanded="{if condition="$activeGroup == 'overview'"}true{else /}false{/if}">
+        <span><i class="bi bi-grid"></i>账户总览</span><i class="bi bi-chevron-down account-side-chevron"></i>
+      </button>
+      <div class="account-side-group-items">
+        <a {if condition="$activeItem == 'dashboard'"}class="is-active"{/if} href="/dashboard"><i class="bi bi-speedometer2"></i><span>仪表盘首页</span></a>
+        <a {if condition="$activeItem == 'profile'"}class="is-active"{/if} href="/dashboard/profile"><i class="bi bi-person-vcard"></i><span>个人资料</span></a>
+        <a {if condition="$activeItem == 'notifications'"}class="is-active"{/if} href="/dashboard/notifications"><i class="bi bi-bell"></i><span>消息通知</span></a>
+      </div>
+    </section>
+
+    <section class="account-side-group {if condition="$activeGroup == 'assets'"}is-open{/if}" data-account-nav-group="assets">
+      <button class="account-side-group-toggle" data-account-nav-toggle type="button" aria-expanded="{if condition="$activeGroup == 'assets'"}true{else /}false{/if}">
+        <span><i class="bi bi-wallet2"></i>资产中心</span><i class="bi bi-chevron-down account-side-chevron"></i>
+      </button>
+      <div class="account-side-group-items">
+        <a {if condition="$activeItem == 'assets'"}class="is-active"{/if} href="/dashboard/assets"><i class="bi bi-wallet2"></i><span>资产总览</span></a>
+        <a {if condition="$activeItem == 'deposit'"}class="is-active"{/if} href="/dashboard/deposit"><i class="bi bi-download"></i><span>充值</span></a>
+        <a {if condition="$activeItem == 'withdraw'"}class="is-active"{/if} href="/dashboard/withdraw"><i class="bi bi-upload"></i><span>提币</span></a>
+        <a {if condition="$activeItem == 'transfer'"}class="is-active"{/if} href="/dashboard/transfer"><i class="bi bi-arrow-left-right"></i><span>资金划转</span></a>
+      </div>
+    </section>
+
+    <section class="account-side-group {if condition="$activeGroup == 'trading'"}is-open{/if}" data-account-nav-group="trading">
+      <button class="account-side-group-toggle" data-account-nav-toggle type="button" aria-expanded="{if condition="$activeGroup == 'trading'"}true{else /}false{/if}">
+        <span><i class="bi bi-bar-chart"></i>交易中心</span><i class="bi bi-chevron-down account-side-chevron"></i>
+      </button>
+      <div class="account-side-group-items">
+        <a {if condition="$activeItem == 'spot-orders'"}class="is-active"{/if} href="/dashboard/spot-orders"><i class="bi bi-graph-up"></i><span>现货订单</span></a>
+        <a {if condition="$activeItem == 'perpetual-orders'"}class="is-active"{/if} href="/dashboard/perpetual-orders"><i class="bi bi-lightning-charge"></i><span>合约订单</span></a>
+        <a {if condition="$activeItem == 'trade-history'"}class="is-active"{/if} href="/dashboard/trade-history"><i class="bi bi-clock-history"></i><span>成交历史</span></a>
+        <a {if condition="$activeItem == 'positions'"}class="is-active"{/if} href="/dashboard/positions"><i class="bi bi-collection"></i><span>持仓管理</span></a>
+        <a {if condition="$activeItem == 'favorites'"}class="is-active"{/if} href="/dashboard/favorites"><i class="bi bi-star"></i><span>自选市场</span></a>
+      </div>
+    </section>
+
+    <section class="account-side-group {if condition="$activeGroup == 'security'"}is-open{/if}" data-account-nav-group="security">
+      <button class="account-side-group-toggle" data-account-nav-toggle type="button" aria-expanded="{if condition="$activeGroup == 'security'"}true{else /}false{/if}">
+        <span><i class="bi bi-shield-lock"></i>安全与身份</span><i class="bi bi-chevron-down account-side-chevron"></i>
+      </button>
+      <div class="account-side-group-items">
+        <a {if condition="$activeItem == 'security'"}class="is-active"{/if} href="/dashboard/security"><i class="bi bi-shield-lock"></i><span>安全中心</span></a>
+        <a {if condition="$activeItem == 'login-devices'"}class="is-active"{/if} href="/dashboard/security/devices"><i class="bi bi-laptop"></i><span>登录设备</span></a>
+        <a {if condition="$activeItem == 'kyc'"}class="is-active"{/if} href="/dashboard/kyc"><i class="bi bi-patch-check"></i><span>身份认证 KYC</span></a>
+        <a {if condition="$activeItem == 'api'"}class="is-active"{/if} href="/dashboard/api"><i class="bi bi-code-square"></i><span>API 管理</span></a>
+      </div>
+    </section>
+</nav>
+</aside>

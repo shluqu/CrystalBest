@@ -1,0 +1,152 @@
+{extend name="layout/base" /}
+{block name="title"}登录设备 — CrystalBest{/block}
+{block name="description"}管理当前登录设备并查看最近 30 条登录会话历史。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=1.4.1" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body security-center-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main login-history-main" data-login-devices-root data-totp-enabled="{$currentUser.totp_enabled}">
+      <section class="account-hero-panel login-history-hero">
+        <div class="account-hero-copy">
+          <span class="account-kicker">LOGIN DEVICES</span>
+          <h1>登录设备</h1>
+          <p>在一个页面统一管理当前有效设备和最近 30 条历史登录记录。当前设备会明确标记，已退出、被撤销和已过期会话仍保留用于安全回溯。</p>
+          <div class="account-hero-meta">
+            <span><i class="bi bi-laptop"></i><span data-dashboard-param style="--param-skeleton-width:18px">{$activeSessionCount}</span> 个活动会话</span>
+            <span><i class="bi bi-clock-history"></i>最近 <span data-dashboard-param style="--param-skeleton-width:24px">{$historyCount}</span> 条历史记录</span>
+            <span><i class="bi bi-shield-check"></i>仅当前账户可查看</span>
+          </div>
+        </div>
+        <div class="login-history-actions">
+          {if condition="$activeSessionCount > 1"}
+          <button class="security-action-button is-danger" data-revoke-other-sessions type="button"><i class="bi bi-box-arrow-right"></i>退出其他设备</button>
+          {else /}
+          <button class="security-action-button" disabled type="button"><i class="bi bi-check2-circle"></i>仅当前设备</button>
+          {/if}
+        </div>
+      </section>
+
+      <section class="account-panel login-devices-panel">
+        <div class="account-panel-head security-panel-head">
+          <div>
+            <h2>当前登录设备</h2>
+            <p>这里只显示仍然有效的 Session。你可以单独退出其他设备；当前设备需要使用侧栏中的“退出登录”。</p>
+          </div>
+          <span class="login-devices-count"><span data-dashboard-param style="--param-skeleton-width:18px">{$activeSessionCount}</span> 个活动会话</span>
+        </div>
+
+        <div class="security-session-list login-devices-active-list">
+          {if condition="empty($activeSessions)"}
+          <div class="security-empty">暂无活动登录设备</div>
+          {else /}
+          {foreach $activeSessions as $item}
+          <article class="security-session-row login-devices-active-row">
+            <div class="security-session-icon">
+              {if condition="$item['platform'] == 'ios'"}
+              <i class="bi bi-phone"></i>
+              {elseif condition="$item['platform'] == 'android'" /}
+              <i class="bi bi-phone-fill"></i>
+              {else /}
+              <i class="bi bi-laptop"></i>
+              {/if}
+            </div>
+            <div class="security-session-copy">
+              <div>
+                <strong data-dashboard-param style="--param-skeleton-width:96px">{$item.device_name|htmlentities}</strong>
+                {if condition="$item.current"}<span class="security-session-badge">当前</span>{/if}
+              </div>
+              <span>
+                IP：<span data-dashboard-param style="--param-skeleton-width:90px">{if condition="$item.ip"}{$item.ip|htmlentities}{else /}--{/if}</span>
+                {if condition="$item.country_code"} · <span data-dashboard-param style="--param-skeleton-width:24px">{$item.country_code|htmlentities}</span>{/if}
+                · 最近活动：<span data-dashboard-param style="--param-skeleton-width:132px">{$item.last_active_at|htmlentities}</span>
+              </span>
+              <small>登录：<span data-dashboard-param style="--param-skeleton-width:132px">{$item.created_at|htmlentities}</span> · 到期：<span data-dashboard-param style="--param-skeleton-width:132px">{$item.expires_at|htmlentities}</span> · 认证等级 Lv.<span data-dashboard-param style="--param-skeleton-width:18px">{$item.auth_level}</span></small>
+              <small class="login-devices-agent">{$item.user_agent|htmlentities}</small>
+            </div>
+            <div class="security-session-action">
+              {if condition="$item.current"}
+              <span class="security-current-device">当前设备</span>
+              {else /}
+              <button class="security-session-revoke" data-session-revoke="{$item.id|htmlentities}" type="button">退出设备</button>
+              {/if}
+            </div>
+          </article>
+          {/foreach}
+          {/if}
+        </div>
+      </section>
+
+      <section class="account-panel login-history-panel">
+        <div class="account-panel-head security-panel-head">
+          <div>
+            <h2>最近登录历史</h2>
+            <p>展示最近 30 条 Session，包括当前、活动、主动退出、安全操作撤销和过期记录。历史记录只用于查看，不会被手动删除。</p>
+          </div>
+          <span class="login-devices-count">最近 <span data-dashboard-param style="--param-skeleton-width:24px">{$historyCount}</span> 条</span>
+        </div>
+
+        <div class="login-history-list">
+          {if condition="empty($loginHistory)"}
+          <div class="security-empty">暂无登录历史</div>
+          {else /}
+          {foreach $loginHistory as $item}
+          <article class="login-history-row">
+            <div class="login-history-device-icon">
+              {if condition="$item['platform'] == 'ios'"}
+              <i class="bi bi-phone"></i>
+              {elseif condition="$item['platform'] == 'android'" /}
+              <i class="bi bi-phone-fill"></i>
+              {else /}
+              <i class="bi bi-laptop"></i>
+              {/if}
+            </div>
+            <div class="login-history-main-copy">
+              <div class="login-history-title-line">
+                <strong data-dashboard-param style="--param-skeleton-width:96px">{$item.device_name|htmlentities}</strong>
+                <span class="login-history-status is-{$item.status|htmlentities}" data-dashboard-param style="--param-skeleton-width:54px">{$item.status_label|htmlentities}</span>
+              </div>
+              <div class="login-history-meta">
+                <span><i class="bi bi-calendar3"></i>登录：<span data-dashboard-param style="--param-skeleton-width:132px">{$item.created_at|htmlentities}</span></span>
+                <span><i class="bi bi-activity"></i>最后活动：<span data-dashboard-param style="--param-skeleton-width:132px">{$item.last_active_at|htmlentities}</span></span>
+                <span><i class="bi bi-globe2"></i>IP：<span data-dashboard-param style="--param-skeleton-width:90px">{if condition="$item.ip"}{$item.ip|htmlentities}{else /}--{/if}</span></span>
+                {if condition="$item.country_code"}<span><i class="bi bi-geo-alt"></i><span data-dashboard-param style="--param-skeleton-width:24px">{$item.country_code|htmlentities}</span></span>{/if}
+              </div>
+              <small class="login-history-agent">{$item.user_agent|htmlentities}</small>
+            </div>
+            <div class="login-history-side">
+              <span>认证等级 Lv.<span data-dashboard-param style="--param-skeleton-width:18px">{$item.auth_level}</span></span>
+              <small>到期：<span data-dashboard-param style="--param-skeleton-width:132px">{$item.expires_at|htmlentities}</span></small>
+              {if condition="$item.revoked_at"}<small>退出：<span data-dashboard-param style="--param-skeleton-width:132px">{$item.revoked_at|htmlentities}</span></small>{/if}
+            </div>
+          </article>
+          {/foreach}
+          {/if}
+        </div>
+      </section>
+
+      <section class="security-note-panel">
+        <i class="bi bi-info-circle"></i>
+        <div><strong>设备管理与历史记录已经合并</strong><p>上方用于管理当前仍有效的登录设备；下方保留最近 30 条完整历史。安全中心不再重复展示设备列表，所有设备操作集中在本页面。</p></div>
+      </section>
+    </section>
+  </div>
+</main>
+
+<div class="security-modal-backdrop" data-login-devices-modal hidden>
+  <section class="security-modal" role="dialog" aria-modal="true" aria-labelledby="login-devices-modal-title">
+    <button class="security-modal-close" data-login-devices-close aria-label="关闭" type="button"><i class="bi bi-x-lg"></i></button>
+    <div data-login-devices-modal-body></div>
+  </section>
+</div>
+<div class="auth-toast" data-auth-toast></div>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/login-devices.js"></script>
+{/block}

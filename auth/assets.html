@@ -1,0 +1,125 @@
+{extend name="layout/base" /}
+{block name="title"}资产总览 — CrystalBest{/block}
+{block name="description"}查看 CrystalBest 账户资产、余额与实时估值。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=1.4.1" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body asset-overview-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main asset-center-main" data-asset-overview-root>
+      <section class="account-hero-panel asset-center-hero">
+        <div class="account-hero-copy">
+          <span class="account-kicker">ASSET CENTER</span>
+          <h1>资产总览</h1>
+          <p>统一查看现货与永续账户资产，实时掌握可用、冻结及估值情况。</p>
+        </div>
+        <div class="asset-custody-badge">
+          <span>托管服务</span>
+          <strong data-dashboard-param style="--param-skeleton-width:156px">{$assetOverview.custody_provider|htmlentities}</strong>
+          <small>专属地址 · 安全托管</small>
+        </div>
+      </section>
+
+      <section class="asset-summary-grid">
+        <article class="account-panel asset-summary-card">
+          <span>总资产估值</span>
+          <strong class="dashboard-param-skeleton" data-dashboard-param data-param-async="1" data-assets-total-value style="--param-skeleton-width:168px"></strong>
+          <small data-assets-price-status>正在更新实时估值</small>
+        </article>
+        <article class="account-panel asset-summary-card">
+          <span>现货账户</span>
+          <strong class="dashboard-param-skeleton" data-dashboard-param data-param-async="1" data-assets-spot-value style="--param-skeleton-width:148px"></strong>
+          <small>可用余额 + 冻结余额</small>
+        </article>
+        <article class="account-panel asset-summary-card">
+          <span>永续账户</span>
+          <strong class="dashboard-param-skeleton" data-dashboard-param data-param-async="1" data-assets-perp-value style="--param-skeleton-width:148px"></strong>
+          <small>全仓永续 · USDT 保证金</small>
+        </article>
+      </section>
+
+      <section class="account-panel asset-balance-panel">
+        <div class="account-panel-head asset-panel-head-actions">
+          <div>
+            <h2>资产余额</h2>
+            <p>查看各资产余额与账户分布。</p>
+          </div>
+          <div class="asset-head-actions">
+            <a class="profile-secondary-button" href="/dashboard/deposit"><i class="bi bi-download"></i>充值</a>
+            <a class="profile-secondary-button" href="/dashboard/withdraw"><i class="bi bi-upload"></i>提币</a>
+            <a class="profile-secondary-button" href="/dashboard/transfer"><i class="bi bi-arrow-left-right"></i>资金划转</a>
+          </div>
+        </div>
+
+        <div class="asset-table-wrap">
+          <table class="asset-balance-table">
+            <thead>
+              <tr>
+                <th>资产</th>
+                <th>总额</th>
+                <th>可用</th>
+                <th>冻结</th>
+                <th>现货</th>
+                <th>永续</th>
+                <th>估值</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {volist name="assetOverview.assets" id="asset"}
+              <tr data-asset-row
+                  data-code="{$asset.code|htmlentities}"
+                  data-decimals="{$asset.display_decimals}"
+                  data-total="{$asset.total|htmlentities}"
+                  data-available="{$asset.available_total|htmlentities}"
+                  data-locked="{$asset.locked_total|htmlentities}"
+                  data-spot="{$asset.spot.total|htmlentities}"
+                  data-perp="{$asset.perpetual.total|htmlentities}">
+                <td>
+                  <div class="asset-token-cell">
+                    <span class="asset-token-mark"><img alt="Bitcoin" class="coin-logo contract-market-logo" decoding="async" height="28" src="/static/assets/images/coins/{$asset.code|lower|htmlentities}.png" width="28"></span>
+                    <span><strong>{$asset.code|htmlentities}</strong><small>{$asset.name|htmlentities}</small></span>
+                  </div>
+                </td>
+                <td><strong class="dashboard-param-skeleton" data-dashboard-param data-param-async="1" data-asset-amount="total" style="--param-skeleton-width:88px"></strong></td>
+                <td><span class="dashboard-param-skeleton" data-dashboard-param data-param-async="1" data-asset-amount="available" style="--param-skeleton-width:76px"></span></td>
+                <td><span class="dashboard-param-skeleton" data-dashboard-param data-param-async="1" data-asset-amount="locked" style="--param-skeleton-width:76px"></span></td>
+                <td><span class="dashboard-param-skeleton" data-dashboard-param data-param-async="1" data-asset-amount="spot" style="--param-skeleton-width:76px"></span></td>
+                <td><span class="dashboard-param-skeleton" data-dashboard-param data-param-async="1" data-asset-amount="perp" style="--param-skeleton-width:76px"></span></td>
+                <td><span class="dashboard-param-skeleton" data-dashboard-param data-param-async="1" data-asset-value style="--param-skeleton-width:84px"></span></td>
+                <td>
+                  <div class="asset-row-actions">
+                    {if condition="$asset['deposit_enabled']"}<a href="/dashboard/deposit?asset={$asset.code|htmlentities}">充值</a>{/if}
+                    {if condition="$asset['withdraw_enabled']"}<a href="/dashboard/withdraw?asset={$asset.code|htmlentities}">提币</a>{/if}
+                    {if condition="$asset['code'] == 'USDT'"}<a href="/dashboard/transfer">划转</a>{/if}
+                  </div>
+                </td>
+              </tr>
+              {/volist}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="asset-info-grid">
+        <article class="account-panel asset-info-card">
+          <i class="bi bi-journal-check"></i>
+          <div><strong>资金记录完整</strong><p>每笔资金变动均保留完整记录，便于核对与追踪。</p></div>
+        </article>
+        <article class="account-panel asset-info-card">
+          <i class="bi bi-arrow-repeat"></i>
+          <div><strong>实时资产估值</strong><p>行情仅用于资产估值，不影响实际持有数量。</p></div>
+        </article>
+      </section>
+    </section>
+  </div>
+</main>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/assets-overview.js?v=20260812-adaptive1"></script>
+{/block}

@@ -1,0 +1,173 @@
+{extend name="layout/base" /}
+{block name="title"}资金划转 — CrystalBest{/block}
+{block name="description"}在 CrystalBest 现货与永续账户之间划转 USDT。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=1.5.2" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body asset-transfer-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main asset-center-main" data-transfer-root
+      data-spot-available="{$transferContext.spot_available|htmlentities}"
+      data-perp-available="{$transferContext.perpetual_available|htmlentities}"
+      data-perp-out-enabled="{if condition="$transferContext.perpetual_transfer_out_enabled"}1{else /}0{/if}">
+      <section class="account-hero-panel asset-center-hero">
+        <div class="account-hero-copy">
+          <span class="account-kicker">INTERNAL TRANSFER</span>
+          <h1>资金划转</h1>
+          <p>在现货账户与永续账户之间快速划转 USDT，账户余额将即时更新。</p>
+        </div>
+        <div class="asset-custody-badge">
+          <span>划转资产</span>
+          <strong data-dashboard-param style="--param-skeleton-width:54px">{$transferContext.asset.code|htmlentities}</strong>
+          <small>同一用户内部账户 · 即时到账</small>
+        </div>
+      </section>
+
+      <section class="asset-transfer-layout">
+        <article class="account-panel asset-transfer-panel">
+          <div class="account-panel-head">
+            <div><h2>账户划转</h2><p>选择划转方向并输入数量，确认后即可完成账户间划转。</p></div>
+          </div>
+
+          <form data-transfer-form>
+            <div class="transfer-account-stack">
+              <div class="transfer-account-box" data-transfer-from-box>
+                <span>从</span>
+                <strong data-transfer-from-label>现货账户</strong>
+                <small>可用 <b data-transfer-source-available data-dashboard-param data-param-async="1" style="--param-skeleton-width:72px"></b> USDT</small>
+              </div>
+              <button class="transfer-swap-button" data-transfer-swap type="button" aria-label="交换划转方向"><i class="bi bi-arrow-down-up"></i></button>
+              <div class="transfer-account-box" data-transfer-to-box>
+                <span>到</span>
+                <strong data-transfer-to-label>永续合约账户</strong>
+                <small>全仓 USDT 保证金账户</small>
+              </div>
+            </div>
+
+            <input data-transfer-direction name="direction" type="hidden" value="spot_to_perpetual"/>
+
+            <label class="transfer-amount-field">
+              <span>划转数量</span>
+              <div class="transfer-amount-input">
+                <input autocomplete="off" data-transfer-amount inputmode="decimal" name="amount" placeholder="0.00" type="text"/>
+                <strong>USDT</strong>
+                <button data-transfer-all type="button">全部</button>
+              </div>
+              <small>请输入需要划转的 USDT 数量。</small>
+            </label>
+
+            {if condition="!$transferContext.perpetual_transfer_out_enabled"}
+            <div class="transfer-risk-note" data-transfer-risk-note>
+              <i class="bi bi-shield-exclamation"></i>
+              <span data-dashboard-param style="--param-skeleton-width:220px">{$transferContext.perpetual_transfer_out_reason|htmlentities}</span>
+            </div>
+            {else /}
+            <div class="transfer-risk-note" data-transfer-risk-note hidden></div>
+            {/if}
+
+            <button class="auth-primary-button transfer-submit-button" data-transfer-submit type="submit">
+              <span>确认划转</span><i class="bi bi-arrow-right"></i>
+            </button>
+          </form>
+        </article>
+
+        <aside class="account-panel transfer-balance-panel">
+          <div class="account-panel-head"><div><h2>USDT 可用余额</h2><p>查看当前可用于划转的 USDT 余额。</p></div></div>
+          <div class="transfer-balance-list">
+            <div><span>现货账户</span><strong data-transfer-spot-balance data-dashboard-param data-param-async="1" style="--param-skeleton-width:82px"></strong><small>USDT</small></div>
+            <div><span>永续账户</span><strong data-transfer-perp-balance data-dashboard-param data-param-async="1" style="--param-skeleton-width:82px"></strong><small>USDT</small></div>
+          </div>
+          <div class="transfer-safety-copy">
+            <i class="bi bi-lock"></i>
+            <p>账户内部划转即时完成，每笔资金变动均保留完整记录。</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="account-panel transfer-history-panel">
+        <div class="account-panel-head">
+          <div><h2>最近划转</h2><p>查看最近的账户划转记录。</p></div>
+        </div>
+        {if condition="empty($transferContext.history)"}
+        <div class="transfer-empty-state"><i class="bi bi-arrow-left-right"></i><strong>暂无划转记录</strong><span>完成第一笔 USDT 内部划转后会显示在这里。</span></div>
+        {else /}
+        <div class="asset-table-wrap">
+          <table class="asset-balance-table transfer-history-table">
+            <thead><tr><th>时间</th><th>方向</th><th>数量</th><th>状态</th><th>划转编号</th><th>账本编号</th></tr></thead>
+            <tbody>
+              {volist name="transferContext.history" id="item"}
+              <tr>
+                <td><span data-dashboard-param style="--param-skeleton-width:132px">{$item.created_at|htmlentities}</span></td>
+                <td>
+                  <span class="transfer-history-direction" data-dashboard-param style="--param-skeleton-width:96px">
+                    {if condition="$item['direction'] == 1"}
+                    <span>现货</span><i class="bi bi-arrow-right" aria-hidden="true"></i><span>永续</span>
+                    {else /}
+                    <span>永续</span><i class="bi bi-arrow-right" aria-hidden="true"></i><span>现货</span>
+                    {/if}
+                  </span>
+                </td>
+                <td><strong><span data-dashboard-param data-param-format="decimal" data-param-value="{$item.amount|htmlentities}" data-param-decimals="8" style="--param-skeleton-width:72px">{$item.amount|htmlentities}</span> {$item.asset_code|htmlentities}</strong></td>
+                <td>{if condition="$item['status'] == 2"}<span class="transfer-status-badge is-success" data-dashboard-param style="--param-skeleton-width:54px">{$item.status_label|htmlentities}</span>{else /}<span class="transfer-status-badge is-muted" data-dashboard-param style="--param-skeleton-width:54px">{$item.status_label|htmlentities}</span>{/if}</td>
+                <td><code data-dashboard-param style="--param-skeleton-width:128px">{$item.transfer_no|htmlentities}</code></td>
+                <td>{if condition="$item.journal_no"}<code data-dashboard-param style="--param-skeleton-width:128px">{$item.journal_no|htmlentities}</code>{else /}—{/if}</td>
+              </tr>
+              {/volist}
+            </tbody>
+          </table>
+        </div>
+        {/if}
+      </section>
+    </section>
+  </div>
+</main>
+
+<div class="transfer-confirm-layer" data-transfer-confirm-layer hidden>
+  <section class="transfer-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="transferConfirmTitle">
+    <div class="transfer-confirm-head">
+      <span class="transfer-confirm-icon"><i class="bi bi-arrow-left-right"></i></span>
+      <div>
+        <span class="account-kicker">确认划转</span>
+        <h2 id="transferConfirmTitle">核对划转信息</h2>
+        <p>确认方向与数量无误后继续。</p>
+      </div>
+      <button type="button" class="transfer-confirm-close" data-transfer-confirm-close aria-label="关闭"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <div class="transfer-confirm-direction">
+      <div class="transfer-confirm-account">
+        <span>从</span>
+        <strong data-transfer-confirm-from>现货账户</strong>
+      </div>
+      <span class="transfer-confirm-arrow" aria-hidden="true"><i class="bi bi-arrow-right"></i></span>
+      <div class="transfer-confirm-account">
+        <span>到</span>
+        <strong data-transfer-confirm-to>永续合约账户</strong>
+      </div>
+    </div>
+
+    <div class="transfer-confirm-summary">
+      <div><span>划转资产</span><strong>USDT</strong></div>
+      <div><span>划转数量</span><strong data-transfer-confirm-amount>—</strong></div>
+      <div><span>手续费</span><strong>0 USDT</strong></div>
+    </div>
+
+    <div class="transfer-confirm-actions">
+      <button type="button" class="profile-secondary-button transfer-confirm-cancel" data-transfer-confirm-close>返回修改</button>
+      <button type="button" class="profile-primary-button transfer-confirm-submit" data-transfer-confirm-submit>
+        <span>确认划转</span><i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+  </section>
+</div>
+
+<div class="auth-toast" data-auth-toast></div>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/asset-transfer.js?v=1.5.2"></script>
+{/block}

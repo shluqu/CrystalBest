@@ -1,0 +1,249 @@
+{extend name="layout/base" /}
+{block name="title"}合约订单 — CrystalBest{/block}
+{block name="description"}查看全部永续合约订单、历史订单收益、手续费分摊与按时间汇总的已实现收益。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=20260811-order-ui8-full" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body perp-order-center-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main perp-order-center-main">
+      <section class="account-hero-panel perp-order-hero">
+        <div class="account-hero-copy">
+          <span class="account-kicker">TRADING / PERPETUAL ORDERS</span>
+          <h1>合约订单</h1>
+          <p>所有订单均来自真实合约订单与已提交 Fill；订单收益采用历史委托同一套只读算法，不写入交易、余额、仓位或账本。</p>
+        </div>
+        <div class="perp-order-hero-actions">
+          <a class="profile-primary-button" href="/trade-swap"><i class="bi bi-lightning-charge"></i>前往合约交易</a>
+        </div>
+      </section>
+
+      <section class="perp-order-stat-grid is-simple">
+        <article class="account-panel perp-order-stat-card">
+          <span>订单总数</span>
+          <strong>{$perpOrders.pagination.total}</strong>
+          <small>当前筛选条件</small>
+        </article>
+        <article class="account-panel perp-order-stat-card">
+          <span>已实现订单收益</span>
+          <strong class="is-{$perpOrders.stats.profit_class|htmlentities}">{$perpOrders.stats.net_profit_display|htmlentities} <em>USDT</em></strong>
+          <small>{$perpOrders.stats.profit_order_count} 笔已实现收益订单</small>
+        </article>
+        <article class="account-panel perp-order-stat-card">
+          <span>今日盈亏</span>
+          <strong class="is-{$perpOrders.stats.today_profit_class|htmlentities}">{$perpOrders.stats.today_net_profit_display|htmlentities} <em>USDT</em></strong>
+          <small>今日已实现收益，已扣除交易手续费</small>
+        </article>
+      </section>
+
+      <section class="account-panel perp-order-list-panel order-history-list-panel">
+        <div class="account-panel-head perp-order-list-head order-history-list-head">
+          <div>
+            <h2>全部合约订单</h2>
+            <p>每页固定 20 条；页面宽度保持账户中心标准宽度，超宽订单列只在表格内部左右拖动。</p>
+          </div>
+          <span class="spot-order-range">第 {$perpOrders.pagination.from}–{$perpOrders.pagination.to} 条 / 共 {$perpOrders.pagination.total} 条</span>
+        </div>
+
+        <form class="spot-order-filter perp-order-filter order-center-filter order-center-filter-perp" method="get" action="/dashboard/perpetual-orders">
+          <input type="hidden" name="page_size" value="20"/>
+          <label class="order-filter-field is-market">
+            <span>合约</span>
+            <select name="symbol">
+              <option value="">全部合约</option>
+              {volist name="perpOrders.markets" id="market"}
+              <option value="{$market.symbol|htmlentities}" {if condition="$perpOrders['filters']['symbol'] == $market['symbol']"}selected{/if}>{$market.base_code|htmlentities}/{$market.quote_code|htmlentities}</option>
+              {/volist}
+            </select>
+          </label>
+          <label class="order-filter-field is-side">
+            <span>方向</span>
+            <select name="side">
+              <option value="ALL" {if condition="$perpOrders['filters']['side'] == 'ALL'"}selected{/if}>全部方向</option>
+              <option value="BUY" {if condition="$perpOrders['filters']['side'] == 'BUY'"}selected{/if}>买入</option>
+              <option value="SELL" {if condition="$perpOrders['filters']['side'] == 'SELL'"}selected{/if}>卖出</option>
+            </select>
+          </label>
+          <label class="order-filter-field is-status">
+            <span>状态</span>
+            <select name="status">
+              <option value="all" {if condition="$perpOrders['filters']['status'] == 'all'"}selected{/if}>全部状态</option>
+              <option value="open" {if condition="$perpOrders['filters']['status'] == 'open'"}selected{/if}>当前委托</option>
+              <option value="filled" {if condition="$perpOrders['filters']['status'] == 'filled'"}selected{/if}>完全成交</option>
+              <option value="cancelled" {if condition="$perpOrders['filters']['status'] == 'cancelled'"}selected{/if}>已撤销</option>
+              <option value="rejected" {if condition="$perpOrders['filters']['status'] == 'rejected'"}selected{/if}>拒绝 / 失效</option>
+            </select>
+          </label>
+          <label class="order-filter-field is-period">
+            <span>时间范围</span>
+            <select name="period" data-order-period-select>
+              <option value="all" {if condition="$perpOrders['filters']['period'] == 'all'"}selected{/if}>全部时间</option>
+              <option value="today" {if condition="$perpOrders['filters']['period'] == 'today'"}selected{/if}>今天</option>
+              <option value="7d" {if condition="$perpOrders['filters']['period'] == '7d'"}selected{/if}>最近 7 天</option>
+              <option value="30d" {if condition="$perpOrders['filters']['period'] == '30d'"}selected{/if}>最近 30 天</option>
+              <option value="90d" {if condition="$perpOrders['filters']['period'] == '90d'"}selected{/if}>最近 90 天</option>
+              <option value="custom" {if condition="$perpOrders['filters']['period'] == 'custom'"}selected{/if}>自定义</option>
+            </select>
+          </label>
+          <label class="order-filter-field is-date-range">
+            <span>日期</span>
+            <span class="order-date-range-control">
+              <input type="date" name="start_date" value="{$perpOrders.filters.start_date|htmlentities}" data-order-date-input/>
+              <i class="bi bi-arrow-right"></i>
+              <input type="date" name="end_date" value="{$perpOrders.filters.end_date|htmlentities}" data-order-date-input/>
+            </span>
+          </label>
+          <div class="order-filter-actions">
+            <button class="profile-secondary-button" type="submit"><i class="bi bi-funnel"></i>筛选</button>
+            <a class="spot-order-filter-reset" href="/dashboard/perpetual-orders">重置</a>
+          </div>
+        </form>
+
+        {if condition="empty($perpOrders['orders'])"}
+        <div class="spot-order-empty"><i class="bi bi-inbox"></i><strong>暂无合约订单</strong><span>创建合约委托后会显示在这里。</span></div>
+        {else /}
+        <div class="asset-table-wrap perp-dashboard-table-wrap order-scroll-viewport order-horizontal-drag" data-order-horizontal-drag>
+          <table class="asset-balance-table perp-dashboard-order-table order-compact-table">
+            <colgroup>
+              <col class="col-time"/><col class="col-market"/><col class="col-profit"/><col class="col-price"/>
+              <col class="col-qty"/><col class="col-value"/><col class="col-state"/><col class="col-action"/>
+            </colgroup>
+            <thead>
+              <tr>
+                <th>委托时间 / 订单号</th>
+                <th>合约 / 方向</th>
+                <th>已实现盈亏 / 订单收益</th>
+                <th>成交均价 / 委托价</th>
+                <th>已成交 / 委托数量</th>
+                <th>成交额 / 手续费</th>
+                <th>杠杆 / 状态</th>
+                <th class="order-sticky-action" data-order-sticky-action>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {volist name="perpOrders.orders" id="order"}
+              <tr>
+                <td>
+                  <strong class="order-primary-value">{$order.created_at_local|htmlentities}</strong>
+                  {if condition="!empty($order['completed_at_local'])"}<small class="order-secondary-value">完成 {$order.completed_at_local|htmlentities}</small>{/if}
+                  <button class="order-no-copy" type="button" data-copy-order-no="{$order.order_no|htmlentities}" title="点击复制订单号"><span>{$order.order_no|htmlentities}</span><i class="bi bi-copy"></i></button>
+                </td>
+                <td>
+                  <strong class="order-primary-value">{$order.pair|htmlentities}</strong>
+                  <span class="spot-order-side is-{$order.side_class|htmlentities}">{$order.side_label|htmlentities}</span>
+                  <small class="order-secondary-value">{$order.role_label|htmlentities} · {$order.type_label|htmlentities}</small>
+                </td>
+                <td class="order-profit-cell">
+                  <small class="order-secondary-value numeric">已实现 {$order.fill_realized_pnl|htmlentities} USDT</small>
+                  {if condition="$order['order_profit'] !== null"}
+                  <span class="perp-dashboard-profit is-{$order.profit_class|htmlentities}">{$order.order_profit_display|htmlentities} USDT</span>
+                  {else /}
+                  <span class="perp-dashboard-profit is-empty">--</span>
+                  {/if}
+                  <small class="order-secondary-value">{$order.role_label|htmlentities}</small>
+                </td>
+                <td>
+                  <strong class="order-primary-value numeric">{$order.average_price|htmlentities}</strong>
+                  <small class="order-secondary-value">委托 {$order.price|htmlentities}</small>
+                </td>
+                <td>
+                  <strong class="order-primary-value numeric">{$order.executed_quantity|htmlentities} {$order.base_code|htmlentities}</strong>
+                  <small class="order-secondary-value">委托 {$order.original_quantity|htmlentities}</small>
+                </td>
+                <td>
+                  <strong class="order-primary-value numeric">{$order.fill_notional|htmlentities} <small>USDT</small></strong>
+                  <small class="order-secondary-value numeric">手续费 -{$order.fill_fee_amount|htmlentities} USDT</small>
+                </td>
+                <td>
+                  <strong class="order-primary-value numeric">{$order.requested_leverage|htmlentities}x</strong>
+                  <span class="spot-order-status is-{$order.status_class|htmlentities}">{$order.status_label|htmlentities}</span>
+                  <small class="order-secondary-value">{if condition="$order['reduce_only']"}只减仓{else /}{$order.type_label|htmlentities}{/if}</small>
+                </td>
+                <td class="order-sticky-action" data-order-sticky-action>
+                  <div class="perp-dashboard-order-actions">
+                    <button class="order-detail-button" type="button" data-order-detail-open data-order-detail-template="perp-order-detail-{$order.id}">详情</button><a class="spot-order-trade-link" href="{$order.trade_url|htmlentities}">交易</a>
+                    <template id="perp-order-detail-{$order.id}">
+                      <article class="order-modal-detail-card">
+                        <header class="order-modal-detail-head">
+                          <div>
+                            <strong>{$order.pair|htmlentities} · {$order.side_label|htmlentities}</strong>
+                            <span>{$order.role_label|htmlentities} · {$order.type_label|htmlentities} · {$order.requested_leverage|htmlentities}x</span>
+                          </div>
+                          <button class="order-modal-order-no" type="button" data-copy-order-no="{$order.order_no|htmlentities}" title="点击复制订单号"><span>{$order.order_no|htmlentities}</span><i class="bi bi-copy"></i></button>
+                        </header>
+                        <div class="order-modal-highlight-grid">
+                          <div><span>订单收益</span><strong class="is-{$order.profit_class|htmlentities}">{if condition="$order['order_profit'] !== null"}{$order.order_profit_display|htmlentities} USDT{else /}--{/if}</strong></div>
+                          <div><span>Fill 已实现盈亏</span><strong>{$order.fill_realized_pnl|htmlentities} USDT</strong></div>
+                          <div><span>实际成交手续费</span><strong>-{$order.fill_fee_amount|htmlentities} USDT</strong></div>
+                        </div>
+                        <dl class="order-modal-detail-grid">
+                          <div><dt>角色</dt><dd>{$order.role_label|htmlentities}</dd></div>
+                          <div><dt>Fill 数</dt><dd>{$order.fill_count}</dd></div>
+                          <div><dt>成交名义价值</dt><dd>{$order.fill_notional|htmlentities} USDT</dd></div>
+                          <div><dt>收益口径已实现盈亏</dt><dd>{$order.profit_realized_pnl|htmlentities} USDT</dd></div>
+                          <div><dt>分摊历史开仓手续费</dt><dd>-{$order.profit_allocated_open_fee|htmlentities} USDT</dd></div>
+                          <div><dt>本次归属平仓手续费</dt><dd>-{$order.profit_close_fee_amount|htmlentities} USDT</dd></div>
+                          <div><dt>持仓变化</dt><dd>{if condition="$order['position_quantity_before'] !== null"}{$order.position_quantity_before|htmlentities}{else /}--{/if} → {if condition="$order['position_quantity_after'] !== null"}{$order.position_quantity_after|htmlentities}{else /}--{/if} {$order.base_code|htmlentities}</dd></div>
+                          <div><dt>开仓均价变化</dt><dd>{if condition="$order['entry_price_before'] !== null"}{$order.entry_price_before|htmlentities}{else /}--{/if} → {if condition="$order['entry_price_after'] !== null"}{$order.entry_price_after|htmlentities}{else /}--{/if}</dd></div>
+                          {if condition="$order['role'] == 'FLIP'"}
+                          <div><dt>反手拆分</dt><dd>平 {$order.flip_close_quantity|htmlentities} / 开 {$order.flip_open_quantity|htmlentities} {$order.base_code|htmlentities}</dd></div>
+                          {/if}
+                          <div><dt>只减仓</dt><dd>{if condition="$order['reduce_only']"}是{else /}否{/if}</dd></div>
+                          <div><dt>预留保证金</dt><dd>{$order.reserved_order_margin|htmlentities} USDT</dd></div>
+                          <div><dt>Engine sequence</dt><dd>{if condition="$order['engine_sequence'] !== null"}{$order.engine_sequence}{else /}--{/if}</dd></div>
+                          {if condition="!empty($order['reject_code'])"}<div><dt>拒绝代码</dt><dd>{$order.reject_code|htmlentities}</dd></div>{/if}
+                        </dl>
+                      </article>
+                    </template>
+                  </div>
+                </td>
+              </tr>
+              {/volist}
+            </tbody>
+          </table>
+        </div>
+        {/if}
+
+        <div class="order-pagination-meta">第 {$perpOrders.pagination.from}–{$perpOrders.pagination.to} 条，共 {$perpOrders.pagination.total} 条 · 第 {$perpOrders.pagination.page} / {$perpOrders.pagination.total_pages} 页</div>
+        {if condition="$perpOrders['pagination']['total_pages'] > 1"}
+        <nav class="spot-order-pagination order-page-pagination" aria-label="合约订单分页">
+          {if condition="!empty($perpOrders['pagination']['previous_url'])"}
+          <a href="{$perpOrders.pagination.previous_url|htmlentities}"><i class="bi bi-chevron-left"></i>上一页</a>
+          {else /}
+          <span class="is-disabled"><i class="bi bi-chevron-left"></i>上一页</span>
+          {/if}
+          <div class="spot-order-page-numbers">
+            {volist name="perpOrders.pagination.pages" id="pageItem"}
+            <a class="{if condition="$pageItem['active']"}is-active{/if}" href="{$pageItem.url|htmlentities}">{$pageItem.page}</a>
+            {/volist}
+          </div>
+          {if condition="!empty($perpOrders['pagination']['next_url'])"}
+          <a href="{$perpOrders.pagination.next_url|htmlentities}">下一页<i class="bi bi-chevron-right"></i></a>
+          {else /}
+          <span class="is-disabled">下一页<i class="bi bi-chevron-right"></i></span>
+          {/if}
+        </nav>
+        {/if}
+      </section>
+    </section>
+  </div>
+</main>
+
+<div class="order-detail-modal" data-order-detail-modal hidden aria-hidden="true">
+  <div class="order-detail-modal-backdrop" data-order-detail-close></div>
+  <section class="order-detail-modal-panel" role="dialog" aria-modal="true" aria-label="订单与收益明细">
+    <button class="order-detail-modal-close" type="button" aria-label="关闭" data-order-detail-close><i class="bi bi-x-lg"></i></button>
+    <div class="order-detail-modal-content" data-order-detail-content></div>
+  </section>
+</div>
+
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/order-dashboard-modal.js?v=20260811-ui7-full"></script>
+<script src="/static/assets/js/order-table-horizontal-drag.js?v=20260811-ui7-full"></script>
+{/block}

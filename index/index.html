@@ -1,0 +1,627 @@
+{extend name="layout/base" /}
+{block name="title"}Aster Exchange — 全球数字资产交易平台{/block}
+{block name="description"}Aster Exchange — 全球数字资产交易平台概念官网。{/block}
+{block name="body_attributes"} id="top"{/block}
+{block name="body"}
+<header class="site-header" data-site-header="">
+  <div class="announcement">
+    <div class="container announcement-inner">
+      <span class="announcement-label">NEW</span>
+      <span>新用户完成认证，可领取专属交易权益</span>
+      <span class="nav-placeholder">查看详情 <i aria-hidden="true" class="bi bi-arrow-right"></i></span>
+    </div>
+  </div>
+  <nav aria-label="主导航" class="nav-shell">
+    <div class="container nav-inner">
+      <a aria-label="Aster Exchange 首页" class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" src="/static/assets/images/logo_light.svg" width="628"/></a>
+      <div class="nav-links" data-nav-links="">
+        <a class="nav-direct-link" href="/c2c">一键买币</a>
+        <a class="nav-direct-link" href="/markets">市场</a>
+        <div class="nav-item" data-dropdown="">
+          <button aria-expanded="false" class="nav-trigger" data-dropdown-trigger="" type="button">
+          交易 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown nav-dropdown-trade" role="menu">
+            <a class="dropdown-link" href="/trade-spot" role="menuitem"><span><strong>现货交易</strong><small>快速买卖数字资产</small></span><i aria-hidden="true" class="bi bi-arrow-left-right"></i></a>
+            <a class="dropdown-link" href="/trade-swap" role="menuitem"><span><strong>合约交易</strong><small>灵活管理多空仓位</small></span><i aria-hidden="true" class="bi bi-graph-up-arrow"></i></a>
+          </div>
+        </div>
+        <div class="nav-item" data-dropdown="">
+          <button aria-expanded="false" class="nav-trigger" data-dropdown-trigger="" type="button">
+          新手学院 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown academy-dropdown" role="menu">
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-coin"></i><span><strong>了解数字资产</strong><small>基础概念与资产类型</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-wallet2"></i><span><strong>买币介绍</strong><small>完成你的首次购买</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-question-circle"></i><span><strong>常见问题</strong><small>快速解决使用疑问</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-newspaper"></i><span><strong>热门资讯</strong><small>掌握市场最新动态</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-journal-text"></i><span><strong>博客文章</strong><small>阅读深度行业观点</small></span></span>
+            <span class="academy-link nav-placeholder" role="menuitem"><i aria-hidden="true" class="bi bi-robot"></i><span><strong>学习 AI 交易</strong><small>了解智能策略工具</small></span></span>
+          </div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button aria-label="搜索币种" class="nav-icon-button" data-search-open="" type="button">
+        <i aria-hidden="true" class="bi bi-search"></i>
+        </button>
+        <button aria-label="切换夜色模式" class="nav-icon-button theme-toggle" data-theme-toggle="" title="切换夜色模式" type="button">
+        <i aria-hidden="true" class="bi bi-moon-stars" data-theme-icon=""></i>
+        </button>
+        <div class="nav-item language-menu nav-desktop-only" data-dropdown="">
+          <button aria-expanded="false" aria-label="选择语言" class="language-trigger" data-dropdown-trigger="" type="button">
+          <img alt="" data-language-flag="" decoding="async" src="/static/assets/images/flags/cn.png"/>
+          <span data-language-label="">简体中文</span>
+          <i aria-hidden="true" class="bi bi-chevron-down"></i>
+          </button>
+          <div class="nav-dropdown language-dropdown" role="menu">
+            <button class="language-option is-active" data-flag="/static/assets/images/flags/cn.png" data-label="简体中文" data-language="zh-CN" type="button"><img alt="中国国旗" decoding="async" src="/static/assets/images/flags/cn.png"/><span>简体中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/us.png" data-label="English" data-language="en-US" type="button"><img alt="美国国旗" decoding="async" src="/static/assets/images/flags/us.png"/><span>English</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/tw.png" data-label="繁體中文" data-language="zh-TW" type="button"><img alt="中国台湾地区旗帜" decoding="async" src="/static/assets/images/flags/tw.png"/><span>繁體中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/jp.png" data-label="日本語" data-language="ja-JP" type="button"><img alt="日本国旗" decoding="async" src="/static/assets/images/flags/jp.png"/><span>日本語</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/kr.png" data-label="한국어" data-language="ko-KR" type="button"><img alt="韩国国旗" decoding="async" src="/static/assets/images/flags/kr.png"/><span>한국어</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/fr.png" data-label="Français" data-language="fr-FR" type="button"><img alt="法国国旗" decoding="async" src="/static/assets/images/flags/fr.png"/><span>Français</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+            <button class="language-option" data-flag="/static/assets/images/flags/es.png" data-label="Español" data-language="es-ES" type="button"><img alt="西班牙国旗" decoding="async" src="/static/assets/images/flags/es.png"/><span>Español</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+          </div>
+        </div>
+        <a class="nav-button nav-button-ghost nav-desktop-only" data-auth-nav-avatar href="/login">登录</a>
+        <a class="nav-button nav-button-primary" data-auth-nav-dashboard href="/register">注册</a>
+        <button aria-expanded="false" aria-label="打开菜单" class="nav-icon-button menu-button" data-menu-button="" type="button">
+        <i aria-hidden="true" class="bi bi-list"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+<div aria-hidden="true" class="header-spacer">
+</div>
+<div class="mobile-backdrop" data-mobile-backdrop="">
+</div>
+<aside aria-hidden="true" class="mobile-panel" data-mobile-panel="">
+  <div class="mobile-panel-head">
+    <a class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" src="/static/assets/images/logo_light.svg" width="628"/></a>
+    <button aria-label="关闭菜单" data-menu-button="" type="button"><i aria-hidden="true" class="bi bi-x-lg"></i></button>
+  </div>
+  <div class="mobile-nav-list">
+    <a class="mobile-direct-link" href="/c2c">一键买币</a>
+    <a class="mobile-direct-link" href="/markets">市场</a>
+    <details>
+      <summary>
+        交易 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+      </summary>
+      <div class="mobile-submenu">
+        <a href="/trade-spot">现货交易</a><a href="/trade-swap">合约交易</a>
+      </div>
+    </details>
+    <details>
+      <summary>
+        新手学院 <i aria-hidden="true" class="bi bi-chevron-down"></i>
+      </summary>
+      <div class="mobile-submenu mobile-submenu-grid">
+        <span class="mobile-placeholder">了解数字资产</span><span class="mobile-placeholder">买币介绍</span><span class="mobile-placeholder">常见问题</span><span class="mobile-placeholder">热门资讯</span><span class="mobile-placeholder">博客文章</span><span class="mobile-placeholder">学习 AI 交易</span>
+      </div>
+    </details>
+  </div>
+  <details class="mobile-language-details">
+    <summary class="mobile-language-summary">
+      <span><img alt="" data-language-flag="" decoding="async" src="/static/assets/images/flags/cn.png"/><span data-language-label="">简体中文</span></span><i aria-hidden="true" class="bi bi-chevron-down"></i>
+    </summary>
+    <div class="mobile-language-options">
+      <button class="language-option is-active" data-flag="/static/assets/images/flags/cn.png" data-label="简体中文" data-language="zh-CN" type="button"><img alt="中国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/cn.png"/><span>简体中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/us.png" data-label="English" data-language="en-US" type="button"><img alt="美国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/us.png"/><span>English</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/tw.png" data-label="繁體中文" data-language="zh-TW" type="button"><img alt="中国台湾地区旗帜" decoding="async" loading="lazy" src="/static/assets/images/flags/tw.png"/><span>繁體中文</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/jp.png" data-label="日本語" data-language="ja-JP" type="button"><img alt="日本国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/jp.png"/><span>日本語</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/kr.png" data-label="한국어" data-language="ko-KR" type="button"><img alt="韩国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/kr.png"/><span>한국어</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/fr.png" data-label="Français" data-language="fr-FR" type="button"><img alt="法国国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/fr.png"/><span>Français</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+      <button class="language-option" data-flag="/static/assets/images/flags/es.png" data-label="Español" data-language="es-ES" type="button"><img alt="西班牙国旗" decoding="async" loading="lazy" src="/static/assets/images/flags/es.png"/><span>Español</span><i aria-hidden="true" class="bi bi-check-lg"></i></button>
+    </div>
+  </details>
+  <div class="mobile-panel-actions">
+    <button data-search-open="" type="button"><i aria-hidden="true" class="bi bi-search"></i>搜索币种</button>
+    <button data-theme-toggle="" type="button"><i aria-hidden="true" class="bi bi-moon-stars" data-theme-icon=""></i><span data-theme-label="">切换夜色模式</span></button>
+  </div>
+</aside>
+{include file="common/search_modal" /}
+<main>
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-content reveal-up">
+        <div class="eyebrow">
+          <i aria-hidden="true" class="bi bi-stars"></i> 服务全球用户的数字资产平台
+        </div>
+        <h1>轻松进入全球数字资产市场</h1>
+        <p class="hero-copy">覆盖现货、合约、策略交易与机构级服务，用清晰的产品体验连接全球流动性。</p>
+        <div class="register-box" id="register">
+          <div class="register-box-head">
+            <div>
+              <span class="register-kicker">快速注册</span>
+            </div>
+            <span class="register-offer">新用户权益</span>
+          </div>
+          <form action="/register" class="register-form" method="get">
+            <label class="input-shell">
+            <i aria-hidden="true" class="bi bi-envelope"></i>
+            <input aria-label="邮箱" autocomplete="email" name="email" placeholder="请输入邮箱" required="" type="text"/>
+            </label>
+            <button class="button button-primary" type="submit">立即注册 <i aria-hidden="true" class="bi bi-arrow-right"></i></button>
+          </form>
+          <div class="register-benefits">
+            <span><i aria-hidden="true" class="bi bi-check-circle-fill"></i>注册无需手续费</span>
+            <span><i aria-hidden="true" class="bi bi-check-circle-fill"></i>7 × 24 小时服务</span>
+            <span><i aria-hidden="true" class="bi bi-check-circle-fill"></i>多重资产保护</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual reveal-up">
+        <div class="visual-frame">
+          <img alt="交易产品界面占位图" decoding="async" fetchpriority="high" src="/static/assets/images/market-placeholder.jpg"/>
+          <div class="visual-overlay">
+            <div class="asset-heading">
+              <img alt="Bitcoin" class="coin-logo coin-avatar" decoding="async" height="28" src="/static/assets/images/coins/btc.png" width="28"/>
+              <div>
+                <strong>BTC / USDT</strong><span>Bitcoin · 现货市场</span>
+              </div>
+            </div>
+            <div class="asset-price">
+              <span class="positive" data-home-hero-change>--</span>
+              <strong data-home-hero-price>--</strong>
+              <span class="price-unit">USDT</span>
+            </div>
+            <div aria-label="价格走势占位" class="price-bars">
+              <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="visual-meta">
+              <span>24h 高 <b data-home-hero-high>--</b></span><span>成交额 <b data-home-hero-turnover>--</b></span>
+            </div>
+          </div>
+        </div>
+        <div class="floating-badge badge-top">
+          <i aria-hidden="true" class="bi bi-lightning-charge-fill"></i><span><small>撮合响应</small><strong>8 ms</strong></span>
+        </div>
+        <div class="floating-badge badge-bottom">
+          <i aria-hidden="true" class="bi bi-shield-check"></i><span><small>储备覆盖</small><strong>100%+</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section aria-label="平台数据" class="metrics reveal-up lazy-render-section" data-stats-section="">
+    <div class="container metrics-grid">
+      <div class="metric">
+        <strong data-count="4800" data-suffix="+">4,800+</strong><span>支持数字资产</span>
+      </div>
+      <div class="metric">
+        <strong data-count="38" data-suffix="M+">38M+</strong><span>全球注册用户</span>
+      </div>
+      <div class="metric">
+        <strong data-count="99.99" data-decimals="2" data-suffix="%">99.99%</strong><span>核心系统可用性</span>
+      </div>
+      <div class="metric">
+        <strong>24 / 7</strong><span>全球客户支持</span>
+      </div>
+    </div>
+  </section>
+  <div
+    aria-busy="true" class="deferred-section-shell" data-deferred-section="home-market"
+    style="--deferred-section-height:790px;--deferred-section-height-mobile:980px">
+    <template data-deferred-template="">
+    <section class="section market-section" id="markets">
+      <div class="container">
+        <div class="market-heading">
+          <div class="section-title-block reveal-up">
+            <span class="section-kicker">Market</span>
+            <h2>今日市场行情</h2>
+            <p>聚合热门资产的实时价格、24 小时表现与成交数据，快速判断当前市场热度。</p>
+          </div>
+          <div class="market-summary reveal-up" data-home-market-summary>
+            <article class="summary-box summary-blue">
+              <div class="summary-top">
+                <i aria-hidden="true" class="bi bi-activity"></i><span>24h 总成交额</span>
+              </div>
+              <div class="summary-bottom">
+                <strong data-home-market-turnover>--</strong><em>全市场</em>
+              </div>
+            </article>
+            <article class="summary-box summary-green">
+              <div class="summary-top">
+                <i aria-hidden="true" class="bi bi-graph-up-arrow"></i><span>上涨市场</span>
+              </div>
+              <div class="summary-bottom">
+                <strong data-home-market-gainers>--</strong><em>24h</em>
+              </div>
+            </article>
+            <article class="summary-box summary-warm">
+              <div class="summary-top">
+                <i aria-hidden="true" class="bi bi-grid-3x3-gap"></i><span>活跃市场</span>
+              </div>
+              <div class="summary-bottom">
+                <strong data-home-market-count>--</strong><em>现货 + 永续</em>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div class="market-panel reveal-up">
+          <div class="market-toolbar">
+            <div aria-label="行情分类" class="market-tabs" role="tablist">
+              <button aria-selected="true" class="market-tab is-active" data-home-market-tab="hot" data-market-tab="" role="tab" type="button">热门</button>
+              <button aria-selected="false" class="market-tab" data-home-market-tab="gainers" data-market-tab="" role="tab" type="button">涨幅榜</button>
+              <button aria-selected="false" class="market-tab" data-home-market-tab="new" data-market-tab="" role="tab" type="button">新币</button>
+              <button aria-selected="false" class="market-tab" data-home-market-tab="turnover" data-market-tab="" role="tab" type="button">成交额</button>
+              <button aria-selected="false" class="market-tab" data-home-market-tab="perpetual" data-market-tab="" role="tab" type="button">合约</button>
+            </div>
+            <button aria-label="搜索币种" class="market-search" data-search-open="" type="button">
+            <i aria-hidden="true" class="bi bi-search"></i>
+            <span>搜索币种</span>
+            </button>
+          </div>
+          <div class="market-table-scroll">
+            <table class="market-table">
+              <thead>
+                <tr>
+                  <th>#</th><th>交易对</th><th>最新价</th><th>24h 涨跌</th><th>24h 最高 / 最低</th><th>24h 成交额</th><th>走势</th><th></th>
+                </tr>
+              </thead>
+              <tbody data-home-market-body aria-busy="true">
+                <tr>
+                  <td colspan="8"><span class="market-data-placeholder">行情加载中…</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="market-note" data-home-market-note><i aria-hidden="true" class="bi bi-broadcast"></i> 行情来自实时市场数据服务，列表每类展示前 10 个币种。</p>
+        </div>
+      </div>
+    </section>
+    </template>
+    <div aria-hidden="true" class="deferred-section-placeholder">
+    </div>
+  </div>
+  <div
+    aria-busy="true" class="deferred-section-shell" data-deferred-section="home-newcomer"
+    style="--deferred-section-height:760px;--deferred-section-height-mobile:1080px">
+    <template data-deferred-template="">
+    <section class="section newcomer-section" id="newcomer">
+      <div class="container">
+        <div class="section-heading newcomer-heading reveal-up">
+          <div>
+            <span class="section-kicker">New User Rewards</span>
+            <h2>新户启航，完成任务解锁专属奖励</h2>
+          </div>
+          <p>用清晰的任务路径完成注册、入金与首笔交易，在一个页面查看进度和可领取权益。</p>
+        </div>
+        <div class="newcomer-shell reveal-up" data-newcomer-carousel="">
+          <div class="newcomer-intro">
+            <div class="newcomer-intro-copy">
+              <span class="newcomer-badge"><i aria-hidden="true" class="bi bi-gift"></i> 新用户专属</span>
+              <h3>最高可解锁 <strong>360 USDT</strong> 新手权益</h3>
+              <p>注册后按顺序完成三项入门任务，奖励状态和任务进度会自动更新。</p>
+              <div class="newcomer-actions">
+                <a class="button button-primary" href="#register">立即参与</a>
+                <a class="newcomer-rule-link" href="#">查看活动规则 <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+              </div>
+            </div>
+            <div aria-hidden="true" class="newcomer-orbit">
+              <span class="newcomer-orbit-ring ring-one"></span>
+              <span class="newcomer-orbit-ring ring-two"></span>
+              <span class="reward-chip chip-one"><i class="bi bi-coin"></i><b>10</b><small>USDT</small></span>
+              <span class="reward-chip chip-two"><i class="bi bi-lightning-charge"></i><b>50</b><small>体验金</small></span>
+              <span class="reward-chip chip-three"><i class="bi bi-stars"></i><b>300</b><small>奖励池</small></span>
+              <span class="newcomer-orbit-core"><i class="bi bi-gift-fill"></i></span>
+            </div>
+          </div>
+          <div class="newcomer-tasks">
+            <div class="newcomer-task-head">
+              <div>
+                <span>新手任务路线</span>
+                <small>注册后 7 天内完成</small>
+              </div>
+              <div aria-label="新户活动切换" class="newcomer-carousel-controls">
+                <button aria-label="上一项活动" data-newcomer-prev="" type="button"><i aria-hidden="true" class="bi bi-chevron-left"></i></button>
+                <button aria-label="下一项活动" data-newcomer-next="" type="button"><i aria-hidden="true" class="bi bi-chevron-right"></i></button>
+              </div>
+            </div>
+            <div class="newcomer-carousel-window">
+              <div class="newcomer-carousel-track" data-newcomer-track="">
+                <article class="newcomer-task-card is-active" data-newcomer-slide="">
+                  <div class="task-card-top">
+                    <span class="task-step">01</span>
+                    <span class="task-state">进行中</span>
+                  </div>
+                  <div class="task-card-main">
+                    <span class="task-icon task-icon-blue"><i aria-hidden="true" class="bi bi-person-check"></i></span>
+                    <div>
+                      <span class="module-title">完成账户注册</span>
+                      <p>创建账户并完成基础安全设置，解锁新手任务中心。</p>
+                    </div>
+                  </div>
+                  <div class="task-reward-row">
+                    <span>任务奖励</span><strong>10 USDT 手续费抵扣券</strong>
+                  </div>
+                  <div class="task-progress">
+                    <span style="--task-progress: 72%"></span>
+                  </div>
+                  <div class="task-progress-label">
+                    <span>当前进度</span><b>72%</b>
+                  </div>
+                </article>
+                <article class="newcomer-task-card" data-newcomer-slide="">
+                  <div class="task-card-top">
+                    <span class="task-step">02</span>
+                    <span class="task-state task-state-wait">待完成</span>
+                  </div>
+                  <div class="task-card-main">
+                    <span class="task-icon task-icon-green"><i aria-hidden="true" class="bi bi-wallet2"></i></span>
+                    <div>
+                      <span class="module-title">完成首次入金</span>
+                      <p>净入金达到 100 USDT，熟悉资产划转和账户管理流程。</p>
+                    </div>
+                  </div>
+                  <div class="task-reward-row">
+                    <span>任务奖励</span><strong>50 USDT 合约体验金</strong>
+                  </div>
+                  <div class="task-progress">
+                    <span style="--task-progress: 38%"></span>
+                  </div>
+                  <div class="task-progress-label">
+                    <span>当前进度</span><b>38%</b>
+                  </div>
+                </article>
+                <article class="newcomer-task-card" data-newcomer-slide="">
+                  <div class="task-card-top">
+                    <span class="task-step">03</span>
+                    <span class="task-state task-state-wait">待完成</span>
+                  </div>
+                  <div class="task-card-main">
+                    <span class="task-icon task-icon-warm"><i aria-hidden="true" class="bi bi-graph-up-arrow"></i></span>
+                    <div>
+                      <span class="module-title">完成首笔交易</span>
+                      <p>完成现货或合约首笔成交，开启完整交易体验。</p>
+                    </div>
+                  </div>
+                  <div class="task-reward-row">
+                    <span>任务奖励</span><strong>最高 300 USDT 奖励</strong>
+                  </div>
+                  <div class="task-progress">
+                    <span style="--task-progress: 12%"></span>
+                  </div>
+                  <div class="task-progress-label">
+                    <span>当前进度</span><b>12%</b>
+                  </div>
+                </article>
+              </div>
+            </div>
+            <div aria-label="新户活动进度" class="newcomer-dots" role="tablist">
+              <button aria-label="查看注册任务" aria-selected="true" class="is-active" data-newcomer-dot="0" type="button"></button>
+              <button aria-label="查看入金任务" aria-selected="false" data-newcomer-dot="1" type="button"></button>
+              <button aria-label="查看交易任务" aria-selected="false" data-newcomer-dot="2" type="button"></button>
+            </div>
+            <div aria-hidden="true" class="newcomer-autoplay-progress">
+              <span data-newcomer-progress=""></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    </template>
+    <div aria-hidden="true" class="deferred-section-placeholder">
+    </div>
+  </div>
+  <div
+    aria-busy="true" class="deferred-section-shell" data-deferred-section="home-products"
+    style="--deferred-section-height:720px;--deferred-section-height-mobile:1120px">
+    <template data-deferred-template="">
+    <section class="section product-section" id="products">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker">Products</span><h2>一站式交易产品</h2>
+          </div>
+          <p>从入门买卖到专业策略，为不同阶段的交易者提供清晰、稳定的产品组合。</p>
+        </div>
+        <div class="product-layout">
+          <article class="product-feature reveal-up">
+            <div class="product-feature-copy">
+              <span class="feature-tag"><i aria-hidden="true" class="bi bi-stars"></i> 专业交易</span>
+              <h3>合约与策略工具</h3>
+              <p>支持多种保证金模式、条件委托和自动化策略，帮助用户更高效地管理仓位。</p>
+              <a href="/trade-swap">探索专业交易 <i aria-hidden="true" class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="product-image">
+              <img alt="交易工具产品占位图" decoding="async" loading="lazy" src="/static/assets/images/cdc_home_banner_exchange_web_usd.webp"/>
+              <span>合约交易</span>
+            </div>
+          </article>
+          <div class="product-list reveal-up">
+            <article class="product-item">
+              <span class="product-icon product-icon-blue"><i aria-hidden="true" class="bi bi-arrow-left-right"></i></span>
+              <div>
+                <span class="module-title">现货交易</span><p>丰富交易对与深度流动性，适合日常资产兑换与配置。</p><a href="/trade-spot">开始交易 <i aria-hidden="true" class="bi bi-arrow-right-short"></i></a>
+              </div>
+            </article>
+            <article class="product-item">
+              <span class="product-icon product-icon-green"><i aria-hidden="true" class="bi bi-wallet2"></i></span>
+              <div>
+                <span class="module-title">简单理财</span><p>灵活选择期限与产品，清楚查看收益规则和资产状态。</p><a href="#">查看产品 <i aria-hidden="true" class="bi bi-arrow-right-short"></i></a>
+              </div>
+            </article>
+            <article class="product-item">
+              <span class="product-icon product-icon-warm"><i aria-hidden="true" class="bi bi-code-slash"></i></span>
+              <div>
+                <span class="module-title">API 与机构服务</span><p>提供稳定接口、子账户体系与面向专业团队的服务支持。</p><a href="#">了解更多 <i aria-hidden="true" class="bi bi-arrow-right-short"></i></a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+    </template>
+    <div aria-hidden="true" class="deferred-section-placeholder">
+    </div>
+  </div>
+  <div
+    aria-busy="true" class="deferred-section-shell" data-deferred-section="home-security"
+    style="--deferred-section-height:920px;--deferred-section-height-mobile:1260px">
+    <template data-deferred-template="">
+    <section class="section security-section" id="security">
+      <div class="container">
+        <div class="section-heading security-heading reveal-up">
+          <div>
+            <span class="section-kicker">Security Architecture</span>
+            <h2>以安全作为产品基础</h2>
+          </div>
+          <p>把账户保护、实时风控、资产托管和储备验证连接成同一套安全架构，让每一次登录、交易和资产变动都有清晰的保护路径。</p>
+        </div>
+        <div class="security-showcase">
+          <article class="security-command reveal-up">
+            <div class="security-command-head">
+              <div>
+                <span class="security-live"><i></i> 安全系统持续运行</span>
+                <span class="module-title">全天候安全监测中心</span>
+              </div>
+              <a href="#">进入安全中心 <i aria-hidden="true" class="bi bi-arrow-up-right"></i></a>
+            </div>
+            <div class="security-media">
+              <video aria-label="资产安全场景动态视频" class="security-video" data-lazy-video="" data-viewport-video="" loop="" muted="" playsinline="" preload="none">
+              <source data-src="/static/assets/video/security-loop.mp4" type="video/mp4"/>
+              您的浏览器暂不支持 HTML5 视频播放。
+              </video>
+              <div class="security-media-overlay">
+                <div aria-hidden="true" class="security-radar">
+                  <span class="radar-ring radar-ring-one"></span>
+                  <span class="radar-ring radar-ring-two"></span>
+                  <span class="radar-ring radar-ring-three"></span>
+                  <span class="radar-core"><i class="bi bi-shield-check"></i></span>
+                </div>
+                <div class="security-media-copy">
+                  <span>实时风险识别</span>
+                  <strong>账户、交易与资产状态统一监测</strong>
+                </div>
+              </div>
+            </div>
+            <div aria-label="安全能力状态" class="security-metrics">
+              <div>
+                <span>监测范围</span><strong>账户 · 交易 · 资产</strong>
+              </div>
+              <div>
+                <span>响应机制</span><strong>实时识别与分级处置</strong>
+              </div>
+              <div>
+                <span>验证能力</span><strong>储备与资产状态可核验</strong>
+              </div>
+            </div>
+          </article>
+          <div class="security-capabilities reveal-up">
+            <div aria-label="安全保护流程" class="security-flow">
+              <span>登录验证</span><i class="bi bi-arrow-right"></i>
+              <span>交易风控</span><i class="bi bi-arrow-right"></i>
+              <span>资产托管</span><i class="bi bi-arrow-right"></i>
+              <span>储备验证</span>
+            </div>
+            <div class="security-card-grid">
+              <article class="security-capability security-capability-featured">
+                <span class="security-capability-icon"><i aria-hidden="true" class="bi bi-person-lock"></i></span>
+                <div class="security-capability-copy">
+                  <span class="module-title">账户访问保护</span>
+                  <p>通过多因素认证、可信设备、反钓鱼码与异常登录提醒，降低未授权访问风险。</p>
+                </div>
+                <div aria-label="账户保护能力" class="security-chip-list">
+                  <span>多因素认证</span><span>可信设备</span><span>异常提醒</span>
+                </div>
+              </article>
+              <article class="security-capability">
+                <span class="security-capability-icon"><i aria-hidden="true" class="bi bi-cpu"></i></span>
+                <div class="security-capability-copy">
+                  <span class="module-title">实时风险引擎</span>
+                  <p>持续分析登录、委托、资产划转和系统状态，对高风险操作增加验证与限制。</p>
+                </div>
+                <div aria-label="实时风控能力" class="security-chip-list">
+                  <span>行为识别</span><span>分级处置</span>
+                </div>
+              </article>
+              <article class="security-capability">
+                <span class="security-capability-icon"><i aria-hidden="true" class="bi bi-safe2"></i></span>
+                <div class="security-capability-copy">
+                  <span class="module-title">分层资产托管</span>
+                  <p>通过冷热钱包隔离、多重签名和权限分层，规范资产操作与审批流程。</p>
+                </div>
+                <div aria-label="资产托管能力" class="security-chip-list">
+                  <span>冷热隔离</span><span>多重签名</span>
+                </div>
+              </article>
+              <article class="security-capability">
+                <span class="security-capability-icon"><i aria-hidden="true" class="bi bi-clipboard2-check"></i></span>
+                <div class="security-capability-copy">
+                  <span class="module-title">储备透明验证</span>
+                  <p>通过清晰的数据披露、验证入口和资产证明，让储备状态更容易核验。</p>
+                </div>
+                <div aria-label="储备验证能力" class="security-chip-list">
+                  <span>数据披露</span><span>储备证明</span>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    </template>
+    <div aria-hidden="true" class="deferred-section-placeholder">
+    </div>
+  </div>
+  <div
+    aria-busy="true" class="deferred-section-shell" data-deferred-section="home-cta"
+    style="--deferred-section-height:270px;--deferred-section-height-mobile:390px">
+    <template data-deferred-template="">
+    <section class="cta-section">
+      <div class="container cta-inner">
+        <div>
+          <span class="section-kicker">Get Started</span><h2>准备好开始你的下一笔交易？</h2><p>注册账户，探索全球市场与专业交易工具。</p>
+        </div>
+        <div class="cta-actions">
+          <a class="button button-primary" href="#register">免费注册</a><a class="button button-light" href="/markets">查看行情</a>
+        </div>
+      </div>
+    </section>
+    </template>
+    <div aria-hidden="true" class="deferred-section-placeholder">
+    </div>
+  </div>
+</main>
+<div
+  aria-busy="true" class="deferred-section-shell" data-deferred-section="site-footer"
+  style="--deferred-section-height:430px;--deferred-section-height-mobile:790px">
+  <template data-deferred-template="">
+  <footer class="footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/"><img alt="Aster Exchange Logo" class="brand-logo brand-logo-light-theme" decoding="async" height="122" loading="lazy" src="/static/assets/images/logo.svg" width="574"/><img alt="Aster Exchange Logo" class="brand-logo brand-logo-dark-theme" decoding="async" height="115" loading="lazy" src="/static/assets/images/logo_light.svg" width="628"/></a>
+        <p>面向全球用户的数字资产交易平台概念官网。</p>
+        <div class="social-links">
+          <a aria-label="Twitter" href="#"><i aria-hidden="true" class="bi bi-twitter"></i></a><a aria-label="Telegram" href="#"><i aria-hidden="true" class="bi bi-telegram"></i></a><a aria-label="Discord" href="#"><i aria-hidden="true" class="bi bi-discord"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h3>交易</h3><a href="/markets">市场行情</a><a href="/trade-spot">现货交易</a><a href="/trade-swap">合约交易</a><a href="#products">策略工具</a>
+      </div>
+      <div class="footer-column">
+        <h3>产品</h3><a href="#products">简单理财</a><a href="#products">机构服务</a><a href="#products">API 文档</a><a href="#products">下载中心</a>
+      </div>
+      <div class="footer-column">
+        <h3>支持</h3><a href="#">帮助中心</a><a href="#">公告中心</a><a href="#">费率说明</a><a href="#security">安全中心</a>
+      </div>
+      <div class="footer-column">
+        <h3>关于</h3><a href="#">关于我们</a><a href="#">联系我们</a><a href="#">加入团队</a><a href="#">服务条款</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2026 Aster Exchange. Concept design.</span>
+    </div>
+  </footer>
+  </template>
+  <div aria-hidden="true" class="deferred-section-placeholder">
+  </div>
+</div>
+<script src="/static/assets/js/main.js?v=20260808-1">
+</script>
+<script src="/static/assets/js/home-market.js?v=4.0.0">
+</script>
+<script src="/static/assets/js/performance-loader.js">
+</script>
+{/block}

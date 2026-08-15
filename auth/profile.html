@@ -1,0 +1,162 @@
+{extend name="layout/base" /}
+{block name="title"}个人资料 — CrystalBest{/block}
+{block name="description"}管理 CrystalBest 账户头像、昵称与基础注册信息。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css?v=1.4.1" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="account-dashboard-body profile-center-body"{/block}
+{block name="body"}
+{include file="auth/account_header" /}
+
+<main class="account-dashboard">
+  <div class="container account-dashboard-shell">
+    {include file="auth/account_sidebar" /}
+
+    <section class="account-main profile-main" data-profile-root>
+      <section class="account-hero-panel profile-hero-panel">
+        <div class="account-hero-copy">
+          <span class="account-kicker">PROFILE</span>
+          <h1>个人资料</h1>
+          <p>默认仅展示当前资料，需要修改时再展开对应编辑区域。账户 UID、注册信息和安全邮箱属于核心信息，在这里仅展示。</p>
+        </div>
+        <div class="profile-hero-status">
+          <span>账户 UID</span>
+          <strong data-dashboard-param style="--param-skeleton-width:132px">{$profile.uid|htmlentities}</strong>
+          <small>唯一公开标识 · 不可修改</small>
+        </div>
+      </section>
+
+      <section class="profile-layout-grid">
+        <article class="account-panel profile-avatar-panel">
+          <div class="account-panel-head">
+            <div>
+              <h2>头像</h2>
+              <p>系统会在注册时自动随机匹配默认头像；如需更换，可上传自定义头像到 Cloudflare R2。</p>
+            </div>
+          </div>
+
+          <div class="profile-display-row profile-avatar-display-row">
+            <div class="profile-avatar-summary">
+              <div class="profile-avatar-preview" data-profile-avatar-preview>
+                <img alt="当前头像" src="{$profile.avatar_url|htmlentities}"/>
+              </div>
+              <div class="profile-display-copy">
+                <span>当前头像</span>
+                <strong data-profile-avatar-source>{if condition="$profile.avatar_storage_key"}自定义头像{else /}系统自动匹配头像{/if}</strong>
+                <small data-profile-avatar-description>{if condition="$profile.avatar_storage_key"}当前头像已存储在 Cloudflare R2。{else /}默认头像由系统自动分配，无需手动选择。{/if}</small>
+              </div>
+            </div>
+            {if condition="$profile.r2_configured"}
+            <button aria-controls="profile-avatar-editor" aria-expanded="false" class="profile-text-action" data-profile-editor-toggle="avatar" type="button">修改头像</button>
+            {else /}
+            <span class="profile-text-status"><i class="bi bi-cloud-slash"></i>R2 尚未配置</span>
+            {/if}
+          </div>
+
+          {if condition="$profile.r2_configured"}
+          <div class="profile-edit-panel" data-profile-editor="avatar" hidden id="profile-avatar-editor">
+            <form data-profile-avatar-form>
+              <div class="profile-editor-intro">
+                <strong>上传自定义头像</strong>
+                <span>支持 JPG、PNG、WEBP，最大 5MB。上传前会在服务器裁切为 512×512 并重新编码，不保留原图元数据。</span>
+              </div>
+              <div class="profile-file-row">
+                <label class="profile-file-select">
+                  <i class="bi bi-image"></i>
+                  <span>选择图片</span>
+                  <input accept="image/jpeg,image/png,image/webp" data-profile-avatar-file hidden name="avatar" type="file"/>
+                </label>
+                <span class="profile-file-name" data-profile-avatar-filename>尚未选择图片</span>
+              </div>
+              <div class="profile-editor-actions">
+                <button class="profile-text-action" data-profile-avatar-submit disabled type="submit">确认上传</button>
+                <button class="profile-text-action is-muted" data-profile-editor-cancel="avatar" type="button">取消</button>
+              </div>
+            </form>
+          </div>
+          {/if}
+        </article>
+
+        <article class="account-panel profile-nickname-panel">
+          <div class="account-panel-head">
+            <div>
+              <h2>昵称</h2>
+              <p>昵称用于用户中心和后续公开展示，不影响登录账号与 UID。</p>
+            </div>
+          </div>
+
+          <div class="profile-display-row">
+            <div class="profile-display-copy">
+              <span>当前昵称</span>
+              <strong data-profile-nickname-display data-dashboard-param style="--param-skeleton-width:96px">{if condition="$profile.nickname"}{$profile.nickname|htmlentities}{else /}未设置昵称{/if}</strong>
+              <small>2–64 个字符；昵称可修改，也可以清空。</small>
+            </div>
+            <button aria-controls="profile-nickname-editor" aria-expanded="false" class="profile-text-action" data-profile-editor-toggle="nickname" type="button">修改昵称</button>
+          </div>
+
+          <div class="profile-edit-panel" data-profile-editor="nickname" hidden id="profile-nickname-editor">
+            <form class="profile-nickname-form" data-profile-nickname-form>
+              <label>
+                <span>新昵称</span>
+                <div class="profile-text-input"><i class="bi bi-person"></i><input autocomplete="nickname" maxlength="64" name="nickname" placeholder="设置你的昵称" type="text" value="{$profile.nickname|htmlentities}"/></div>
+              </label>
+              <div class="profile-editor-actions">
+                <button class="profile-text-action" type="submit">保存昵称</button>
+                <button class="profile-text-action is-muted" data-profile-editor-cancel="nickname" type="button">取消</button>
+              </div>
+            </form>
+          </div>
+        </article>
+      </section>
+
+      <section class="account-panel profile-info-panel">
+        <div class="account-panel-head">
+          <div>
+            <h2>账户信息</h2>
+            <p>以下信息由系统生成或用于账户安全，不支持在个人资料页直接修改。</p>
+          </div>
+        </div>
+        <div class="profile-info-grid">
+          <div class="profile-info-item">
+            <span>账户 UID</span>
+            <strong class="profile-mono" data-dashboard-param style="--param-skeleton-width:132px">{$profile.uid|htmlentities}</strong>
+            <small>唯一公开标识，不可修改</small>
+          </div>
+          <div class="profile-info-item">
+            <span>注册时间</span>
+            <strong data-dashboard-param style="--param-skeleton-width:140px">{$profile.registered_at|htmlentities}</strong>
+            <small>账户首次创建时间</small>
+          </div>
+          <div class="profile-info-item">
+            <span>注册方式</span>
+            <strong data-dashboard-param style="--param-skeleton-width:72px">{$profile.registration_channel_label|htmlentities}</strong>
+            <small data-dashboard-param style="--param-skeleton-width:72px">{$profile.registration_channel|htmlentities}</small>
+          </div>
+          <div class="profile-info-item">
+            <span>邮箱验证</span>
+            <strong data-dashboard-param style="--param-skeleton-width:54px">{if condition="$profile.email_verified"}已验证{else /}未验证{/if}</strong>
+            <small data-dashboard-param style="--param-skeleton-width:132px">{if condition="$profile.email_verified_at"}{$profile.email_verified_at|htmlentities}{else /}尚无验证时间{/if}</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="account-panel profile-email-panel">
+        <div class="profile-email-row">
+          <div class="profile-email-icon"><i class="bi bi-envelope-check"></i></div>
+          <div class="profile-email-copy">
+            <span>安全邮箱</span>
+            <strong data-dashboard-param style="--param-skeleton-width:132px">{$profile.email_masked|htmlentities}</strong>
+            <small>安全邮箱用于验证码、账号恢复及高风险操作确认。为避免账户接管风险，只能在安全中心修改。</small>
+          </div>
+          <a class="profile-secondary-button" href="/dashboard/security#security-email"><i class="bi bi-shield-lock"></i>前往安全中心修改</a>
+        </div>
+      </section>
+    </section>
+  </div>
+</main>
+
+<div class="auth-toast" data-auth-toast></div>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/account-center.js"></script>
+<script src="/static/assets/js/profile.js"></script>
+{/block}

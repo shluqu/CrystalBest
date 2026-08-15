@@ -1,0 +1,111 @@
+{extend name="layout/base" /}
+{block name="title"}注册 — CrystalBest{/block}
+{block name="description"}创建 CrystalBest 账户。{/block}
+{block name="head_extra"}
+<link href="/static/assets/css/auth.css" rel="stylesheet"/>
+{/block}
+{block name="body_attributes"} class="auth-body auth-register"{/block}
+{block name="body"}
+<header class="auth-header">
+  <div class="container auth-header-inner">
+    <a class="auth-brand" href="/"><img alt="CrystalBest" class="brand-logo brand-logo-light-theme" src="/static/assets/images/logo.svg"/><img alt="CrystalBest" class="brand-logo brand-logo-dark-theme" src="/static/assets/images/logo_light.svg"/></a>
+    <div class="auth-header-actions"><a class="auth-home-link" href="/"><i class="bi bi-house"></i><span>返回首页</span></a><button aria-label="切换夜色模式" class="nav-icon-button theme-toggle" data-theme-toggle type="button"><i class="bi bi-moon-stars" data-theme-icon></i></button></div>
+  </div>
+</header>
+<main class="auth-main">
+  <section class="auth-showcase">
+    <div class="auth-showcase-inner">
+      <span class="auth-eyebrow"><i class="bi bi-person-check"></i> VERIFIED REGISTRATION</span>
+      <h1>先验证邮箱，再创建你的交易账户</h1>
+      <p>注册过程拆分为人机验证、邮箱验证码和密码设置，避免机器人批量注册并确认邮箱真实可用。</p>
+      <div class="auth-feature-grid">
+        <article><i class="bi bi-shield-check"></i><div><strong>人机验证</strong><span>ThinkCaptcha 图形验证码</span></div></article>
+        <article><i class="bi bi-envelope-check"></i><div><strong>邮箱验证</strong><span>6 位一次性验证码</span></div></article>
+        <article><i class="bi bi-lock"></i><div><strong>安全密码</strong><span>Argon2id 优先哈希</span></div></article>
+        <article><i class="bi bi-person-badge"></i><div><strong>验证后注册</strong><span>邮箱通过后才创建账户</span></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="auth-form-side">
+    <div class="auth-form-wrap auth-form-wrap-wide">
+      <div class="auth-card auth-wizard-card" data-register-wizard>
+        <div class="auth-card-head">
+          <span class="auth-kicker">CREATE ACCOUNT</span>
+          <h2>注册账户</h2>
+        </div>
+
+        {if condition="$googleEnabled || $microsoftEnabled"}
+        <div class="auth-social auth-social-links" aria-label="第三方注册">
+          {if condition="$googleEnabled"}<a class="auth-social-button auth-social-google" href="/auth/google?next=/dashboard"><i class="bi bi-google"></i><span>使用 Google</span></a>{/if}
+          {if condition="$microsoftEnabled"}<a class="auth-social-button auth-social-microsoft" href="/auth/microsoft?next=/dashboard"><i class="bi bi-microsoft"></i><span>使用 Microsoft</span></a>{/if}
+        </div>
+        <div class="auth-divider auth-divider-plain" aria-hidden="true"></div>
+        {/if}
+
+        <div class="auth-wizard-progress" aria-label="注册进度">
+          <span class="is-active" data-step-indicator="email"><b>1</b>邮箱</span>
+          <i></i>
+          <span data-step-indicator="captcha"><b>2</b>人机验证</span>
+          <i></i>
+          <span data-step-indicator="code"><b>3</b>邮箱验证</span>
+          <i></i>
+          <span data-step-indicator="password"><b>4</b>设置密码</span>
+        </div>
+
+        <section class="auth-wizard-step is-active" data-register-step="email">
+          <form class="auth-form" data-register-email-form novalidate>
+            <label><span>注册邮箱</span><div class="auth-input"><i class="bi bi-envelope"></i><input autocomplete="email" name="email" placeholder="name@example.com" required type="email" value="{$prefillEmail|htmlentities}"/></div></label>
+            <button class="auth-submit" type="submit"><span>继续</span><i class="bi bi-arrow-right"></i></button>
+          </form>
+        </section>
+
+        <section class="auth-wizard-step" data-register-step="captcha" hidden>
+          <div class="auth-step-heading"><strong>确认你是真实用户</strong><span data-register-email-label></span></div>
+          <form class="auth-form" data-register-captcha-form novalidate>
+            <div class="auth-captcha-box">
+              <button class="auth-captcha-image" data-captcha-refresh="register-email" type="button" aria-label="刷新验证码"><img data-captcha-image="register-email" src="/captcha/register-email" alt="人机验证码"/></button>
+              <label><span>图形验证码</span><div class="auth-input"><i class="bi bi-shield-check"></i><input name="captcha" maxlength="8" autocomplete="off" placeholder="输入图片字符" required type="text"/></div></label>
+            </div>
+            <button class="auth-submit" type="submit"><span>验证并发送邮箱验证码</span><i class="bi bi-send"></i></button>
+            <button class="auth-text-button" data-register-back="email" type="button">更换邮箱</button>
+          </form>
+        </section>
+
+        <section class="auth-wizard-step" data-register-step="code" hidden>
+          <div class="auth-step-heading"><strong>输入邮箱验证码</strong><span>验证码已发送到 <b data-register-email-label></b></span></div>
+          <form class="auth-form" data-register-code-form novalidate>
+            <label><span>6 位验证码</span><div class="auth-input auth-code-input"><i class="bi bi-envelope-check"></i><input autocomplete="one-time-code" inputmode="numeric" maxlength="6" minlength="6" name="code" pattern="[0-9]{6}" placeholder="000000" required type="text"/></div></label>
+            <button class="auth-submit" type="submit"><span>验证邮箱</span><i class="bi bi-patch-check"></i></button>
+            <button class="auth-text-button" data-register-resend type="button">重新发送验证码</button>
+          </form>
+        </section>
+
+        <section class="auth-wizard-step" data-register-step="password" hidden>
+          <div class="auth-success-panel">
+            <i class="bi bi-check-circle-fill"></i>
+            <div><strong>邮箱验证成功</strong><span>邮箱所有权已确认，现在设置登录密码即可完成注册。</span></div>
+          </div>
+          <form class="auth-form" data-auth-form="register" novalidate>
+            <input name="registration_ticket" data-registration-ticket type="hidden"/>
+            <label><span>已验证邮箱</span><div class="auth-input auth-input-readonly"><i class="bi bi-envelope-check"></i><input name="email" data-register-final-email readonly type="email"/></div></label>
+            <div class="auth-final-grid">
+              <label><span>密码 <em>8-128 位</em></span><div class="auth-input"><i class="bi bi-lock"></i><input autocomplete="new-password" minlength="8" name="password" required type="password"/><button aria-label="显示密码" data-password-toggle type="button"><i class="bi bi-eye"></i></button></div></label>
+              <label><span>确认密码</span><div class="auth-input"><i class="bi bi-lock-fill"></i><input autocomplete="new-password" minlength="8" name="confirmPassword" required type="password"/><button aria-label="显示密码" data-password-toggle type="button"><i class="bi bi-eye"></i></button></div></label>
+              <label class="auth-final-captcha"><span>人机验证</span><div class="auth-final-captcha-shell"><button class="auth-captcha-image auth-captcha-image-small" data-captcha-refresh="register-final" type="button" aria-label="刷新验证码"><img data-captcha-image="register-final" src="/captcha/register-final" alt="人机验证码"/></button><div class="auth-input"><i class="bi bi-shield-check"></i><input name="captcha" maxlength="8" autocomplete="off" placeholder="验证码" required type="text"/></div></div></label>
+            </div>
+            <label class="auth-check auth-agreement"><input name="accept_terms" required type="checkbox"/>我已阅读并同意服务条款与隐私政策</label>
+            <button class="auth-submit" type="submit"><span>创建账户</span><i class="bi bi-arrow-right"></i></button>
+          </form>
+        </section>
+
+        <div class="auth-switch">已经有账户？ <a href="/login">立即登录</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="auth-footer"><span>© CrystalBest</span><nav><a href="/">首页</a><a href="/markets">市场</a></nav></footer>
+<div class="auth-toast" data-auth-toast></div>
+<script src="/static/assets/js/main.js"></script>
+<script src="/static/assets/js/auth.js"></script>
+{/block}
