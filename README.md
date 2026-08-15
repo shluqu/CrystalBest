@@ -21,7 +21,7 @@
 - 用户站：<https://crystalbest.top/>
 - 登录页：<https://crystalbest.top/login>
 
-<details>
+
 <summary><b>演示登录信息</b></summary>
 
 ```text
@@ -29,9 +29,11 @@ host@hmailx.com
 Qaz@741852
 ```
 
-</details>
+
 
 ---
+## 联系我们
+- telegram : https://t.me/lonmenhr
 
 ## 网站预览
 
